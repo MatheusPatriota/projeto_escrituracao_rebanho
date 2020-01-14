@@ -7,7 +7,7 @@ import 'package:ouvinos_caprinos/ui/ovino_page.dart';
 
 import 'cadastro_caprino_page.dart';
 
-
+enum OrderOptions { orderaz, orderza, orderbyid }
 
 class CaprinoPage extends StatefulWidget {
   @override
@@ -17,7 +17,7 @@ class CaprinoPage extends StatefulWidget {
 class _CaprinoPageState extends State<CaprinoPage> {
   AnimalHelper helper = AnimalHelper();
 
-  List<Animal> animais = List();
+  List<Animal> animaisCaprinos = List();
 
   @override
   void initState() {
@@ -39,8 +39,26 @@ class _CaprinoPageState extends State<CaprinoPage> {
              
             },
           ),
-          IconButton(icon: Icon(Icons.sort), onPressed: () {}),
+          PopupMenuButton<OrderOptions>(
+            icon: Icon(Icons.sort),
+            itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
+              const PopupMenuItem<OrderOptions>(
+                child: Text("Ordenar de A-Z"),
+                value: OrderOptions.orderaz,
+              ),
+              const PopupMenuItem<OrderOptions>(
+                child: Text("Ordenar de Z-A"),
+                value: OrderOptions.orderza,
+              ),
+              const PopupMenuItem<OrderOptions>(
+                child: Text("Ordenar pelo Id"),
+                value: OrderOptions.orderbyid,
+              ),
+            ],
+            onSelected: _orderList,
+          ),
         ],
+        
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showCadastroCaprinoPage,
@@ -90,7 +108,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
       ),
        body: ListView.builder(
           padding: EdgeInsets.all(10.0),
-          itemCount: animais.length,
+          itemCount: animaisCaprinos.length,
           itemBuilder: (context, index) {
             return _animalCard(context, index);
           }
@@ -113,8 +131,8 @@ class _CaprinoPageState extends State<CaprinoPage> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                        image: animais[index].img != null ?
-                          FileImage(File(animais[index].img)) :
+                        image: animaisCaprinos[index].img != null ?
+                          FileImage(File(animaisCaprinos[index].img)) :
                             AssetImage("images/caprino.png"),
                         fit: BoxFit.cover
                     ),
@@ -125,14 +143,14 @@ class _CaprinoPageState extends State<CaprinoPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(animais[index].nome ?? "",
+                      Text(animaisCaprinos[index].nome ?? "",
                         style: TextStyle(fontSize: 22.0,
                             fontWeight: FontWeight.bold),
                       ),
-                      Text(animais[index].sexo ?? "",
+                      Text(animaisCaprinos[index].sexo ?? "",
                         style: TextStyle(fontSize: 18.0),
                       ),
-                      Text(animais[index].raca ?? "",
+                      Text(animaisCaprinos[index].raca ?? "",
                         style: TextStyle(fontSize: 18.0),
                       )
                     ],
@@ -169,7 +187,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
                         ),
                         onPressed: (){
                           Navigator.pop(context);
-                          _showCadastroCaprinoPage(animal: animais[index]);
+                          _showCadastroCaprinoPage(animal: animaisCaprinos[index]);
                         },
                       ),
                     ),
@@ -180,9 +198,9 @@ class _CaprinoPageState extends State<CaprinoPage> {
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
                         ),
                         onPressed: (){
-                          helper.deleteAnimal(animais[index].id);
+                          helper.deleteAnimal(animaisCaprinos[index].id);
                           setState(() {
-                            animais.removeAt(index);
+                            animaisCaprinos.removeAt(index);
                             Navigator.pop(context);
                           });
                         },
@@ -200,7 +218,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
 
    void _showCadastroCaprinoPage({Animal animal}) async {
     final recAnimal = await Navigator.push(context,
-      MaterialPageRoute(builder: (context) => CadastroCaprinoPage(animal: animal,))
+      MaterialPageRoute(builder: (context) => CadastroCaprinoPage(animalCaprino: animal,))
     );
     if(recAnimal != null){
       if(animal != null){
@@ -214,9 +232,41 @@ class _CaprinoPageState extends State<CaprinoPage> {
 
   void _getAllAnimals() {
     helper.getAllAnimals().then((list) {
+      print(list);
+      List<Animal> listaFinal = new List();
+      
+      for (var ani in list) {
+        if(ani.tipo == "caprino"){
+          listaFinal.add(ani);
+        }
+      }
       setState(() {
-        animais = list;
+        animaisCaprinos = listaFinal;
       });
     });
   }
+
+  void _orderList(OrderOptions result) {
+    switch (result) {
+      case OrderOptions.orderaz:
+        animaisCaprinos.sort((a, b) {
+          return a.nome.toLowerCase().compareTo(b.nome.toLowerCase());
+        });
+        break;
+      case OrderOptions.orderza:
+        animaisCaprinos.sort((a, b) {
+          return b.nome.toLowerCase().compareTo(a.nome.toLowerCase());
+        });
+        break;
+      case OrderOptions.orderbyid:
+        animaisCaprinos.sort((a,b){
+          return  a.id.compareTo(b.id);
+        });
+        break;
+        
+    }
+    setState(() {});
+  }
+
+
 }

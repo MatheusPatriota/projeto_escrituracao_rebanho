@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:ouvinos_caprinos/ui/caprino_page.dart';
+import 'package:ouvinos_caprinos/ui/home_page.dart';
 
 void main() {
   runApp(MaterialApp(
-    home: CaprinoPage(),
+    home: HomePage(),
     debugShowCheckedModeBanner: false,
   ));
 }

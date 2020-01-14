@@ -17,7 +17,7 @@ class OvinoPage extends StatefulWidget {
 class _OvinoPageState extends State<OvinoPage> {
   AnimalHelper helper = AnimalHelper();
 
-  List<Animal> animais = List();
+  List<Animal> animaisOvinos = List();
 
   @override
   void initState() {
@@ -88,7 +88,7 @@ class _OvinoPageState extends State<OvinoPage> {
       ),
        body: ListView.builder(
           padding: EdgeInsets.all(10.0),
-          itemCount: animais.length,
+          itemCount: animaisOvinos.length,
           itemBuilder: (context, index) {
             return _animalCard(context, index);
           }
@@ -111,9 +111,9 @@ class _OvinoPageState extends State<OvinoPage> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                        image: animais[index].img != null ?
-                          FileImage(File(animais[index].img)) :
-                            AssetImage("images/caprino.png"),
+                        image: animaisOvinos[index].img != null ?
+                          FileImage(File(animaisOvinos[index].img)) :
+                            AssetImage("images/ovino.png"),
                         fit: BoxFit.cover
                     ),
                   ),
@@ -123,14 +123,14 @@ class _OvinoPageState extends State<OvinoPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(animais[index].nome ?? "",
+                      Text(animaisOvinos[index].nome ?? "",
                         style: TextStyle(fontSize: 22.0,
                             fontWeight: FontWeight.bold),
                       ),
-                      Text(animais[index].sexo ?? "",
+                      Text(animaisOvinos[index].sexo ?? "",
                         style: TextStyle(fontSize: 18.0),
                       ),
-                      Text(animais[index].raca ?? "",
+                      Text(animaisOvinos[index].raca ?? "",
                         style: TextStyle(fontSize: 18.0),
                       )
                     ],
@@ -167,7 +167,7 @@ class _OvinoPageState extends State<OvinoPage> {
                         ),
                         onPressed: (){
                           Navigator.pop(context);
-                          _showCadastroOvinoPage(animal: animais[index]);
+                          _showCadastroOvinoPage(animal: animaisOvinos[index]);
                         },
                       ),
                     ),
@@ -178,9 +178,9 @@ class _OvinoPageState extends State<OvinoPage> {
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
                         ),
                         onPressed: (){
-                          helper.deleteAnimal(animais[index].id);
+                          helper.deleteAnimal(animaisOvinos[index].id);
                           setState(() {
-                            animais.removeAt(index);
+                            animaisOvinos.removeAt(index);
                             Navigator.pop(context);
                           });
                         },
@@ -198,7 +198,7 @@ class _OvinoPageState extends State<OvinoPage> {
 
    void _showCadastroOvinoPage({Animal animal}) async {
     final recAnimal = await Navigator.push(context,
-      MaterialPageRoute(builder: (context) => CadastroOvinoPage(animal: animal,))
+      MaterialPageRoute(builder: (context) => CadastroOvinoPage(animalOvino: animal,))
     );
     if(recAnimal != null){
       if(animal != null){
@@ -212,8 +212,15 @@ class _OvinoPageState extends State<OvinoPage> {
 
   void _getAllAnimals() {
     helper.getAllAnimals().then((list) {
+      List<Animal> listaFinal = new List();
+      
+      for (var ani in list) {
+        if(ani.tipo == "ovino"){
+          listaFinal.add(ani);
+        }
+      }
       setState(() {
-        animais = list;
+        animaisOvinos = listaFinal;
       });
     });
   }
