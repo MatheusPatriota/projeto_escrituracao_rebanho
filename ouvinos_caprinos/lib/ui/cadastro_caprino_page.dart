@@ -1,9 +1,9 @@
-import 'dart:async';
+// @author: Matheus Patriota
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ouvinos_caprinos/drowpdown_info/dropdown_buttons.dart';
 import 'package:ouvinos_caprinos/helper/animais_helper.dart';
 
 class CadastroCaprinoPage extends StatefulWidget {
@@ -16,347 +16,435 @@ class CadastroCaprinoPage extends StatefulWidget {
 }
 
 class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
-  /// Variveis de controle que passam informacao para o banco de dados
-  final _tipoController = TextEditingController();
-  final _nomeController = TextEditingController();
-  final _sexoController = TextEditingController();
-  final _categoriaController = TextEditingController();
-  final _racaController = TextEditingController();
-  final _brincoControleController = TextEditingController();
-  final _paiController = TextEditingController();
-  final _maeController = TextEditingController();
-  final _dataNascimentoController = TextEditingController();
-  final _dataAquisicaoController = TextEditingController();
-  final _valorAquisicaoController = TextEditingController();
-  final _nomeVendedorController = TextEditingController();
-  final _patrimonioController = TextEditingController();
+  // variavel responsavel pela chave do formulario
+  final _formKey = GlobalKey<FormState>();
 
-  final _nomeFocus = FocusNode();
+  // apontadores para as listas de multipla escolha
+  int _selectedGender = 0;
+  int _selectedCategoria = 0;
+  int _selectedRaca = 0;
 
-  bool _userEdited = false;
+  // animal a ser criado/editado
   Animal _editedAnimal;
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  // variaveis para o menu de alternativas no cadastro
-  List<Sexo> _sexos = Sexo.getSex();
-  List<DropdownMenuItem<Sexo>> _menuSexo;
-  Sexo _sexoSelecionado;
+  // listas onde serao armazenada as possiveis escolhas
+  List<DropdownMenuItem<int>> genderList = [];
+  List<DropdownMenuItem<int>> categoriaList = [];
+  List<DropdownMenuItem<int>> racaList = [];
 
-  List<Categoria> _categorias = Categoria.getCategorias();
-  List<DropdownMenuItem<Categoria>> _menuCategorias;
-  Categoria _categoriaSelecionado;
+  // checa se o animal foi editado
+  bool _userEdited = false;
 
-  List<RacaCaprino> _racasCaprino = RacaCaprino.getRacaCaprinos();
-  List<DropdownMenuItem<RacaCaprino>> _menuRacasCaprinos;
-  RacaCaprino _racaCaprinoSelecionado;
+  // recupera as datas atuais
+  DateTime _dataNascimento = new DateTime.now();
+  DateTime _dataAquisicao = new DateTime.now();
 
-  /// Metodo inicializa toda vez que tem alguma alteracao no aplicativo
+  // funcao para o usuario escolhar a data de nascimento
+  Future<Null> _selectDateNascimento(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: _dataNascimento,
+      firstDate: new DateTime(1900),
+      lastDate: new DateTime(2100),
+    );
+    if (picked != null && picked != _dataNascimento) {
+      setState(() {
+        _dataNascimento = picked;
+      });
+    }
+  }
+
+  // funcao para o usuario escolhar a data de Aquisicao
+  Future<Null> _selectDateAquisicao(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: _dataAquisicao,
+      firstDate: new DateTime(1900),
+      lastDate: new DateTime(2100),
+    );
+    if (picked != null && picked != _dataAquisicao) {
+      setState(() {
+        _dataAquisicao = picked;
+      });
+    }
+  }
+
+  //inicializa toda vez que algo eh alterado
   @override
   void initState() {
-    _menuSexo = buildDropdownSexoItems(_sexos);
-    _sexoSelecionado = _menuSexo[0].value;
-
-    _menuCategorias = buildDropdownCategoriaItems(_categorias);
-    _categoriaSelecionado = _menuCategorias[0].value;
-
-    _menuRacasCaprinos = buildDropdownRacasCaprinoItems(_racasCaprino);
-    _racaCaprinoSelecionado = _menuRacasCaprinos[0].value;
-
     super.initState();
 
     if (widget.animalCaprino == null) {
       _editedAnimal = Animal();
+      _editedAnimal.sexo = "Macho";
+      _editedAnimal.raca = "NS";
+      _editedAnimal.tipo = "caprino";
+      print(_editedAnimal);
     } else {
       _editedAnimal = Animal.fromMap(widget.animalCaprino.toMap());
-
-      _tipoController.text = _editedAnimal.tipo;
-      _nomeController.text = _editedAnimal.nome;
-      _sexoController.text = _editedAnimal.sexo;
-      _categoriaController.text = _editedAnimal.categoria;
-      _racaController.text = _editedAnimal.raca;
-      _brincoControleController.text = _editedAnimal.brincoControle;
-      _paiController.text = _editedAnimal.pai;
-      _maeController.text = _editedAnimal.mae;
-      _dataNascimentoController.text = _editedAnimal.dataNascimento;
-      _dataAquisicaoController.text = _editedAnimal.dataAquisicao;
-      _valorAquisicaoController.text = _editedAnimal.valorAquisicao;
-      _nomeVendedorController.text = _editedAnimal.nomeVendedor;
-      _patrimonioController.text = _editedAnimal.patrimonio;
     }
   }
 
-  /**
-   * Tentei unificar em uma unica funcao do tipo generica, mas nao consegui, tive que colocar desse jeito 
-   * se tiver alguma sugestao pode mandar
-   */
-
-  /// Metodo responsavel por criar o menu de alternativas para o cadastro
-  List<DropdownMenuItem<Sexo>> buildDropdownSexoItems(List x) {
-    List<DropdownMenuItem<Sexo>> items = List();
-    for (Sexo c in x) {
-      items.add(
-        DropdownMenuItem(
-          value: c,
-          child: Text(c.nome),
-        ),
-      );
-    }
-    return items;
+  // carrega a lista de possiveis sexos
+  void loadGenderList() {
+    genderList = [];
+    genderList.add(new DropdownMenuItem(
+      child: new Text('Macho'),
+      value: 0,
+    ));
+    genderList.add(new DropdownMenuItem(
+      child: new Text('Fêmea'),
+      value: 1,
+    ));
   }
 
-  List<DropdownMenuItem<Categoria>> buildDropdownCategoriaItems(List x) {
-    List<DropdownMenuItem<Categoria>> items = List();
-    for (Categoria c in x) {
-      items.add(
-        DropdownMenuItem(
-          value: c,
-          child: Text(c.nome),
-        ),
-      );
-    }
-    return items;
+  // carrega a lista de possiveis categorias
+  void loadCategoriaList() {
+    categoriaList = [];
+    categoriaList.add(new DropdownMenuItem(
+      child: new Text('Não Selecionado'),
+      value: 0,
+    ));
+    categoriaList.add(new DropdownMenuItem(
+      child: new Text('Cria'),
+      value: 1,
+    ));
+    categoriaList.add(new DropdownMenuItem(
+      child: new Text('Recria'),
+      value: 2,
+    ));
+    categoriaList.add(new DropdownMenuItem(
+      child: new Text('Terminação'),
+      value: 3,
+    ));
+    categoriaList.add(new DropdownMenuItem(
+      child: new Text('Matriz'),
+      value: 4,
+    ));
+    categoriaList.add(new DropdownMenuItem(
+      child: new Text('Repodutor'),
+      value: 5,
+    ));
   }
 
-  List<DropdownMenuItem<RacaCaprino>> buildDropdownRacasCaprinoItems(List x) {
-    List<DropdownMenuItem<RacaCaprino>> items = List();
-    for (RacaCaprino c in x) {
-      items.add(
-        DropdownMenuItem(
-          value: c,
-          child: Text(c.nome),
-        ),
-      );
-    }
-    return items;
+  // carrega a lista de possiveis racas
+  void loadRacaList() {
+    racaList = [];
+    racaList.add(new DropdownMenuItem(
+      child: new Text('NS'),
+      value: 0,
+    ));
+    racaList.add(new DropdownMenuItem(
+      child: new Text('Alpino'),
+      value: 1,
+    ));
+    racaList.add(new DropdownMenuItem(
+      child: new Text('Anglo Nubiano'),
+      value: 2,
+    ));
+    racaList.add(new DropdownMenuItem(
+      child: new Text('Boer'),
+      value: 3,
+    ));
+    racaList.add(new DropdownMenuItem(
+      child: new Text('Mestiço'),
+      value: 4,
+    ));
+    racaList.add(new DropdownMenuItem(
+      child: new Text('Saanen'),
+      value: 5,
+    ));
+    racaList.add(new DropdownMenuItem(
+      child: new Text('Savana'),
+      value: 6,
+    ));
+    racaList.add(new DropdownMenuItem(
+      child: new Text('Toggenburg'),
+      value: 7,
+    ));
+    // print(racaList[0].child.toStringShallow());
   }
 
+  // montando a pagina de exibicao
   @override
   Widget build(BuildContext context) {
+    // carregando as listas
+    loadGenderList();
+    loadCategoriaList();
+    loadRacaList();
+    // willpopScpe vai retornar nosso animal
     return WillPopScope(
       onWillPop: _requestPop,
+      // Scaffold possibilita o slide pra cima e para baixo
       child: Scaffold(
+        //barra superior com informacoes
         appBar: AppBar(
           backgroundColor: Colors.green,
           title: Text(_editedAnimal.nome ?? "Novo Caprino"),
           centerTitle: true,
         ),
+        // botao salvar
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            if (_editedAnimal.nome != null && _editedAnimal.nome.isNotEmpty) {
-              Navigator.pop(context, _editedAnimal);
-            } else {
-              FocusScope.of(context).requestFocus(_nomeFocus);
-            }
+            Navigator.pop(context, _editedAnimal);
           },
           child: Icon(Icons.save),
           backgroundColor: Colors.green,
         ),
-        body: SingleChildScrollView(
-          child: Form(
+        // formulario de cadastro
+        body: Form(
             key: _formKey,
-            child: Column(
-              children: <Widget>[
-                GestureDetector(
-                  child: Container(
-                    width: 140.0,
-                    height: 140.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          image: _editedAnimal.img != null
-                              ? FileImage(File(_editedAnimal.img))
-                              : AssetImage("images/caprino.png"),
-                          fit: BoxFit.cover),
-                    ),
-                  ),
-                  onTap: () {
-                    ImagePicker.pickImage(source: ImageSource.camera)
-                        .then((file) {
-                      if (file == null) return;
-                      setState(() {
-                        _editedAnimal.img = file.path;
-                      });
-                    });
-                  },
-                ),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: TextField(
-                    controller: _nomeController,
-                    focusNode: _nomeFocus,
-                    decoration: InputDecoration(labelText: "Nome"),
-                    onChanged: (text) {
-                      _userEdited = true;
-                      setState(() {
-                        _editedAnimal.nome = text;
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: DropdownButtonFormField<Sexo>(
-                    isExpanded: true,
-                    value: _sexoSelecionado,
-                    items: _menuSexo,
-                    onChanged: (Sexo sexoSelecionado) {
-                      setState(() {
-                        _userEdited = true;
-                        _sexoSelecionado = sexoSelecionado;
-                        _editedAnimal.sexo = sexoSelecionado.nome;
-                        _editedAnimal.tipo = "caprino";
-                      });
-                    },
-                   
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: DropdownButtonFormField(
-                    isExpanded: true,
-                    hint: Text("Selecione a Categoria"),
-                    value: _categoriaSelecionado,
-                    items: _menuCategorias,
-                    onChanged: (Categoria categoriaSelecionada) {
-                      setState(() {
-                        _userEdited = true;
-                        _categoriaSelecionado = categoriaSelecionada;
-                        _editedAnimal.categoria = categoriaSelecionada.nome;
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: DropdownButtonFormField(
-                    isExpanded: true,
-                    hint: Text("Selecione a Raça"),
-                    value: _racaCaprinoSelecionado,
-                    items: _menuRacasCaprinos,
-                    onChanged: (RacaCaprino racaCaprinoSelecionada) {
-                      setState(() {
-                        _userEdited = true;
-                        _racaCaprinoSelecionado = racaCaprinoSelecionada;
-                        _editedAnimal.raca = racaCaprinoSelecionada.nome;
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: TextField(
-                    controller: _brincoControleController,
-                    decoration:
-                        InputDecoration(labelText: "Brinco de Controle"),
-                    onChanged: (text) {
-                      _userEdited = true;
-                      setState(() {
-                        _editedAnimal.brincoControle = text;
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: TextField(
-                    controller: _paiController,
-                    decoration: InputDecoration(labelText: "Pai"),
-                    onChanged: (text) {
-                      _userEdited = true;
-                      setState(() {
-                        _editedAnimal.pai = text;
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: TextField(
-                    controller: _maeController,
-                    decoration: InputDecoration(labelText: "Mae"),
-                    onChanged: (text) {
-                      _userEdited = true;
-                      setState(() {
-                        _editedAnimal.mae = text;
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: TextField(
-                    controller: _dataNascimentoController,
-                    decoration:
-                        InputDecoration(labelText: "Data de Nascimento"),
-                    onChanged: (text) {
-                      _userEdited = true;
-                      setState(() {
-                        _editedAnimal.dataNascimento = text;
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: TextField(
-                    controller: _dataAquisicaoController,
-                    decoration: InputDecoration(labelText: "Data de aquisicao"),
-                    onChanged: (text) {
-                      _userEdited = true;
-                      setState(() {
-                        _editedAnimal.dataAquisicao = text;
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: TextField(
-                    controller: _valorAquisicaoController,
-                    decoration:
-                        InputDecoration(labelText: "Valor de Aquisicao"),
-                    onChanged: (text) {
-                      _userEdited = true;
-                      setState(() {
-                        _editedAnimal.valorAquisicao = text;
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: TextField(
-                    controller: _nomeVendedorController,
-                    decoration: InputDecoration(labelText: "Nome do Vendedor"),
-                    onChanged: (text) {
-                      _userEdited = true;
-                      setState(() {
-                        _editedAnimal.nomeVendedor = text;
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: TextField(
-                    controller: _patrimonioController,
-                    decoration: InputDecoration(labelText: "Patrimonio"),
-                    onChanged: (text) {
-                      _userEdited = true;
-                      setState(() {
-                        _editedAnimal.patrimonio = text;
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+            child: new Container(
+              padding: EdgeInsets.all(13.0),
+              child: ListView(
+                children: getFormWidgets(),
+              ),
+            )),
       ),
     );
   }
 
+// Funcao que retorna todos os widgets usados no formulario de cadastro
+  List<Widget> getFormWidgets() {
+    // formatando a data para guardar no bd
+    var formatoDataNascimento =
+        "${_dataNascimento.day}-${_dataNascimento.month}-${_dataNascimento.year}";
+    var formatoDataAquisicao =
+        "${_dataAquisicao.day}-${_dataAquisicao.month}-${_dataAquisicao.year}";
+    List<Widget> formWidget = new List();
+    // widget para inserir a imagem no formulario
+    formWidget.add(
+      Column(
+        children: <Widget>[
+          GestureDetector(
+            child: Container(
+              width: 140.0,
+              height: 140.0,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                    image: _editedAnimal.img != null
+                        ? FileImage(File(_editedAnimal.img))
+                        : AssetImage("images/caprino.png"),
+                    fit: BoxFit.cover),
+              ),
+            ),
+            onTap: () {
+              ImagePicker.pickImage(source: ImageSource.camera).then((file) {
+                if (file == null) return;
+                setState(() {
+                  _editedAnimal.img = file.path;
+                });
+              });
+            },
+          ),
+        ],
+      ),
+    );
+
+    // widget para inserir o nome do animal
+    formWidget.add(
+      new TextField(
+        decoration: InputDecoration(labelText: "Nome"),
+        onChanged: (text) {
+          _userEdited = true;
+          setState(() {
+            _editedAnimal.nome = text;
+          });
+        },
+      ),
+    );
+    formWidget.add(Container(
+      child: Text("Sexo*"),
+      padding: EdgeInsets.only(top: 10.0),
+    ));
+    // widget para inserir o sexo do animal
+    formWidget.add(new DropdownButton(
+      hint: new Text('Select Gender'),
+      items: genderList,
+      value: _selectedGender,
+      onChanged: (value) {
+        setState(() {
+          _userEdited = true;
+          _selectedGender = value;
+          _editedAnimal.sexo =
+              removeCaracteres(genderList[value].child.toString());
+        });
+      },
+      isExpanded: true,
+    ));
+    formWidget.add(Container(
+      child: Text("Categoria"),
+      padding: EdgeInsets.only(top: 10.0),
+    ));
+    // widget para inserir a categoria do animal
+    formWidget.add(new DropdownButton(
+      hint: new Text('Select Categoria'),
+      items: categoriaList,
+      value: _selectedCategoria,
+      onChanged: (value) {
+        setState(() {
+          _userEdited = true;
+          _selectedCategoria = value;
+          _editedAnimal.categoria =
+              removeCaracteres(categoriaList[value].child.toString());
+        });
+      },
+      isExpanded: true,
+    ));
+    formWidget.add(Container(
+      child: Text("Raça*"),
+      padding: EdgeInsets.only(top: 10.0),
+    ));
+    // widget para inserir a raca do animal
+    formWidget.add(new DropdownButton(
+      hint: new Text('Selecione a Raça'),
+      items: racaList,
+      value: _selectedRaca,
+      onChanged: (value) {
+        setState(() {
+          _userEdited = true;
+          _selectedRaca = value;
+          _editedAnimal.raca =
+              removeCaracteres(racaList[value].child.toString());
+        });
+      },
+      isExpanded: true,
+    ));
+    // widget para inserir o numero do brinco de controle
+    formWidget.add(
+      new TextField(
+        decoration: InputDecoration(labelText: "Brinco de Controle"),
+        onChanged: (text) {
+          _userEdited = true;
+          setState(() {
+            _editedAnimal.brincoControle = text;
+          });
+        },
+      ),
+    );
+    // widget para inserir o pai do animal
+    formWidget.add(
+      new TextField(
+        decoration: InputDecoration(labelText: "Pai"),
+        onChanged: (text) {
+          _userEdited = true;
+          setState(() {
+            _editedAnimal.pai = text;
+          });
+        },
+      ),
+    );
+    // widget para inserir a mae do animal
+    formWidget.add(
+      new TextField(
+        decoration: InputDecoration(labelText: "Mãe"),
+        onChanged: (text) {
+          _userEdited = true;
+          setState(() {
+            _editedAnimal.mae = text;
+          });
+        },
+      ),
+    );
+    formWidget.add(Container(
+      child: Text("Data de Nascimento*"),
+      padding: EdgeInsets.only(top: 10.0),
+    ));
+    // widget para data de nascimentoque eh obrigatoria
+    formWidget.add(
+      new RaisedButton(
+        child: Text("$formatoDataNascimento"),
+        onPressed: () {
+          _selectDateNascimento(context);
+          print(_dataNascimento.toString());
+          _userEdited = true;
+          setState(() {
+            _editedAnimal.dataNascimento = formatoDataNascimento;
+          });
+        },
+      ),
+    );
+    // widget para data de aquisicao
+    formWidget.add(Container(
+      child: Text("Data de Aquisição"),
+      padding: EdgeInsets.only(top: 10.0),
+    ));
+    formWidget.add(
+      RaisedButton(
+          child: Text("$formatoDataAquisicao"),
+          onPressed: () {
+            _selectDateAquisicao(context);
+            _userEdited = true;
+
+            setState(() {
+              _editedAnimal.dataAquisicao = formatoDataAquisicao;
+            });
+          }),
+    );
+    // widget para o valor da aquisicao do animal
+    formWidget.add(
+      new TextField(
+        keyboardType: TextInputType.numberWithOptions(decimal: true),
+        decoration:
+            InputDecoration(labelText: "Valor da Aquisição", prefixText: "R\$"),
+        onChanged: (text) {
+          _userEdited = true;
+          setState(() {
+            _editedAnimal.valorAquisicao = text;
+          });
+        },
+      ),
+    );
+    // widget para o nome do vendedor
+    formWidget.add(
+      new TextField(
+        decoration: InputDecoration(labelText: "Nome do Vendedor"),
+        onChanged: (text) {
+          _userEdited = true;
+          setState(() {
+            _editedAnimal.nomeVendedor = text;
+          });
+        },
+      ),
+    );
+    // widget para o patrimonio
+    formWidget.add(
+      new TextField(
+        decoration: InputDecoration(labelText: "Patrimônio/N do Patrimônio"),
+        onChanged: (text) {
+          _userEdited = true;
+          setState(() {
+            _editedAnimal.patrimonio = text;
+          });
+        },
+      ),
+    );
+
+    return formWidget;
+  }
+// funcao para remover caracteres indesejados na string
+  String removeCaracteres(String s) {
+    String resp = "";
+    bool removed = false;
+    for (var i = 0; i < s.length; i++) {
+      if (!(s[i] == "T" ||
+          s[i] == "x" ||
+          s[i] == "t" ||
+          s[i] == "(" ||
+          s[i] == ")" ||
+          s[i] == '"')) {
+        if (removed == false && s[i] == "e") {
+          removed = true;
+        } else {
+          resp += s[i];
+        }
+      }
+    }
+    return resp;
+  }
+
+  // Funcao para checar se foi feita alguma alteracao no cadastro
   Future<bool> _requestPop() {
     if (_userEdited) {
       showDialog(

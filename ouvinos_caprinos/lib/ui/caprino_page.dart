@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:ouvinos_caprinos/helper/animais_helper.dart';
 import 'package:ouvinos_caprinos/ui/ovino_page.dart';
+import 'package:ouvinos_caprinos/ui/show_caprino_information.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
 import 'cadastro_caprino_page.dart';
@@ -35,9 +36,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),
-            onPressed: () {
-             
-            },
+            onPressed: () {},
           ),
           PopupMenuButton<OrderOptions>(
             icon: Icon(Icons.sort),
@@ -58,7 +57,6 @@ class _CaprinoPageState extends State<CaprinoPage> {
             onSelected: _orderList,
           ),
         ],
-        
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showCadastroCaprinoPage,
@@ -68,7 +66,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
-          children:  <Widget>[
+          children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.green,
@@ -84,7 +82,6 @@ class _CaprinoPageState extends State<CaprinoPage> {
             ListTile(
               leading: Icon(Icons.change_history),
               title: Text('Caprinos'),
-               
             ),
             ListTile(
               leading: Icon(Icons.account_circle),
@@ -93,11 +90,10 @@ class _CaprinoPageState extends State<CaprinoPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => OvinoPage(),
-                      ),
+                    builder: (context) => OvinoPage(),
+                  ),
                 );
               },
-              
             ),
             ListTile(
               leading: Icon(Icons.settings),
@@ -106,74 +102,74 @@ class _CaprinoPageState extends State<CaprinoPage> {
           ],
         ),
       ),
-       body: ListView.builder(
+      body: ListView.builder(
           padding: EdgeInsets.all(10.0),
           itemCount: animaisCaprinos.length,
           itemBuilder: (context, index) {
             return _animalCard(context, index);
-          }
-      ),
+          }),
     );
   }
 
-
-  
-  Widget _animalCard(BuildContext context, int index){
+  Widget _animalCard(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
         child: Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  width: 80.0,
-                  height: 80.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                        image: animaisCaprinos[index].img != null ?
-                          FileImage(File(animaisCaprinos[index].img)) :
-                            AssetImage("images/caprino.png"),
-                        fit: BoxFit.cover
-                    ),
-                  ),
+          padding: EdgeInsets.all(10.0),
+          child: Row(
+            children: <Widget>[
+              Container(
+                width: 80.0,
+                height: 80.0,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                      image: animaisCaprinos[index].img != null
+                          ? FileImage(File(animaisCaprinos[index].img))
+                          : AssetImage("images/caprino.png"),
+                      fit: BoxFit.cover),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(animaisCaprinos[index].nome ?? "",
-                        style: TextStyle(fontSize: 22.0,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Text(animaisCaprinos[index].sexo ?? "",
-                        style: TextStyle(fontSize: 18.0),
-                      ),
-                      Text(animaisCaprinos[index].raca ?? "",
-                        style: TextStyle(fontSize: 18.0),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "Nº de Indetificação " +
+                              animaisCaprinos[index].id.toString() ??
+                          "",
+                      style: TextStyle(
+                          fontSize: 22.0, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "Nome: " + animaisCaprinos[index].nome ?? "",
+                      style: TextStyle(fontSize: 18.0),
+                    ),
+                    Text(
+                      "Sexo: " + animaisCaprinos[index].sexo ?? "",
+                      style: TextStyle(fontSize: 18.0),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
-      onTap: (){
+      onTap: () {
         _showOptions(context, index);
       },
     );
   }
 
-
-  void _showOptions(BuildContext context, int index){
+  void _showOptions(BuildContext context, int index) {
     showModalBottomSheet(
         context: context,
-        builder: (context){
+        builder: (context) {
           return BottomSheet(
-            onClosing: (){},
-            builder: (context){
+            onClosing: () {},
+            builder: (context) {
               return Container(
                 padding: EdgeInsets.all(10.0),
                 child: Column(
@@ -182,22 +178,39 @@ class _CaprinoPageState extends State<CaprinoPage> {
                     Padding(
                       padding: EdgeInsets.all(10.0),
                       child: FlatButton(
-                        child: Text("Editar",
-                          style: TextStyle(color: Colors.red, fontSize: 20.0),
+                        child: Text(
+                          "Ver Informações",
+                          style: TextStyle(color: Colors.green, fontSize: 20.0),
                         ),
-                        onPressed: (){
+                        onPressed: () {
                           Navigator.pop(context);
-                          _showCadastroCaprinoPage(animal: animaisCaprinos[index]);
+                          _showCaprinoInformation(
+                              animal: animaisCaprinos[index]);
                         },
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
                       child: FlatButton(
-                        child: Text("Excluir",
+                        child: Text(
+                          "Editar",
+                          style: TextStyle(color: Colors.green, fontSize: 20.0),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _showCadastroCaprinoPage(
+                              animal: animaisCaprinos[index]);
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: FlatButton(
+                        child: Text(
+                          "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
                         ),
-                        onPressed: (){
+                        onPressed: () {
                           helper.deleteAnimal(animaisCaprinos[index].id);
                           setState(() {
                             animaisCaprinos.removeAt(index);
@@ -211,17 +224,28 @@ class _CaprinoPageState extends State<CaprinoPage> {
               );
             },
           );
-        }
-    );
+        });
   }
 
+  void _showCaprinoInformation({Animal animal}) async {
+    final recAnimal = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => CaprinoInformation(
+                  caprino: animal,
+                )));
+                
+  }
 
-   void _showCadastroCaprinoPage({Animal animal}) async {
-    final recAnimal = await Navigator.push(context,
-      MaterialPageRoute(builder: (context) => CadastroCaprinoPage(animalCaprino: animal,))
-    );
-    if(recAnimal != null){
-      if(animal != null){
+  void _showCadastroCaprinoPage({Animal animal}) async {
+    final recAnimal = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => CadastroCaprinoPage(
+                  animalCaprino: animal,
+                )));
+    if (recAnimal != null) {
+      if (animal != null) {
         await helper.updateAnimal(recAnimal);
       } else {
         await helper.saveAnimal(recAnimal);
@@ -234,9 +258,9 @@ class _CaprinoPageState extends State<CaprinoPage> {
     helper.getAllAnimals().then((list) {
       print(list);
       List<Animal> listaFinal = new List();
-      
+
       for (var ani in list) {
-        if(ani.tipo == "caprino"){
+        if (ani.tipo == "caprino") {
           listaFinal.add(ani);
         }
       }
@@ -259,14 +283,11 @@ class _CaprinoPageState extends State<CaprinoPage> {
         });
         break;
       case OrderOptions.orderbyid:
-        animaisCaprinos.sort((a,b){
-          return  a.id.compareTo(b.id);
+        animaisCaprinos.sort((a, b) {
+          return a.id.compareTo(b.id);
         });
         break;
-        
     }
     setState(() {});
   }
-
-
 }
