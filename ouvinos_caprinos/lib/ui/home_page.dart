@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ouvinos_caprinos/ui/caprino_page.dart';
-import 'package:ouvinos_caprinos/ui/ovino_page.dart';
+import 'package:ouvinos_caprinos/ui/caprino/caprino_page.dart';
+import 'package:ouvinos_caprinos/ui/ovino/ovino_page.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);

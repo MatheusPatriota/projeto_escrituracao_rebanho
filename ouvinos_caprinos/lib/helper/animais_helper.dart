@@ -6,6 +6,7 @@ import 'package:sqflite/sqflite.dart';
 final String animalTable = "animalTable";
 final String idColumn = "idColumn";
 final String tipoAnimalColumn = "tipoAnimalColumn";
+final String statusAnimalColumn = "statusAnimalColumn";
 final String nomeColumn = "nomeColumn";
 final String sexoColumn = "sexoColumn";
 final String categoriaColumn = "categoriaColumn";
@@ -45,7 +46,7 @@ class AnimalHelper {
     return await openDatabase(path, version: 1,
         onCreate: (Database db, int newerVersion) async {
       await db.execute(
-          "CREATE TABLE $animalTable($idColumn INTEGER PRIMARY KEY, $tipoAnimalColumn TEXT ,$nomeColumn TEXT, $sexoColumn TEXT,"
+          "CREATE TABLE $animalTable($idColumn INTEGER PRIMARY KEY, $tipoAnimalColumn TEXT, $statusAnimalColumn TEXT ,$nomeColumn TEXT, $sexoColumn TEXT,"
             "$categoriaColumn TEXT, $racaColumn TEXT, $brincoControleColumn TEXT, $paiColumn TEXT,"
             "$maeColumn TEXT, $dataNascimentoColumn TEXT, $dataAquisicaoColumn TEXT, $valorAquisicaoColumn TEXT, "
             "$patriomionioColumn TEXT, $nomeVendedorColumn TEXT, $imgColumn TEXT)"
@@ -65,6 +66,7 @@ class AnimalHelper {
         columns: [
           idColumn,
           tipoAnimalColumn,
+          statusAnimalColumn,
           nomeColumn,
           sexoColumn,
           categoriaColumn,
@@ -125,6 +127,7 @@ class AnimalHelper {
 class Animal {
   int id;
   String tipo;
+  String status;
   String nome;
   String sexo;
   String categoria;
@@ -144,6 +147,7 @@ class Animal {
   Animal.fromMap(Map map) {
     id = map[idColumn];
     tipo = map[tipoAnimalColumn];
+    status = map[statusAnimalColumn];
     nome = map[nomeColumn];
     sexo = map[sexoColumn];
     categoria = map[categoriaColumn];
@@ -162,6 +166,7 @@ class Animal {
   Map toMap() {
     Map<String, dynamic> map = {
       tipoAnimalColumn: tipo,
+      statusAnimalColumn: status,
       nomeColumn: nome,
       sexoColumn: sexo,
       categoriaColumn: categoria,

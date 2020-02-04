@@ -7,7 +7,7 @@ import 'package:ouvinos_caprinos/helper/animais_helper.dart';
 
 import 'cadastro_ovino_page.dart';
 
-import 'caprino_page.dart';
+import 'package:ouvinos_caprinos/ui/caprino/caprino_page.dart';
 
 class OvinoPage extends StatefulWidget {
   @override
