@@ -79,6 +79,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
       _editedAnimal.sexo = "Macho";
       _editedAnimal.raca = "NS";
       _editedAnimal.tipo = "caprino";
+      _editedAnimal.status = "0";
       print(_editedAnimal);
     } else {
       _editedAnimal = Animal.fromMap(widget.animalCaprino.toMap());
