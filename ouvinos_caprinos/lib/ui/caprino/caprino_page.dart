@@ -1,8 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:ouvinos_caprinos/helper/animais_helper.dart';
-import 'package:ouvinos_caprinos/ui/ovino/ovino_page.dart';
+import 'package:ouvinos_caprinos/animal/class/animal.dart';
+import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
+import 'package:ouvinos_caprinos/categoria/class/categoria.dart';
+import 'package:ouvinos_caprinos/categoria/db/categoria_database.dart';
+import 'package:ouvinos_caprinos/especie/db/especie_database.dart';
+import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
+// import 'package:ouvinos_caprinos/ui/ovino/ovino_page.dart';
 import 'package:ouvinos_caprinos/ui/caprino/show_caprino_information.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
@@ -16,7 +21,10 @@ class CaprinoPage extends StatefulWidget {
 }
 
 class _CaprinoPageState extends State<CaprinoPage> {
-  AnimalHelper helper = AnimalHelper();
+  AnimalHelper animalHelper = AnimalHelper();
+  CategoriaHelper categoriaHelper = CategoriaHelper();
+  RacaHelper racaHelper = RacaHelper();
+  EspecieHelper especieHelper = EspecieHelper();
 
   List<Animal> animaisCaprinos = List();
   List<Animal> animaisCaprinosVendidos = List();
@@ -26,10 +34,22 @@ class _CaprinoPageState extends State<CaprinoPage> {
   @override
   void initState() {
     super.initState();
-
+    // metodoAux();
     _getAllAnimals();
   }
 
+  // metodoAux() async{
+  //   if(await categoriaHelper.getNumber() == 0){
+  //     Categoria  c =  Categoria();
+  //     List<String> l = ["Cria","Recria","Terminação","Matriz","Reprodutor"];
+  //     for (var i = 0; i < 5; i++) {
+  //       c.idAnimal = null;
+  //       c.descricao = l[i];
+  //       categoriaHelper.saveCategoria(c);
+  //     }
+  //     // print(categoriaHelper.saveCategoria(c));
+  //   }
+  // }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -106,7 +126,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => OvinoPage(),
+                          // builder: (context) => OvinoPage(),
                         ),
                       );
                     },
@@ -180,7 +200,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
                   children: <Widget>[
                     Text(
                       "Nº de Indetificação " +
-                              animaisCaprinos[index].id.toString() ??
+                              animaisCaprinos[index].idAnimal.toString() ??
                           "",
                       style: TextStyle(
                           fontSize: 22.0, fontWeight: FontWeight.bold),
@@ -254,7 +274,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
                         ),
                         onPressed: () {
-                          helper.deleteAnimal(animaisCaprinos[index].id);
+                          animalHelper.deleteAnimal(animaisCaprinos[index].idAnimal);
                           setState(() {
                             animaisCaprinos.removeAt(index);
                             Navigator.pop(context);
@@ -288,16 +308,16 @@ class _CaprinoPageState extends State<CaprinoPage> {
                 )));
     if (recAnimal != null) {
       if (animal != null) {
-        await helper.updateAnimal(recAnimal);
+        await animalHelper.updateAnimal(recAnimal);
       } else {
-        await helper.saveAnimal(recAnimal);
+        await animalHelper.saveAnimal(recAnimal);
       }
       _getAllAnimals();
     }
   }
 
   void _getAllAnimals() {
-    helper.getAllAnimals().then((list) {
+    animalHelper.getAllAnimals().then((list) {
       print(list);
       List<Animal> listaFinalDisponiveis = new List();
       List<Animal> listaFinalVendidos = new List();
@@ -305,7 +325,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
       List<Animal> listaFinalExcluidos = new List();
 
       for (var ani in list) {
-        if (ani.tipo == "caprino") {
+        if (ani.idEspecie == 1) {
           if (ani.status == "0") {
             listaFinalDisponiveis.add(ani);
           } else if (ani.status == "1") {
@@ -362,16 +382,16 @@ class _CaprinoPageState extends State<CaprinoPage> {
         break;
       case OrderOptions.orderbyid:
         animaisCaprinos.sort((a, b) {
-          return a.id.compareTo(b.id);
+          return a.idAnimal.compareTo(b.idAnimal);
         });
         animaisCaprinosVendidos.sort((a, b) {
-          return a.id.compareTo(b.id);
+          return a.idAnimal.compareTo(b.idAnimal);
         });
         animaisCaprinosMortos.sort((a, b) {
-          return a.id.compareTo(b.id);
+          return a.idAnimal.compareTo(b.idAnimal);
         });
         animaisCaprinosEcluidos.sort((a, b) {
-          return a.id.compareTo(b.id);
+          return a.idAnimal.compareTo(b.idAnimal);
         });
         break;
     }

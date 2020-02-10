@@ -4,7 +4,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ouvinos_caprinos/helper/animais_helper.dart';
+import 'package:ouvinos_caprinos/animal/class/animal.dart';
+
 
 class CadastroCaprinoPage extends StatefulWidget {
   final Animal animalCaprino;
@@ -77,8 +78,9 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     if (widget.animalCaprino == null) {
       _editedAnimal = Animal();
       _editedAnimal.sexo = "Macho";
-      _editedAnimal.raca = "NS";
-      _editedAnimal.tipo = "caprino";
+      _editedAnimal.idRaca = 1;
+      _editedAnimal.idEspecie = 1;
+      _editedAnimal.idCategoria = 0;
       _editedAnimal.status = "0";
       print(_editedAnimal);
     } else {
@@ -287,8 +289,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
         setState(() {
           _userEdited = true;
           _selectedCategoria = value;
-          _editedAnimal.categoria =
-              removeCaracteres(categoriaList[value].child.toString());
+          _editedAnimal.idCategoria = 1;
         });
       },
       isExpanded: true,
@@ -306,8 +307,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
         setState(() {
           _userEdited = true;
           _selectedRaca = value;
-          _editedAnimal.raca =
-              removeCaracteres(racaList[value].child.toString());
+          _editedAnimal.idRaca = 1;
         });
       },
       isExpanded: true,

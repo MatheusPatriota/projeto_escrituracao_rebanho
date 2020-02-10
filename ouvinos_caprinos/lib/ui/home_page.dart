@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ouvinos_caprinos/ui/caprino/caprino_page.dart';
-import 'package:ouvinos_caprinos/ui/ovino/ovino_page.dart';
+// import 'package:ouvinos_caprinos/ui/ovino/ovino_page.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
        Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => OvinoPage(),
+                      // builder: (context) => OvinoPage(),
                       ),
                 );
     }
