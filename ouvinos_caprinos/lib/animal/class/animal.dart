@@ -5,12 +5,12 @@ class Animal {
   int idCategoria;
   int idRaca;
   int idEspecie;
+  int idPai;
+  int idMae;
   String status;
   String nome;
   String sexo;
   String brincoControle;
-  String pai;
-  String mae;
   String dataNascimento;
   String dataAquisicao;
   String valorAquisicao;
@@ -27,8 +27,8 @@ class Animal {
       this.idCategoria,
       this.idRaca,
       this.brincoControle,
-      this.pai,
-      this.mae,
+      this.idPai,
+      this.idMae,
       this.dataNascimento,
       this.dataAquisicao,
       this.nomeVendedor,
@@ -44,8 +44,8 @@ class Animal {
     idCategoria = map[idCategoriaColumn];
     idRaca = map[idRacaColumn];
     brincoControle = map[brincoControle];
-    pai = map[paiColumn];
-    mae = map[maeColumn];
+    idPai = map[idPaiColumn];
+    idMae = map[idMaeColumn];
     dataNascimento = map[dataNascimentoColumn];
     dataAquisicao = map[dataAquisicaoColumn];
     valorAquisicao = map[valorAquisicaoColumn];
@@ -63,8 +63,8 @@ class Animal {
       idCategoriaColumn: idCategoria,
       idRacaColumn: idRaca,
       brincoControleColumn: brincoControle,
-      paiColumn: pai,
-      maeColumn: mae,
+      idPaiColumn: idPai,
+      idMaeColumn: idMae,
       dataNascimentoColumn: dataNascimento,
       dataAquisicaoColumn: dataAquisicao,
       valorAquisicaoColumn: valorAquisicao,
@@ -80,6 +80,6 @@ class Animal {
 
   @override
   String toString() {
-    return "Animal(idAnimal: $idAnimal, idEspecie:$idEspecie, name: $nome, sexo:$sexo, idCategoria:$idCategoria ,idRaca: $idRaca, brinco de controle:$brincoControle, pai:$pai, mae:$mae, data de nascimento:$dataNascimento, data de aquisicao:$dataAquisicao, valor de aquisicao: $valorAquisicao, nome do vendedor:$nomeVendedor, patrimonio:$patrimonio, img: $img)";
+    return "Animal(idAnimal: $idAnimal, idEspecie:$idEspecie, name: $nome, sexo:$sexo, idCategoria:$idCategoria ,idRaca: $idRaca, brinco de controle:$brincoControle, idPai:$idPai, idMae:$idMae, data de nascimento:$dataNascimento, data de aquisicao:$dataAquisicao, valor de aquisicao: $valorAquisicao, nome do vendedor:$nomeVendedor, patrimonio:$patrimonio, img: $img)";
   }
 }

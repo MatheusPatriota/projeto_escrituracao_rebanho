@@ -1,7 +1,10 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
+import 'package:ouvinos_caprinos/categoria/class/categoria.dart';
+import 'package:ouvinos_caprinos/categoria/db/categoria_database.dart';
+import 'package:ouvinos_caprinos/raca/class/raca.dart';
+import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
 
 
 class CaprinoInformation extends StatefulWidget {
@@ -15,11 +18,42 @@ class CaprinoInformation extends StatefulWidget {
 
 class _CaprinoInformationState extends State<CaprinoInformation> {
   Animal _caprinoSelecionado;
+
+  CategoriaHelper categoriaHelper = CategoriaHelper();
+  RacaHelper racaHelper = RacaHelper();
+
+  List<Categoria> categorias = List();
+  List<Raca> racas = List();
+
+  Future<void> _getAllCategorias() async{
+    await categoriaHelper.getAllCategorias().then((listaC){
+      print(listaC);
+     
+
+      setState(() {
+        categorias = listaC;
+      });
+    });
+  }
+
+Future<void> _getAllRacas() async{
+    await racaHelper.getAllRacas().then((listaR){
+      print(listaR);
+      
+      setState(() {
+        racas = listaR;
+      });
+    });
+  }
+
+
   final _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
     _caprinoSelecionado = Animal.fromMap(widget.caprino.toMap());
+    _getAllCategorias();
+    _getAllRacas();
   }
 
   @override
@@ -81,11 +115,11 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                       ]),
                       DataRow(cells: [
                         DataCell(Text("Categoria")),
-                        // DataCell(Text(_caprinoSelecionado.idategoria))
+                        DataCell(Text(categorias[_caprinoSelecionado.idCategoria].descricao))
                       ]),
                       DataRow(cells: [
                         DataCell(Text("Raça")),
-                        // DataCell(Text(_caprinoSelecionado.raca))
+                        DataCell(Text(racas[_caprinoSelecionado.idRaca].descricao))
                       ]),
                     ],
                   ),

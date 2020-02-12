@@ -12,8 +12,8 @@ final String sexoColumn = "sexo";
 final String idCategoriaColumn = "id_categoria";
 final String idRacaColumn = "id_raca";
 final String brincoControleColumn = "brinco_controle";
-final String paiColumn = "pai";
-final String maeColumn = "mae";
+final String idPaiColumn = "id_pai";
+final String idMaeColumn = "id_mae";
 final String dataNascimentoColumn = "data_nascimento";
 final String dataAquisicaoColumn = "data_aquisicao";
 final String valorAquisicaoColumn = "valor_aquisicao";
@@ -54,8 +54,8 @@ class AnimalHelper {
           "$statusAnimalColumn TEXT,"
           "$sexoColumn TEXT,"
           "$brincoControleColumn TEXT,"
-          "$paiColumn TEXT,"
-          "$maeColumn TEXT,"
+          "$idPaiColumn INTEGER,"
+          "$idMaeColumn INTEGER,"
           "$dataNascimentoColumn TEXT,"
           "$dataAquisicaoColumn TEXT,"
           "$valorAquisicaoColumn TEXT,"
@@ -69,7 +69,7 @@ class AnimalHelper {
           "$idRacaColumn INTEGER ,"
           "$idEspecieColumn INTEGER )"
          );
-         print("Database was created!");
+         print("Animal database was created");
     });
   }
 
@@ -91,8 +91,8 @@ class AnimalHelper {
           idCategoriaColumn,
           idRacaColumn,
           brincoControleColumn,
-          paiColumn,
-          maeColumn,
+          idPaiColumn,
+          idMaeColumn,
           dataNascimentoColumn,
           dataAquisicaoColumn,
           valorAquisicaoColumn,
