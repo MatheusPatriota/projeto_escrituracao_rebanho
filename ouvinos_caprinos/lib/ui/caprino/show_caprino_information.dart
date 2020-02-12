@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:ouvinos_caprinos/helper/animais_helper.dart';
+import 'package:ouvinos_caprinos/animal/class/animal.dart';
+
 
 class CaprinoInformation extends StatefulWidget {
   final Animal caprino;
@@ -68,7 +69,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                     rows: [
                       DataRow(cells: [
                         DataCell(Text("Indetificação")),
-                        DataCell(Text(_caprinoSelecionado.id.toString()))
+                        DataCell(Text(_caprinoSelecionado.idAnimal.toString()))
                       ]),
                       DataRow(cells: [
                         DataCell(Text("Nome")),
@@ -80,11 +81,11 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                       ]),
                       DataRow(cells: [
                         DataCell(Text("Categoria")),
-                        DataCell(Text(_caprinoSelecionado.categoria))
+                        // DataCell(Text(_caprinoSelecionado.idategoria))
                       ]),
                       DataRow(cells: [
                         DataCell(Text("Raça")),
-                        DataCell(Text(_caprinoSelecionado.raca))
+                        // DataCell(Text(_caprinoSelecionado.raca))
                       ]),
                     ],
                   ),
