@@ -1,16 +1,11 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
-import 'package:ouvinos_caprinos/categoria/class/categoria.dart';
 import 'package:ouvinos_caprinos/categoria/db/categoria_database.dart';
 import 'package:ouvinos_caprinos/especie/db/especie_database.dart';
 import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
-// import 'package:ouvinos_caprinos/ui/ovino/ovino_page.dart';
 import 'package:ouvinos_caprinos/ui/caprino/show_caprino_information.dart';
-// import 'package:url_launcher/url_launcher.dart';
-
 import 'cadastro_caprino_page.dart';
 
 enum OrderOptions { orderaz, orderza, orderbyid }
@@ -21,11 +16,12 @@ class CaprinoPage extends StatefulWidget {
 }
 
 class _CaprinoPageState extends State<CaprinoPage> {
+  // variaveis para inicializacao do db
   AnimalHelper animalHelper = AnimalHelper();
   CategoriaHelper categoriaHelper = CategoriaHelper();
   RacaHelper racaHelper = RacaHelper();
   EspecieHelper especieHelper = EspecieHelper();
-
+  // variaveis para armazenar os estados dos animais 
   List<Animal> animaisCaprinos = List();
   List<Animal> animaisCaprinosVendidos = List();
   List<Animal> animaisCaprinosMortos = List();
@@ -34,22 +30,12 @@ class _CaprinoPageState extends State<CaprinoPage> {
   @override
   void initState() {
     super.initState();
-    // metodoAux();
+    _getAllCategorias();
+    _getAllEspecies();
+    _getAllRacas();
     _getAllAnimals();
   }
 
-  // metodoAux() async{
-  //   if(await categoriaHelper.getNumber() == 0){
-  //     Categoria  c =  Categoria();
-  //     List<String> l = ["Cria","Recria","Terminação","Matriz","Reprodutor"];
-  //     for (var i = 0; i < 5; i++) {
-  //       c.idAnimal = null;
-  //       c.descricao = l[i];
-  //       categoriaHelper.saveCategoria(c);
-  //     }
-  //     // print(categoriaHelper.saveCategoria(c));
-  //   }
-  // }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -126,8 +112,8 @@ class _CaprinoPageState extends State<CaprinoPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          // builder: (context) => OvinoPage(),
-                        ),
+                            // builder: (context) => OvinoPage(),
+                            ),
                       );
                     },
                   ),
@@ -274,7 +260,8 @@ class _CaprinoPageState extends State<CaprinoPage> {
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
                         ),
                         onPressed: () {
-                          animalHelper.deleteAnimal(animaisCaprinos[index].idAnimal);
+                          animalHelper
+                              .deleteAnimal(animaisCaprinos[index].idAnimal);
                           setState(() {
                             animaisCaprinos.removeAt(index);
                             Navigator.pop(context);
@@ -290,6 +277,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
         });
   }
 
+  // direciona para a pagina de exibicao do animal
   void _showCaprinoInformation({Animal animal}) async {
     final recAnimal = await Navigator.push(
         context,
@@ -299,6 +287,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
                 )));
   }
 
+  // direciona para a pagina de cadastro do caprino
   void _showCadastroCaprinoPage({Animal animal}) async {
     final recAnimal = await Navigator.push(
         context,
@@ -312,10 +301,27 @@ class _CaprinoPageState extends State<CaprinoPage> {
       } else {
         await animalHelper.saveAnimal(recAnimal);
       }
+
       _getAllAnimals();
     }
   }
 
+// carrega o banco de dados categoria
+  void _getAllCategorias() {
+    categoriaHelper.getAllCategorias();
+  }
+
+// carrega o banco de dados de racas
+  void _getAllRacas() {
+    racaHelper.getAllRacas();
+  }
+
+// carrega o banco de dados das especies
+  void _getAllEspecies() {
+    especieHelper.getAllEspecies();
+  }
+
+  // recupera todos os animais cadastrados no banco de dados
   void _getAllAnimals() {
     animalHelper.getAllAnimals().then((list) {
       print(list);
@@ -343,13 +349,10 @@ class _CaprinoPageState extends State<CaprinoPage> {
         animaisCaprinosMortos = listaFinalMortos;
         animaisCaprinosEcluidos = listaFinalExcluidos;
       });
-      print(animaisCaprinos);
-      print(animaisCaprinosVendidos);
-      print(animaisCaprinosMortos);
-      print(animaisCaprinosEcluidos);
     });
   }
 
+  // ordena a lista de acordo com a preferencia
   void _orderList(OrderOptions result) {
     switch (result) {
       case OrderOptions.orderaz:

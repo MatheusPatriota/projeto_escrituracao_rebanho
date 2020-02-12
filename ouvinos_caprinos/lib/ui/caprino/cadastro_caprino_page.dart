@@ -1,11 +1,15 @@
 // @author: Matheus Patriota
 
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
-
+import 'package:ouvinos_caprinos/categoria/class/categoria.dart';
+import 'package:ouvinos_caprinos/categoria/db/categoria_database.dart';
+import 'package:ouvinos_caprinos/especie/class/especie.dart';
+import 'package:ouvinos_caprinos/especie/db/especie_database.dart';
+import 'package:ouvinos_caprinos/raca/class/raca.dart';
+import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
 
 class CadastroCaprinoPage extends StatefulWidget {
   final Animal animalCaprino;
@@ -28,6 +32,10 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
   // animal a ser criado/editado
   Animal _editedAnimal;
 
+  CategoriaHelper categoriaHelper = CategoriaHelper();
+  RacaHelper racaHelper = RacaHelper();
+  EspecieHelper especieHelper = EspecieHelper();
+
   // listas onde serao armazenada as possiveis escolhas
   List<DropdownMenuItem<int>> genderList = [];
   List<DropdownMenuItem<int>> categoriaList = [];
@@ -39,6 +47,10 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
   // recupera as datas atuais
   DateTime _dataNascimento = new DateTime.now();
   DateTime _dataAquisicao = new DateTime.now();
+
+  List<Categoria> categorias = List();
+  List<Especie> especies = List();
+  List<Raca> racas = List();
 
   // funcao para o usuario escolhar a data de nascimento
   Future<Null> _selectDateNascimento(BuildContext context) async {
@@ -86,6 +98,40 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     } else {
       _editedAnimal = Animal.fromMap(widget.animalCaprino.toMap());
     }
+
+    _getAllCategorias();
+    _getAllEspecies();
+    _getAllRacas();
+  }
+
+  Future<void> _getAllCategorias() async {
+    await categoriaHelper.getAllCategorias().then((listaC) {
+      print(listaC);
+
+      setState(() {
+        categorias = listaC;
+      });
+    });
+  }
+
+  Future<void> _getAllRacas() async {
+    await racaHelper.getAllRacas().then((listaR) {
+      print(listaR);
+
+      setState(() {
+        racas = listaR;
+      });
+    });
+  }
+
+  Future<void> _getAllEspecies() async {
+    await especieHelper.getAllEspecies().then((listaE) {
+      print(listaE);
+
+      setState(() {
+        especies = listaE;
+      });
+    });
   }
 
   // carrega a lista de possiveis sexos
@@ -104,68 +150,24 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
   // carrega a lista de possiveis categorias
   void loadCategoriaList() {
     categoriaList = [];
-    categoriaList.add(new DropdownMenuItem(
-      child: new Text('Não Selecionado'),
-      value: 0,
-    ));
-    categoriaList.add(new DropdownMenuItem(
-      child: new Text('Cria'),
-      value: 1,
-    ));
-    categoriaList.add(new DropdownMenuItem(
-      child: new Text('Recria'),
-      value: 2,
-    ));
-    categoriaList.add(new DropdownMenuItem(
-      child: new Text('Terminação'),
-      value: 3,
-    ));
-    categoriaList.add(new DropdownMenuItem(
-      child: new Text('Matriz'),
-      value: 4,
-    ));
-    categoriaList.add(new DropdownMenuItem(
-      child: new Text('Repodutor'),
-      value: 5,
-    ));
+    for (var i = 0; i < categorias.length; i++) {
+      categoriaList.add(new DropdownMenuItem(
+        child: new Text(categorias[i].descricao),
+        value: i,
+      ));
+    }
   }
 
   // carrega a lista de possiveis racas
   void loadRacaList() {
     racaList = [];
-    racaList.add(new DropdownMenuItem(
-      child: new Text('NS'),
-      value: 0,
-    ));
-    racaList.add(new DropdownMenuItem(
-      child: new Text('Alpino'),
-      value: 1,
-    ));
-    racaList.add(new DropdownMenuItem(
-      child: new Text('Anglo Nubiano'),
-      value: 2,
-    ));
-    racaList.add(new DropdownMenuItem(
-      child: new Text('Boer'),
-      value: 3,
-    ));
-    racaList.add(new DropdownMenuItem(
-      child: new Text('Mestiço'),
-      value: 4,
-    ));
-    racaList.add(new DropdownMenuItem(
-      child: new Text('Saanen'),
-      value: 5,
-    ));
-    racaList.add(new DropdownMenuItem(
-      child: new Text('Savana'),
-      value: 6,
-    ));
-    racaList.add(new DropdownMenuItem(
-      child: new Text('Toggenburg'),
-      value: 7,
-    ));
-    // print(racaList[0].child.toStringShallow());
+
+    for (var i = 0; i < racas.length; i++) {
+      racaList.add(new DropdownMenuItem(
+        child: new Text(racas[i].descricao),
+        value: i,
+      ));
+    }
   }
 
   // montando a pagina de exibicao
@@ -289,7 +291,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
         setState(() {
           _userEdited = true;
           _selectedCategoria = value;
-          _editedAnimal.idCategoria = 1;
+          _editedAnimal.idCategoria = categoriaList[value].value;
         });
       },
       isExpanded: true,
@@ -307,7 +309,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
         setState(() {
           _userEdited = true;
           _selectedRaca = value;
-          _editedAnimal.idRaca = 1;
+          _editedAnimal.idRaca = racaList[value].value;
         });
       },
       isExpanded: true,
@@ -324,26 +326,26 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
         },
       ),
     );
-    // widget para inserir o pai do animal
+    // widget para inserir o idPai do animal
     formWidget.add(
       new TextField(
         decoration: InputDecoration(labelText: "Pai"),
         onChanged: (text) {
           _userEdited = true;
           setState(() {
-            _editedAnimal.pai = text;
+            _editedAnimal.idPai = 0;
           });
         },
       ),
     );
-    // widget para inserir a mae do animal
+    // widget para inserir a idMae do animal
     formWidget.add(
       new TextField(
         decoration: InputDecoration(labelText: "Mãe"),
         onChanged: (text) {
           _userEdited = true;
           setState(() {
-            _editedAnimal.mae = text;
+            _editedAnimal.idMae = 0;
           });
         },
       ),
@@ -424,6 +426,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
 
     return formWidget;
   }
+
 // funcao para remover caracteres indesejados na string
   String removeCaracteres(String s) {
     String resp = "";

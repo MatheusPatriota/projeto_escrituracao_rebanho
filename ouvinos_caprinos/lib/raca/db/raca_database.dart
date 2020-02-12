@@ -21,6 +21,7 @@ class RacaHelper {
       return _racaDataBase;
     } else {
       _racaDataBase = await initDb();
+      racasPadrao();
       return _racaDataBase;
     }
   }
@@ -32,9 +33,9 @@ class RacaHelper {
     return await openDatabase(path, version: 1,
         onCreate: (Database db, int newerVersion) async {
       await db.execute(
-          "CREATE TABLE IF NOT EXISTS $tableName (  $idRacaColumn INT(11) NOT NULL,"
-          "$descricaoColumn VARCHAR(45) NULL DEFAULT NULL,"
-          " PRIMARY KEY ($idRacaColumn))");
+           "CREATE TABLE IF NOT EXISTS $tableName (  $idRacaColumn INTEGER PRIMARY KEY  ,"
+          "$descricaoColumn TEXTL)");
+          print("Raca dataBase was created");
     });
   }
 
@@ -85,5 +86,18 @@ class RacaHelper {
   Future close() async {
     Database dbRaca = await db;
     dbRaca.close();
+  }
+
+  Future racasPadrao() async {
+    int a = await getNumber();
+    if (a == 0) {
+      saveRaca(new Raca(id: null, descricao: "NS"));
+      saveRaca(new Raca(id: null, descricao: "Alpino"));
+      saveRaca(new Raca(id: null, descricao: "Anglo Nubiano"));
+      saveRaca(new Raca(id: null, descricao: "Boer"));
+      saveRaca(new Raca(id: null, descricao: "Mestiço"));
+      saveRaca(new Raca(id: null, descricao: "Saanen"));
+      saveRaca(new Raca(id: null, descricao: "Toggenburg"));
+    }
   }
 }

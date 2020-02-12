@@ -17,10 +17,11 @@ class CategoriaHelper {
   Database _categoriaDataBase;
 
   Future<Database> get db async {
-    if (_categoriaDataBase != null) {
+    if (_categoriaDataBase != null) {      
       return _categoriaDataBase;
     } else {
       _categoriaDataBase = await initDb();
+      categoriasPadrao();
       return _categoriaDataBase;
     }
   }
@@ -32,9 +33,9 @@ class CategoriaHelper {
     return await openDatabase(path, version: 1,
         onCreate: (Database db, int newerVersion) async {
       await db.execute(
-          "CREATE TABLE IF NOT EXISTS $tableName (  $idCategoriaColumn INT(11)  AUTO INCREMENT NOT NULL,"
-          "$descricaoColumn VARCHAR(45) NOT NULL,"
-          " PRIMARY KEY ($idCategoriaColumn))");
+          "CREATE TABLE IF NOT EXISTS $tableName (  $idCategoriaColumn INTEGER PRIMARY KEY  ,"
+          "$descricaoColumn TEXTL)");
+          print("Categoria dataBase was created");
     });
   }
 
@@ -88,5 +89,19 @@ class CategoriaHelper {
   Future close() async {
     Database dbCategoria = await db;
     dbCategoria.close();
+  }
+
+  Future categoriasPadrao() async {
+    int a = await getNumber();
+    if(a == 0){
+      saveCategoria(new Categoria(id: null,descricao: "Não Selecionado"));
+      saveCategoria(new Categoria(id: null,descricao: "Cria"));
+      saveCategoria(new Categoria(id: null,descricao: "Recria"));
+      saveCategoria(new Categoria(id: null,descricao: "Terminação"));
+      saveCategoria(new Categoria(id: null,descricao: "Matriz"));
+      saveCategoria(new Categoria(id: null,descricao: "Reprodutor"));
+    }
+    
+    
   }
 }

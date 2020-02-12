@@ -21,6 +21,7 @@ class EspecieHelper {
       return _especieDataBase;
     } else {
       _especieDataBase = await initDb();
+      especiesPadrao();
       return _especieDataBase;
     }
   }
@@ -32,9 +33,9 @@ class EspecieHelper {
     return await openDatabase(path, version: 1,
         onCreate: (Database db, int newerVersion) async {
       await db.execute(
-          " CREATE TABLE IF NOT EXISTS $tableName ($idEspecieColumn INT(11) NOT NULL,"
-          "$descricaoColumn VARCHAR(45) NULL DEFAULT NULL,"
-          " PRIMARY KEY ($idEspecieColumn))");
+          "CREATE TABLE IF NOT EXISTS $tableName (  $idEspecieColumn INTEGER PRIMARY KEY  ,"
+          "$descricaoColumn TEXTL)");
+          print("Especie dataBase was created");
     });
   }
 
@@ -59,7 +60,8 @@ class EspecieHelper {
 
   Future<int> deleteEspecie(int id) async {
     Database dbEspecie = await db;
-    return await dbEspecie.delete(tableName, where: "$idEspecieColumn = ?", whereArgs: [id]);
+    return await dbEspecie
+        .delete(tableName, where: "$idEspecieColumn = ?", whereArgs: [id]);
   }
 
   Future<int> updateEspecie(Especie raca) async {
@@ -87,5 +89,14 @@ class EspecieHelper {
   Future close() async {
     Database dbEspecie = await db;
     dbEspecie.close();
+  }
+
+  Future especiesPadrao() async {
+    int a = await getNumber();
+    if (a == 0) {
+      saveEspecie(new Especie(id: null, descricao: "Caprino"));
+      saveEspecie(new Especie(id: null, descricao: "Ovino"));
+     
+    }
   }
 }
