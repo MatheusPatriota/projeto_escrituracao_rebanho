@@ -43,7 +43,7 @@ class Animal {
     sexo = map[sexoColumn];
     idCategoria = map[idCategoriaColumn];
     idRaca = map[idRacaColumn];
-    brincoControle = map[brincoControle];
+    brincoControle = map[brincoControleColumn];
     idPai = map[idPaiColumn];
     idMae = map[idMaeColumn];
     dataNascimento = map[dataNascimentoColumn];

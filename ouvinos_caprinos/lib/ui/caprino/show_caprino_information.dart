@@ -1,10 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/categoria/class/categoria.dart';
 import 'package:ouvinos_caprinos/categoria/db/categoria_database.dart';
 import 'package:ouvinos_caprinos/raca/class/raca.dart';
 import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
+import 'package:ouvinos_caprinos/util/funcoes.dart';
 
 
 class CaprinoInformation extends StatefulWidget {
@@ -64,11 +67,72 @@ Future<void> _getAllRacas() async{
         title: Text("Informações Sobre " + _caprinoSelecionado.nome),
         centerTitle: true,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.arrow_drop_down_circle),
-        backgroundColor: Colors.green,
-      ),
+      floatingActionButton:  SpeedDial(
+          // both default to 16
+          marginRight: 18,
+          marginBottom: 20,
+          animatedIcon: AnimatedIcons.menu_close,
+          animatedIconTheme: IconThemeData(size: 22.0),
+          // this is ignored if animatedIcon is non null
+          // child: Icon(Icons.add),
+          visible: true,
+          // If true user is forced to close dial manually 
+          // by tapping main button and overlay is not rendered.
+          closeManually: false,
+          curve: Curves.bounceIn,
+          overlayColor: Colors.black,
+          overlayOpacity: 0.5,
+          onOpen: () => print('OPENING DIAL'),
+          onClose: () => print('DIAL CLOSED'),
+          tooltip: 'Speed Dial',
+          heroTag: 'speed-dial-hero-tag',
+          backgroundColor: Colors.green,
+          foregroundColor: Colors.white,
+          elevation: 8.0,
+          shape: CircleBorder(),
+          children: [
+            SpeedDialChild(
+              child: Icon(MdiIcons.needle),
+              backgroundColor: Colors.green,
+              label: 'Tratamento',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () => print('FIRST CHILD')
+            ),
+            SpeedDialChild(
+              child: Icon(MdiIcons.weightKilogram),
+              backgroundColor: Colors.green,
+              label: 'Pesagem',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () => print('SECOND CHILD'),
+            ),
+            SpeedDialChild(
+              child: Icon(MdiIcons.cashUsd),
+              backgroundColor: Colors.green,
+              label: 'Venda',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () => print('THIRD CHILD'),
+            ),
+            SpeedDialChild(
+              child: Icon(MdiIcons.skullCrossbones),
+              backgroundColor: Colors.green,
+              label: 'Morte',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () => print('FOUR CHILD'),
+            ),
+            SpeedDialChild(
+              child: Icon(MdiIcons.alert),
+              backgroundColor: Colors.green,
+              label: 'Observações',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () => print('FIVE CHILD'),
+            ),
+          ],
+        ),
+      //  FloatingActionButton(
+      //   onPressed: () {},
+      //   child: Icon(Icons.arrow_drop_down_circle),
+      //   backgroundColor: Colors.green,
+      // ),
       body: Form(
         key: _formKey,
         child: new Container(
@@ -102,12 +166,24 @@ Future<void> _getAllRacas() async{
                     ],
                     rows: [
                       DataRow(cells: [
-                        DataCell(Text("Indetificação")),
+                        DataCell(Text("Patrimônio")),
+                        DataCell(Text(ehvazio(_caprinoSelecionado.patrimonio)))
+                      ]),
+                      DataRow(cells: [
+                        DataCell(Text("Brinco")),
+                        DataCell(Text(ehvazio(_caprinoSelecionado.brincoControle)))
+                      ]),
+                      DataRow(cells: [
+                        DataCell(Text("ID")),
                         DataCell(Text(_caprinoSelecionado.idAnimal.toString()))
                       ]),
                       DataRow(cells: [
+                        DataCell(Text("Idade")),
+                        DataCell(Text(idadeAnimal(slice(_caprinoSelecionado.dataNascimento,5), slice(_caprinoSelecionado.dataNascimento,3,4))))
+                      ]),
+                      DataRow(cells: [
                         DataCell(Text("Nome")),
-                        DataCell(Text(_caprinoSelecionado.nome))
+                        DataCell(Text(ehvazio(_caprinoSelecionado.nome)))
                       ]),
                       DataRow(cells: [
                         DataCell(Text("Sexo")),
