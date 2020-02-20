@@ -288,7 +288,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
 
   // direciona para a pagina de exibicao do animal
   void _showCaprinoInformation({Animal animal}) async {
-    final recAnimal = await Navigator.push(
+    await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => CaprinoInformation(
@@ -357,7 +357,6 @@ class _CaprinoPageState extends State<CaprinoPage> {
         animaisCaprinosVendidos = listaFinalVendidos;
         animaisCaprinosMortos = listaFinalMortos;
         animaisCaprinosEcluidos = listaFinalExcluidos;
-        print(animaisCaprinosEcluidos);
         allAnimals = list;
       });
     });

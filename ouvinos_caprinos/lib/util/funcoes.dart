@@ -1,3 +1,9 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:ouvinos_caprinos/animal/class/animal.dart';
+import 'package:ouvinos_caprinos/tratamento/class/tratamento.dart';
+import 'package:ouvinos_caprinos/ui/comum/tratamento_page.dart';
+
 String ehvazio(dynamic a){
   String stringFinal = a;
   if (a == null){
@@ -39,3 +45,4 @@ String slice(String subject, [int start = 0, int end]) {
 
   return subject.substring(_realStart, _realEnd);
 }
+

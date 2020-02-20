@@ -59,6 +59,9 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
   DateTime _dataNascimento = new DateTime.now();
   DateTime _dataAquisicao = new DateTime.now();
 
+  String _dataNascimentoFormatada = "";
+  String _dataAquisicaoFormatada = "";
+
   List<Categoria> categorias = List();
   List<Especie> especies = List();
   List<Raca> racas = List();
@@ -75,6 +78,8 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     );
     if (picked != null && picked != _dataNascimento) {
       setState(() {
+        _dataNascimentoFormatada =
+            "${picked.day}-${picked.month}-${picked.year}";
         _dataNascimento = picked;
       });
     }
@@ -90,6 +95,8 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     );
     if (picked != null && picked != _dataAquisicao) {
       setState(() {
+        _dataAquisicaoFormatada =
+            "${picked.day}-${picked.month}-${picked.year}";
         _dataAquisicao = picked;
       });
     }
@@ -103,11 +110,17 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     if (widget.animalCaprino == null) {
       _editedAnimal = Animal();
       _editedAnimal.sexo = "Macho";
-      _editedAnimal.idRaca = 1;
+      _editedAnimal.idRaca = 0;
       _editedAnimal.idEspecie = 1;
       _editedAnimal.idCategoria = 0;
       _editedAnimal.status = "0";
-      _editedAnimal.dataNascimento =  "${_dataNascimento.day}-${_dataNascimento.month}-${_dataNascimento.year}";
+
+      _dataNascimentoFormatada =
+          "${_dataNascimento.day}-${_dataNascimento.month}-${_dataNascimento.year}";
+      _dataAquisicaoFormatada =
+          "${_dataAquisicao.day}-${_dataAquisicao.month}-${_dataAquisicao.year}";
+
+      // _editedAnimal.dataNascimento = "01-12-2020";
       print(_editedAnimal);
     } else {
       _editedAnimal = Animal.fromMap(widget.animalCaprino.toMap());
@@ -121,7 +134,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
       _selectedNomeVendedor.text = _editedAnimal.nomeVendedor;
       _selectedValorAquisicao.text = _editedAnimal.valorAquisicao;
       _selectedPatrimonio.text = _editedAnimal.patrimonio;
-
+      _dataNascimentoFormatada = _editedAnimal.dataNascimento;
     }
 
     _getAllCategorias();
@@ -130,9 +143,9 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     _getAllAnimals();
   }
 
-  int _retornaNumeracaoSexo(String a){
+  int _retornaNumeracaoSexo(String a) {
     int result = 0;
-    if(a == "Fêmea"){
+    if (a == "Fêmea") {
       result = 1;
     }
     return result;
@@ -140,8 +153,6 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
 
   Future<void> _getAllCategorias() async {
     await categoriaHelper.getAllCategorias().then((listaC) {
-      
-
       setState(() {
         categorias = listaC;
       });
@@ -150,8 +161,6 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
 
   Future<void> _getAllRacas() async {
     await racaHelper.getAllRacas().then((listaR) {
-      
-
       setState(() {
         racas = listaR;
       });
@@ -162,12 +171,12 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     await animalHelper.getAllAnimals().then((listaA) {
       List<Animal> paisFinal = List();
       List<Animal> maesFinal = List();
-      
+
       for (var animal in listaA) {
-        if(animal.idEspecie == 1){
-          if(animal.sexo =="Macho"){
+        if (animal.idEspecie == 1) {
+          if (animal.sexo == "Macho") {
             paisFinal.add(animal);
-          }else{
+          } else {
             maesFinal.add(animal);
           }
         }
@@ -182,8 +191,6 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
 
   Future<void> _getAllEspecies() async {
     await especieHelper.getAllEspecies().then((listaE) {
-      
-
       setState(() {
         especies = listaE;
       });
@@ -229,28 +236,32 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
   void loadPaiList() {
     paiList = [];
     paiList.add(new DropdownMenuItem(
-        child: new Text("Não Selecionado"),
-        value: 0,
-      ));
-    for (var i = 0; i < pais.length; i++) {
-      paiList.add(new DropdownMenuItem(
-        child: new Text(pais[i].nome),
-        value: i+1,
-      ));
+      child: new Text("Não Selecionado"),
+      value: 0,
+    ));
+    if (pais.isNotEmpty) {
+      for (var i = 0; i < pais.length; i++) {
+        paiList.add(new DropdownMenuItem(
+          child: Text(pais[i].nome ?? pais[i].idAnimal.toString()),
+          value: i + 1,
+        ));
+      }
     }
   }
 
   void loadMaeList() {
     maeList = [];
     maeList.add(new DropdownMenuItem(
-        child: new Text("Não Selecionada"),
-        value: 0,
-      ));
-    for (var i = 0; i < maes.length; i++) {
-      maeList.add(new DropdownMenuItem(
-        child: new Text(maes[i].nome),
-        value: i+1,
-      ));
+      child: new Text("Não Selecionada"),
+      value: 0,
+    ));
+    if (maes.isNotEmpty) {
+      for (var i = 0; i < maes.length; i++) {
+        maeList.add(new DropdownMenuItem(
+          child: new Text(maes[i].nome ?? maes[i].idAnimal.toString()),
+          value: i + 1,
+        ));
+      }
     }
   }
 
@@ -298,10 +309,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
 // Funcao que retorna todos os widgets usados no formulario de cadastro
   List<Widget> getFormWidgets() {
     // formatando a data para guardar no bd
-    var formatoDataNascimento =
-        "${_dataNascimento.day}-${_dataNascimento.month}-${_dataNascimento.year}";
-    var formatoDataAquisicao =
-        "${_dataAquisicao.day}-${_dataAquisicao.month}-${_dataAquisicao.year}";
+
     List<Widget> formWidget = new List();
     // widget para inserir a imagem no formulario
     formWidget.add(
@@ -338,7 +346,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
       new TextField(
         decoration: InputDecoration(labelText: "Nome"),
         controller: _selectedNome,
-        onChanged: (text) {          
+        onChanged: (text) {
           setState(() {
             _userEdited = true;
             _editedAnimal.nome = text;
@@ -457,13 +465,12 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     // widget para data de nascimentoque eh obrigatoria
     formWidget.add(
       new RaisedButton(
-        child: Text("$formatoDataNascimento"),
+        child: Text("$_dataNascimentoFormatada"),
         onPressed: () {
           _selectDateNascimento(context);
-          print(_dataNascimento.toString());
-          _userEdited = true;
           setState(() {
-            _editedAnimal.dataNascimento = formatoDataNascimento;
+            _userEdited = true;
+            _editedAnimal.dataNascimento = _dataNascimentoFormatada;
           });
         },
       ),
@@ -475,13 +482,12 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     ));
     formWidget.add(
       RaisedButton(
-          child: Text("$formatoDataAquisicao"),
+          child: Text("$_dataAquisicaoFormatada"),
           onPressed: () {
             _selectDateAquisicao(context);
-            _userEdited = true;
-
             setState(() {
-              _editedAnimal.dataAquisicao = formatoDataAquisicao;
+              _userEdited = true;
+              _editedAnimal.dataAquisicao = _dataAquisicaoFormatada;
             });
           }),
     );
