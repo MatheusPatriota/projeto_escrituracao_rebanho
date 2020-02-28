@@ -6,6 +6,7 @@ import 'package:ouvinos_caprinos/categoria/db/categoria_database.dart';
 import 'package:ouvinos_caprinos/especie/db/especie_database.dart';
 import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
 import 'package:ouvinos_caprinos/ui/caprino/show_caprino_information.dart';
+import 'package:ouvinos_caprinos/util/funcoes.dart';
 import 'cadastro_caprino_page.dart';
 
 enum OrderOptions { orderaz, orderza, orderbyid }
@@ -21,11 +22,12 @@ class _CaprinoPageState extends State<CaprinoPage> {
   CategoriaHelper categoriaHelper = CategoriaHelper();
   RacaHelper racaHelper = RacaHelper();
   EspecieHelper especieHelper = EspecieHelper();
-  // variaveis para armazenar os estados dos animais 
+  // variaveis para armazenar os estados dos animais
   List<Animal> animaisCaprinos = List();
   List<Animal> animaisCaprinosVendidos = List();
   List<Animal> animaisCaprinosMortos = List();
   List<Animal> animaisCaprinosEcluidos = List();
+  List<Animal> allAnimals = List();
 
   @override
   void initState() {
@@ -130,28 +132,28 @@ class _CaprinoPageState extends State<CaprinoPage> {
                   padding: EdgeInsets.all(10.0),
                   itemCount: animaisCaprinos.length,
                   itemBuilder: (context, index) {
-                    return _animalCard(context, index);
+                    return _animalCard(context, index, animaisCaprinos);
                   },
                 ),
                 ListView.builder(
                   padding: EdgeInsets.all(10.0),
                   itemCount: animaisCaprinosVendidos.length,
                   itemBuilder: (context, index) {
-                    return _animalCard(context, index);
+                    return _animalCard(context, index, animaisCaprinosVendidos);
                   },
                 ),
                 ListView.builder(
                   padding: EdgeInsets.all(10.0),
                   itemCount: animaisCaprinosMortos.length,
                   itemBuilder: (context, index) {
-                    return _animalCard(context, index);
+                    return _animalCard(context, index, animaisCaprinosMortos);
                   },
                 ),
                 ListView.builder(
                   padding: EdgeInsets.all(10.0),
                   itemCount: animaisCaprinosEcluidos.length,
                   itemBuilder: (context, index) {
-                    return _animalCard(context, index);
+                    return _animalCard(context, index, animaisCaprinosEcluidos);
                   },
                 ),
               ],
@@ -160,7 +162,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
     );
   }
 
-  Widget _animalCard(BuildContext context, int index) {
+  Widget _animalCard(BuildContext context, int index, List<Animal> lista) {
     return GestureDetector(
       child: Card(
         child: Padding(
@@ -173,8 +175,8 @@ class _CaprinoPageState extends State<CaprinoPage> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                      image: animaisCaprinos[index].img != null
-                          ? FileImage(File(animaisCaprinos[index].img))
+                      image: lista[index].img != null
+                          ? FileImage(File(lista[index].img))
                           : AssetImage("images/caprino.png"),
                       fit: BoxFit.cover),
                 ),
@@ -185,18 +187,20 @@ class _CaprinoPageState extends State<CaprinoPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      "Nº de Indetificação " +
-                              animaisCaprinos[index].idAnimal.toString() ??
-                          "",
+                      "Brinco: " + ehvazio(lista[index].brincoControle) ?? "",
                       style: TextStyle(
                           fontSize: 22.0, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "Nome: " + animaisCaprinos[index].nome ?? "",
+                      "ID: " + lista[index].idAnimal.toString() ?? "",
                       style: TextStyle(fontSize: 18.0),
                     ),
                     Text(
-                      "Sexo: " + animaisCaprinos[index].sexo ?? "",
+                      "Nome: " + ehvazio(lista[index].nome) ?? "",
+                      style: TextStyle(fontSize: 18.0),
+                    ),
+                    Text(
+                      "Sexo: " + lista[index].sexo ?? "",
                       style: TextStyle(fontSize: 18.0),
                     )
                   ],
@@ -207,12 +211,12 @@ class _CaprinoPageState extends State<CaprinoPage> {
         ),
       ),
       onTap: () {
-        _showOptions(context, index);
+        _showOptions(context, index, lista);
       },
     );
   }
 
-  void _showOptions(BuildContext context, int index) {
+  void _showOptions(BuildContext context, int index, List<Animal> lista) {
     showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -233,8 +237,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                          _showCaprinoInformation(
-                              animal: animaisCaprinos[index]);
+                          _showCaprinoInformation(animal: lista[index]);
                         },
                       ),
                     ),
@@ -247,8 +250,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                          _showCadastroCaprinoPage(
-                              animal: animaisCaprinos[index]);
+                          _showCadastroCaprinoPage(animal: lista[index]);
                         },
                       ),
                     ),
@@ -260,12 +262,19 @@ class _CaprinoPageState extends State<CaprinoPage> {
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
                         ),
                         onPressed: () {
-                          animalHelper
-                              .deleteAnimal(animaisCaprinos[index].idAnimal);
-                          setState(() {
-                            animaisCaprinos.removeAt(index);
-                            Navigator.pop(context);
-                          });
+                          if (lista[index].status != "3") {
+                            lista[index].status = "3";
+                            animalHelper.updateAnimal(lista[index]);
+                            setState(() {
+                              _getAllAnimals();
+                              lista.removeAt(index);
+                              Navigator.pop(context);
+                            });
+                          } else {
+                            setState(() {
+                              Navigator.pop(context);
+                            });
+                          }
                         },
                       ),
                     ),
@@ -279,7 +288,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
 
   // direciona para a pagina de exibicao do animal
   void _showCaprinoInformation({Animal animal}) async {
-    final recAnimal = await Navigator.push(
+    await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => CaprinoInformation(
@@ -338,7 +347,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
             listaFinalVendidos.add(ani);
           } else if (ani.status == "2") {
             listaFinalMortos.add(ani);
-          } else if (ani.status == "4") {
+          } else if (ani.status == "3") {
             listaFinalExcluidos.add(ani);
           }
         }
@@ -348,6 +357,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
         animaisCaprinosVendidos = listaFinalVendidos;
         animaisCaprinosMortos = listaFinalMortos;
         animaisCaprinosEcluidos = listaFinalExcluidos;
+        allAnimals = list;
       });
     });
   }

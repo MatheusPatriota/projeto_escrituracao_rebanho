@@ -21,8 +21,13 @@ final String patriomionioColumn = "patrimonio";
 final String nomeVendedorColumn = "nome_vendedor";
 final String imgColumn = "img";
 final String dataMorteColumn = "data_morte";
-final String descricaoMorteColumn ="descricao_morte";
+final String descricaoMorteColumn = "descricao_morte";
 final String dataRemocaoColumn = "data_remocao";
+final String dataVendaAnimalColumn = "data_venda_animal";
+final String motivoRemocaoColumn = "motivo_remocao";
+final String valorVendaColumn = "valor_venda";
+final String nomeCompradorColumn = "nome_comprador";
+final String anotacoesVendaColumn = "anotacoes_venda";
 
 class AnimalHelper {
   static final AnimalHelper _instance = AnimalHelper.internal();
@@ -50,7 +55,10 @@ class AnimalHelper {
         onCreate: (Database db, int newerVersion) async {
       await db.execute("CREATE TABLE $tableName ("
           "$idAnimalColumn INTEGER PRIMARY KEY,"
-          "$nomeColumn TEXT,"         
+          "$idCategoriaColumn INTEGER ,"
+          "$idRacaColumn INTEGER ,"
+          "$idEspecieColumn INTEGER ,"
+          "$nomeColumn TEXT,"
           "$statusAnimalColumn TEXT,"
           "$sexoColumn TEXT,"
           "$brincoControleColumn TEXT,"
@@ -65,11 +73,12 @@ class AnimalHelper {
           "$dataMorteColumn TEXT,"
           "$descricaoMorteColumn TEXT,"
           "$dataRemocaoColumn TEXT,"
-          "$idCategoriaColumn INTEGER ,"
-          "$idRacaColumn INTEGER ,"
-          "$idEspecieColumn INTEGER )"
-         );
-         print("Animal database was created");
+          "$dataVendaAnimalColumn TEXT,"
+          "$motivoRemocaoColumn TEXT,"
+          "$valorVendaColumn TEXT,"
+          "$nomeCompradorColumn TEXT,"
+          "$anotacoesVendaColumn TEXT)");
+      print("Animal database was created");
     });
   }
 
@@ -98,7 +107,15 @@ class AnimalHelper {
           valorAquisicaoColumn,
           patriomionioColumn,
           nomeVendedorColumn,
-          imgColumn
+          imgColumn,
+          dataMorteColumn,
+          descricaoMorteColumn,
+          dataRemocaoColumn,
+          dataVendaAnimalColumn,
+          motivoRemocaoColumn,
+          valorVendaColumn,
+          nomeCompradorColumn,
+          anotacoesVendaColumn
         ],
         where: "$idAnimalColumn = ?",
         whereArgs: [id]);
@@ -111,7 +128,8 @@ class AnimalHelper {
 
   Future<int> deleteAnimal(int id) async {
     Database dbAnimal = await db;
-    return await dbAnimal.delete(tableName, where: "$idAnimalColumn = ?", whereArgs: [id]);
+    return await dbAnimal
+        .delete(tableName, where: "$idAnimalColumn = ?", whereArgs: [id]);
   }
 
   Future<int> updateAnimal(Animal animal) async {

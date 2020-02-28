@@ -17,6 +17,14 @@ class Animal {
   String nomeVendedor;
   String patrimonio;
   String img;
+  String dataMorte;
+  String descricaoMorte;
+  String dataRemocao;
+  String dataVendaAnimal;
+  String motivoRemocao;
+  String valorVenda;
+  String nomeComprador;
+  String anotacoesVenda;
 
   Animal(
       {this.idAnimal,
@@ -33,7 +41,15 @@ class Animal {
       this.dataAquisicao,
       this.nomeVendedor,
       this.patrimonio,
-      this.img});
+      this.img,
+      this.dataMorte,
+      this.descricaoMorte,
+      this.dataRemocao,
+      this.dataVendaAnimal,
+      this.motivoRemocao,
+      this.valorVenda,
+      this.nomeComprador,
+      this.anotacoesVenda});
 
   Animal.fromMap(Map map) {
     idAnimal = map[idAnimalColumn];
@@ -43,7 +59,7 @@ class Animal {
     sexo = map[sexoColumn];
     idCategoria = map[idCategoriaColumn];
     idRaca = map[idRacaColumn];
-    brincoControle = map[brincoControle];
+    brincoControle = map[brincoControleColumn];
     idPai = map[idPaiColumn];
     idMae = map[idMaeColumn];
     dataNascimento = map[dataNascimentoColumn];
@@ -52,6 +68,14 @@ class Animal {
     nomeVendedor = map[nomeVendedorColumn];
     patrimonio = map[patriomionioColumn];
     img = map[imgColumn];
+    dataMorte = map[dataMorteColumn];
+    descricaoMorte = map[descricaoMorteColumn];
+    dataRemocao = map[dataRemocaoColumn];
+    dataVendaAnimal = map[dataVendaAnimalColumn];
+    motivoRemocao = map[motivoRemocaoColumn];
+    valorVenda = map[valorVendaColumn];
+    nomeComprador = map[nomeCompradorColumn];
+    anotacoesVenda = map[anotacoesVendaColumn];
   }
 
   Map toMap() {
@@ -70,7 +94,15 @@ class Animal {
       valorAquisicaoColumn: valorAquisicao,
       patriomionioColumn: patrimonio,
       nomeVendedorColumn: nomeVendedor,
-      imgColumn: img
+      imgColumn: img,
+      dataMorteColumn: dataMorte,
+      descricaoMorteColumn: descricaoMorte,
+      dataRemocaoColumn: dataRemocao,
+      dataVendaAnimalColumn: dataVendaAnimal,
+      motivoRemocaoColumn: motivoRemocao,
+      valorVendaColumn: valorVenda,
+      nomeCompradorColumn: nomeComprador,
+      anotacoesVendaColumn: anotacoesVenda
     };
     if (idAnimal != null) {
       map[idAnimalColumn] = idAnimal;
@@ -80,6 +112,6 @@ class Animal {
 
   @override
   String toString() {
-    return "Animal(idAnimal: $idAnimal, idEspecie:$idEspecie, name: $nome, sexo:$sexo, idCategoria:$idCategoria ,idRaca: $idRaca, brinco de controle:$brincoControle, idPai:$idPai, idMae:$idMae, data de nascimento:$dataNascimento, data de aquisicao:$dataAquisicao, valor de aquisicao: $valorAquisicao, nome do vendedor:$nomeVendedor, patrimonio:$patrimonio, img: $img)";
+    return "Animal(idAnimal: $idAnimal, idEspecie:$idEspecie, name: $nome, sexo:$sexo, idCategoria:$idCategoria ,idRaca: $idRaca, brinco de controle:$brincoControle, idPai:$idPai, idMae:$idMae, data de nascimento:$dataNascimento, data de aquisicao:$dataAquisicao, valor de aquisicao: $valorAquisicao, nome do vendedor:$nomeVendedor, patrimonio:$patrimonio, img: $img, dataMorte: $dataMorte, descricaoMorte: $descricaoMorte, dr: $dataRemocao, dva: $dataVendaAnimal, mr: $motivoRemocao, vv: $valorVenda, nomeComprador: $nomeComprador, anotacoesVenda: $anotacoesVenda)";
   }
 }
