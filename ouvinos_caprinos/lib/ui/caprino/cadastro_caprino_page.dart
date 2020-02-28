@@ -120,7 +120,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
       _dataAquisicaoFormatada =
           "${_dataAquisicao.day}-${_dataAquisicao.month}-${_dataAquisicao.year}";
 
-      // _editedAnimal.dataNascimento = "01-12-2020";
+      _editedAnimal.dataNascimento = _dataNascimentoFormatada;
       print(_editedAnimal);
     } else {
       _editedAnimal = Animal.fromMap(widget.animalCaprino.toMap());
