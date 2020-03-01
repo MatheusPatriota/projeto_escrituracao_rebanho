@@ -15,7 +15,7 @@ class ObservacaoPage extends StatefulWidget {
 
 class _ObservacaoPageState extends State<ObservacaoPage> {
   Animal _animalSelecionado;
-  Observacao  _observacaoCriada;
+  Observacao _observacaoCriada;
 
   DateTime _dataSelecionada = DateTime.now();
 

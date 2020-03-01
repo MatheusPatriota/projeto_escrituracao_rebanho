@@ -62,12 +62,12 @@ class _TratamentoPageState extends State<TratamentoPage> {
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.pop(context, _tratamentoCadastrado);
-          },
-          child: Icon(Icons.check),
-          backgroundColor: Colors.green,
-        ),
+        onPressed: () {
+          Navigator.pop(context, _tratamentoCadastrado);
+        },
+        child: Icon(Icons.check),
+        backgroundColor: Colors.green,
+      ),
       body: Form(
         key: _formKey,
         child: Container(
@@ -111,6 +111,7 @@ class _TratamentoPageState extends State<TratamentoPage> {
                 },
               ),
               TextField(
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
                 decoration:
                     InputDecoration(labelText: "Periodo de Carencia(DIAS)"),
                 // controller: _selectedNome,
@@ -123,7 +124,9 @@ class _TratamentoPageState extends State<TratamentoPage> {
                 },
               ),
               TextField(
-                decoration: InputDecoration(labelText: "Custo*"),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                decoration:
+                    InputDecoration(labelText: "Custo*", prefixText: "R\$"),
                 // controller: _selectedNome,
                 onChanged: (text) {
                   setState(() {
