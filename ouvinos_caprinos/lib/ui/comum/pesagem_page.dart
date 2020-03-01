@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
+import 'package:ouvinos_caprinos/pesagem/class/pesagem.dart';
+import 'package:ouvinos_caprinos/pesagem/db/pesagem_database.dart';
 
 class PesagemPage extends StatefulWidget {
   final Animal animalPesagem;
@@ -16,9 +18,12 @@ class _PesagemPageState extends State<PesagemPage> {
 
   Animal _animalSelecionado;
 
+  Pesagem _pesoCadastrado;
+
   DateTime _dataSelecionada = DateTime.now();
 
   AnimalHelper animalHelper = AnimalHelper();
+  PesagemHelper pesagemHelper = PesagemHelper();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -26,6 +31,11 @@ class _PesagemPageState extends State<PesagemPage> {
   void initState() {
     super.initState();
     _animalSelecionado = Animal.fromMap(widget.animalPesagem.toMap());
+    if(_pesoCadastrado == null){
+      _pesoCadastrado = Pesagem(animalId: _animalSelecionado.idAnimal);
+      _pesoCadastrado.data = _dataFormatada(_dataSelecionada);
+      // _pesoCadastrado.idAnimal = 1;
+    }
   }
 
   String _dataFormatada(data) {
@@ -42,6 +52,7 @@ class _PesagemPageState extends State<PesagemPage> {
     if (picked != null && picked != _dataSelecionada) {
       setState(() {
         _dataSelecionada = picked;
+        _pesoCadastrado.data = _dataFormatada(_dataSelecionada);
       });
     }
   }
@@ -55,8 +66,9 @@ class _PesagemPageState extends State<PesagemPage> {
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.pop(context, _animalSelecionado);
+          onPressed: () {           
+            
+            Navigator.pop(context, _pesoCadastrado);
           },
           child: Icon(Icons.check),
           backgroundColor: Colors.green,
@@ -76,6 +88,7 @@ class _PesagemPageState extends State<PesagemPage> {
                 onPressed: () {
                   _selectDataPesagem(context);
                   setState(() {
+                    
                     // _userEdited = true;
                     // _editedAnimal.dataNascimento = _dataNascimentoFormatada;
                   });
@@ -85,7 +98,8 @@ class _PesagemPageState extends State<PesagemPage> {
                 decoration: InputDecoration(labelText: "Peso(KG)*"),
                 // controller: _selectedNome,
                 onChanged: (text) {
-                  setState(() {
+                  setState(() {                  
+                    _pesoCadastrado.peso = text;
                     // _userEdited = true;
                     // _editedAnimal.nome = text;
                   });

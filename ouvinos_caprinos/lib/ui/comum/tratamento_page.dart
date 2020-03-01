@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
+import 'package:ouvinos_caprinos/tratamento/class/tratamento.dart';
 
 class TratamentoPage extends StatefulWidget {
   final Animal animalTratamento;
@@ -14,6 +15,7 @@ class TratamentoPage extends StatefulWidget {
 
 class _TratamentoPageState extends State<TratamentoPage> {
   Animal _animalSelecionado;
+  Tratamento _tratamentoCadastrado;
 
   DateTime _dataSelecionada = DateTime.now();
 
@@ -25,6 +27,11 @@ class _TratamentoPageState extends State<TratamentoPage> {
   void initState() {
     super.initState();
     _animalSelecionado = Animal.fromMap(widget.animalTratamento.toMap());
+    if (_tratamentoCadastrado == null) {
+      _tratamentoCadastrado = Tratamento();
+      _tratamentoCadastrado.animalId = _animalSelecionado.idAnimal;
+      _tratamentoCadastrado.data = _dataFormatada(_dataSelecionada);
+    }
   }
 
   String _dataFormatada(data) {
@@ -41,6 +48,7 @@ class _TratamentoPageState extends State<TratamentoPage> {
     if (picked != null && picked != _dataSelecionada) {
       setState(() {
         _dataSelecionada = picked;
+        _tratamentoCadastrado.data = _dataFormatada(picked);
       });
     }
   }
@@ -55,7 +63,7 @@ class _TratamentoPageState extends State<TratamentoPage> {
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.pop(context, _animalSelecionado);
+            Navigator.pop(context, _tratamentoCadastrado);
           },
           child: Icon(Icons.check),
           backgroundColor: Colors.green,
@@ -85,6 +93,7 @@ class _TratamentoPageState extends State<TratamentoPage> {
                 // controller: _selectedNome,
                 onChanged: (text) {
                   setState(() {
+                    _tratamentoCadastrado.motivo = text;
                     // _userEdited = true;
                     // _editedAnimal.nome = text;
                   });
@@ -95,6 +104,7 @@ class _TratamentoPageState extends State<TratamentoPage> {
                 // controller: _selectedNome,
                 onChanged: (text) {
                   setState(() {
+                    _tratamentoCadastrado.medicacao = text;
                     // _userEdited = true;
                     // _editedAnimal.nome = text;
                   });
@@ -106,6 +116,7 @@ class _TratamentoPageState extends State<TratamentoPage> {
                 // controller: _selectedNome,
                 onChanged: (text) {
                   setState(() {
+                    _tratamentoCadastrado.periodoCarencia = text;
                     // _userEdited = true;
                     // _editedAnimal.nome = text;
                   });
@@ -116,6 +127,7 @@ class _TratamentoPageState extends State<TratamentoPage> {
                 // controller: _selectedNome,
                 onChanged: (text) {
                   setState(() {
+                    _tratamentoCadastrado.custo = text;
                     // _userEdited = true;
                     // _editedAnimal.nome = text;
                   });
@@ -126,6 +138,7 @@ class _TratamentoPageState extends State<TratamentoPage> {
                 // controller: _selectedNome,
                 onChanged: (text) {
                   setState(() {
+                    _tratamentoCadastrado.anotacoes = text;
                     // _userEdited = true;
                     // _editedAnimal.nome = text;
                   });

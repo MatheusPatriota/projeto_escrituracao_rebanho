@@ -25,6 +25,7 @@ class _VendaPageState extends State<VendaPage> {
   void initState() {
     super.initState();
     _animalSelecionado = Animal.fromMap(widget.animalVenda.toMap());
+    _animalSelecionado.dataVendaAnimal = _dataFormatada(_dataSelecionada);
   }
 
   String _dataFormatada(data) {
@@ -56,7 +57,9 @@ class _VendaPageState extends State<VendaPage> {
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
+            _animalSelecionado.status = "1";
             Navigator.pop(context, _animalSelecionado);
+
           },
           child: Icon(Icons.check),
           backgroundColor: Colors.green,
@@ -76,6 +79,7 @@ class _VendaPageState extends State<VendaPage> {
                 onPressed: () {
                   _selectDataPesagem(context);
                   setState(() {
+                    _animalSelecionado.dataVendaAnimal = _dataFormatada(_dataSelecionada);
                     // _userEdited = true;
                     // _editedAnimal.dataNascimento = _dataNascimentoFormatada;
                   });

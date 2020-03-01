@@ -1,9 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:ouvinos_caprinos/animal/class/animal.dart';
-import 'package:ouvinos_caprinos/tratamento/class/tratamento.dart';
-import 'package:ouvinos_caprinos/ui/comum/tratamento_page.dart';
-
 String ehvazio(dynamic a){
   String stringFinal = a;
   if (a == null){
@@ -29,20 +23,3 @@ String idadeAnimal(String ano, String mes){
   return resultado;
 
 }
-
-String slice(String subject, [int start = 0, int end]) {
-  if (subject is! String) {
-    return '';
-  }
-
-  int _realEnd;
-  int _realStart = start < 0 ? subject.length + start : start;
-  if (end is! int) {
-    _realEnd = subject.length;
-  } else {
-    _realEnd = end < 0 ? subject.length + end : end;
-  }
-
-  return subject.substring(_realStart, _realEnd);
-}
-

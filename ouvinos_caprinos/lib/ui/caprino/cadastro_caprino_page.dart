@@ -68,6 +68,10 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
   List<Animal> pais = List();
   List<Animal> maes = List();
 
+  String _dataFormatada(data) {
+    return "${data.day}/${data.month}/${data.year}";
+  }
+
   // funcao para o usuario escolhar a data de nascimento
   Future<Null> _selectDateNascimento(BuildContext context) async {
     final DateTime picked = await showDatePicker(
@@ -78,9 +82,9 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     );
     if (picked != null && picked != _dataNascimento) {
       setState(() {
-        _dataNascimentoFormatada =
-            "${picked.day}-${picked.month}-${picked.year}";
+        _dataNascimentoFormatada = _dataFormatada(picked);
         _dataNascimento = picked;
+        _editedAnimal.dataNascimento = _dataFormatada(picked);
       });
     }
   }
@@ -95,9 +99,9 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     );
     if (picked != null && picked != _dataAquisicao) {
       setState(() {
-        _dataAquisicaoFormatada =
-            "${picked.day}-${picked.month}-${picked.year}";
+        _dataAquisicaoFormatada = _dataFormatada(picked);
         _dataAquisicao = picked;
+        _editedAnimal.dataAquisicao = _dataFormatada(picked);
       });
     }
   }
@@ -115,10 +119,8 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
       _editedAnimal.idCategoria = 0;
       _editedAnimal.status = "0";
 
-      _dataNascimentoFormatada =
-          "${_dataNascimento.day}-${_dataNascimento.month}-${_dataNascimento.year}";
-      _dataAquisicaoFormatada =
-          "${_dataAquisicao.day}-${_dataAquisicao.month}-${_dataAquisicao.year}";
+      _dataNascimentoFormatada = _dataFormatada(_dataNascimento);
+      _dataAquisicaoFormatada = _dataFormatada(_dataAquisicao);
 
       _editedAnimal.dataNascimento = _dataNascimentoFormatada;
       print(_editedAnimal);
@@ -151,7 +153,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     return result;
   }
 
-  Future<void> _getAllCategorias() async {
+  _getAllCategorias() async {
     await categoriaHelper.getAllCategorias().then((listaC) {
       setState(() {
         categorias = listaC;
@@ -159,7 +161,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     });
   }
 
-  Future<void> _getAllRacas() async {
+  _getAllRacas() async {
     await racaHelper.getAllRacas().then((listaR) {
       setState(() {
         racas = listaR;
@@ -167,7 +169,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     });
   }
 
-  Future<void> _getAllAnimals() async {
+  _getAllAnimals() async {
     await animalHelper.getAllAnimals().then((listaA) {
       List<Animal> paisFinal = List();
       List<Animal> maesFinal = List();

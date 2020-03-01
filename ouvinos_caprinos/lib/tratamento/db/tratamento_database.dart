@@ -39,12 +39,12 @@ class TratamentoHelper {
         onCreate: (Database db, int newerVersion) async {
       await db.execute(
           "CREATE TABLE IF NOT EXISTS $tableName (  $idTratamentoColumn INTEGER PRIMARY KEY  ,"
-          "$animalIdColumn INTEGER)"
-          "$dataColumn TEXT)"
-          "$motivoColumn TEXT)"
-          "$medicacaoColumn TEXT)"
-          "$periodoCarenciaColumn TEXT)"
-          "$custoColumn TEXT)"
+          "$animalIdColumn INTEGER,"
+          "$dataColumn TEXT,"
+          "$motivoColumn TEXT,"
+          "$medicacaoColumn TEXT,"
+          "$periodoCarenciaColumn TEXT,"
+          "$custoColumn TEXT,"
           "$anotacoesColumn TEXT)");
       print("Tratamento dataBase was created");
     });
@@ -52,7 +52,9 @@ class TratamentoHelper {
 
   Future<Tratamento> saveTratamento(Tratamento tratamento) async {
     Database dbTratamento = await db;
+    print(dbTratamento);
     tratamento.id = await dbTratamento.insert(tableName, tratamento.toMap());
+    print("Tratamento Salvo");
     return tratamento;
   }
 
