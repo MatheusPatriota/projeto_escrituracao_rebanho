@@ -6,8 +6,14 @@ import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/categoria/class/categoria.dart';
 import 'package:ouvinos_caprinos/categoria/db/categoria_database.dart';
+import 'package:ouvinos_caprinos/observacao/class/observacao.dart';
+import 'package:ouvinos_caprinos/observacao/db/observacao_database.dart';
+import 'package:ouvinos_caprinos/pesagem/class/pesagem.dart';
+import 'package:ouvinos_caprinos/pesagem/db/pesagem_database.dart';
 import 'package:ouvinos_caprinos/raca/class/raca.dart';
 import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
+import 'package:ouvinos_caprinos/tratamento/class/tratamento.dart';
+import 'package:ouvinos_caprinos/tratamento/db/tratamento_database.dart';
 import 'package:ouvinos_caprinos/ui/comum/morte_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/observacao_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/pesagem_page.dart';
@@ -31,8 +37,20 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
   CategoriaHelper categoriaHelper = CategoriaHelper();
   RacaHelper racaHelper = RacaHelper();
 
+  // variaveis para acessor os dbs dos eventos
+  TratamentoHelper tratamentoHelper = TratamentoHelper();
+  ObservacaoHelper observacaoHelper = ObservacaoHelper();
+  PesagemHelper pesagemHelper = PesagemHelper();
+
   List<Categoria> categorias = List();
   List<Raca> racas = List();
+
+  //listas de eventos
+  List<Tratamento> tratamentos = List();
+  List<Observacao> observacoes = List();
+  List<Pesagem> pesos = List();
+
+  List<String> _dataComSplit;
 
   Future<void> _getAllCategorias() async {
     await categoriaHelper.getAllCategorias().then((listaC) {
@@ -55,13 +73,69 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     });
   }
 
+  Future<void> _getAllTratamentos() async {
+    List<Tratamento> tratamentosFinal = List();
+    await tratamentoHelper.getAllTratamentos().then((listaT) {
+      if (listaT.isNotEmpty) {
+        for (var tratamento in listaT) {
+          if (tratamento.animalId == _caprinoSelecionado.idAnimal) {
+            tratamentosFinal.add(tratamento);
+          }
+        }
+        print(listaT);
+        setState(() {
+          tratamentos = tratamentosFinal;
+        });
+      }
+    });
+  }
+
+  Future<void> _getAllObservacoes() async {
+    List<Observacao> observacoesFinal = List();
+    await observacaoHelper.getAllObservacaos().then((listaO) {
+      if (listaO.isNotEmpty) {
+        for (var observacao in listaO) {
+          if (observacao.animalId == _caprinoSelecionado.idAnimal) {
+            observacoesFinal.add(observacao);
+          }
+        }
+
+        setState(() {
+          observacoes = observacoesFinal;
+        });
+      }
+    });
+  }
+
+  Future<void> _getAllPesagens() async {
+    List<Pesagem> pesagemFinal = List();
+    await pesagemHelper.getAllPesagems().then((listaP) {
+      print(listaP);
+      if (listaP.isNotEmpty) {
+        for (var peso in listaP) {
+          if (peso.animalId == _caprinoSelecionado.idAnimal) {
+            pesagemFinal.add(peso);
+          }
+        }
+        print(pesagemFinal);
+        setState(() {
+          pesos = pesagemFinal;
+        });
+      }
+    });
+  }
+
   final _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
     _caprinoSelecionado = Animal.fromMap(widget.caprino.toMap());
+    _dataComSplit = _caprinoSelecionado.dataNascimento.split("/");
     _getAllCategorias();
     _getAllRacas();
+    _getAllTratamentos();
+    _getAllObservacoes();
+    _getAllPesagens();
   }
 
   @override
@@ -101,13 +175,19 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
             backgroundColor: Colors.green,
             label: 'Tratamento',
             labelStyle: TextStyle(fontSize: 18.0),
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              final recTratamento = await Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => TratamentoPage(
                             animalTratamento: _caprinoSelecionado,
                           )));
+              if (recTratamento != null) {
+                if (_caprinoSelecionado != null) {
+                  tratamentoHelper.saveTratamento(recTratamento);
+                  _getAllTratamentos();
+                }
+              }
             },
           ),
           SpeedDialChild(
@@ -116,15 +196,16 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
             label: 'Pesagem',
             labelStyle: TextStyle(fontSize: 18.0),
             onTap: () async {
-              final recAnimal = await Navigator.push(
+              final recPesagem = await Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => PesagemPage(
                             animalPesagem: _caprinoSelecionado,
                           )));
-              if (recAnimal != null) {
+              if (recPesagem != null) {
                 if (_caprinoSelecionado != null) {
-                  animalHelper.updateAnimal(recAnimal);
+                  pesagemHelper.savePesagem(recPesagem);
+                  _getAllPesagens();
                 }
               }
             },
@@ -142,8 +223,9 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                             animalVenda: _caprinoSelecionado,
                           )));
               if (recAnimal != null) {
+                print(recAnimal);
                 if (_caprinoSelecionado != null) {
-                 await animalHelper.updateAnimal(recAnimal);
+                  await animalHelper.updateAnimal(recAnimal);
                 }
               }
             },
@@ -172,13 +254,19 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
             backgroundColor: Colors.green,
             label: 'Observações',
             labelStyle: TextStyle(fontSize: 18.0),
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              final recObservacao = await Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => ObservacaoPage(
                             animalObservacao: _caprinoSelecionado,
                           )));
+              if (recObservacao != null) {
+                if (_caprinoSelecionado != null) {
+                  observacaoHelper.saveObservacao(recObservacao);
+                  _getAllObservacoes();
+                }
+              }
             },
           ),
         ],
@@ -235,9 +323,11 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                       ]),
                       DataRow(cells: [
                         DataCell(Text("Idade")),
-                        DataCell(Text(idadeAnimal(
-                            slice(_caprinoSelecionado.dataNascimento, 5),
-                            slice(_caprinoSelecionado.dataNascimento, 3, 4))))
+                        DataCell(
+                          Text(
+                            idadeAnimal(_dataComSplit[2], _dataComSplit[1]),
+                          ),
+                        ),
                       ]),
                       DataRow(cells: [
                         DataCell(Text("Nome")),
@@ -251,16 +341,16 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                         DataCell(Text("Categoria")),
                         DataCell(Text(
                             categorias[_caprinoSelecionado.idCategoria]
-                                .descricao))
+                                    .descricao ??
+                                ""))
                       ]),
                       DataRow(cells: [
                         DataCell(Text("Raça")),
-                        DataCell(
-                            Text(racas[_caprinoSelecionado.idRaca].descricao))
+                        DataCell(Text(
+                            racas[_caprinoSelecionado.idRaca].descricao ?? ""))
                       ]),
                     ],
                   ),
-                  Divider(),
                   DataTable(
                     columns: <DataColumn>[
                       DataColumn(
@@ -273,13 +363,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                         label: Text(''),
                       ),
                     ],
-                    rows: [
-                      DataRow(cells: [
-                        DataCell(Icon(MdiIcons.cake)),
-                        DataCell(Text(_caprinoSelecionado.dataNascimento)),
-                        DataCell(Text("Nascimento"))
-                      ]),
-                    ],
+                    rows: listaEventos(),
                   ),
                 ],
               ),
@@ -288,5 +372,67 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         ),
       ),
     );
+  }
+
+  List<DataRow> listaEventos() {
+    List<DataRow> lista = [];
+    //data nascimento
+
+    lista.add(DataRow(cells: [
+      DataCell(Icon(MdiIcons.cake)),
+      DataCell(Text(_caprinoSelecionado.dataNascimento)),
+      DataCell(Text("Nascimento")),
+    ]));
+
+    // pesagem
+    if (pesos.isNotEmpty) {
+      for (var peso in pesos) {
+        lista.add(DataRow(cells: [
+          DataCell(Icon(MdiIcons.weightKilogram)),
+          DataCell(Text(peso.data)),
+          DataCell(Text(peso.peso + "KG"))
+        ]));
+      }
+    }
+
+    // morte
+    if (_caprinoSelecionado.status == "2") {
+      lista.add(DataRow(cells: [
+        DataCell(Icon(MdiIcons.skullCrossbones)),
+        DataCell(Text(_caprinoSelecionado.dataMorte)),
+        DataCell(Text(_caprinoSelecionado.descricaoMorte))
+      ]));
+    }
+    // tratamento
+    if (tratamentos.isNotEmpty) {
+      for (var tratamento in tratamentos) {
+        lista.add(DataRow(cells: [
+          DataCell(Icon(MdiIcons.needle)),
+          DataCell(Text(tratamento.data)),
+          DataCell(Text(tratamento.medicacao))
+        ]));
+      }
+    }
+
+    //venda
+    if (_caprinoSelecionado.status == "1") {
+      lista.add(DataRow(cells: [
+        DataCell(Icon(MdiIcons.cashUsd)),
+        DataCell(Text(_caprinoSelecionado.dataVendaAnimal)),
+        DataCell(Text(_caprinoSelecionado.valorVenda))
+      ]));
+    }
+    //observacoes
+    if (observacoes.isNotEmpty) {
+      for (var observacao in observacoes) {
+        lista.add(DataRow(cells: [
+          DataCell(Icon(MdiIcons.alert)),
+          DataCell(Text(observacao.data)),
+          DataCell(Text(observacao.descricao))
+        ]));
+      }
+    }
+
+    return lista;
   }
 }

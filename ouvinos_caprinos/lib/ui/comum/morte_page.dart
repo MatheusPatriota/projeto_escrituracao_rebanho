@@ -25,6 +25,7 @@ class _MortePageState extends State<MortePage> {
   void initState() {
     super.initState();
     _animalSelecionado = Animal.fromMap(widget.animalMorte.toMap());
+    _animalSelecionado.dataMorte = _dataFormatada(_dataSelecionada);
   }
 
   String _dataFormatada(data) {
@@ -42,7 +43,7 @@ class _MortePageState extends State<MortePage> {
       setState(() {
         _dataSelecionada = picked;
         _animalSelecionado.dataMorte = _dataFormatada(picked);
-        _animalSelecionado.status = "2";
+       
       });
     }
   }
@@ -57,6 +58,7 @@ class _MortePageState extends State<MortePage> {
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
+            _animalSelecionado.status = "2";
             Navigator.pop(context, _animalSelecionado);
           },
           child: Icon(Icons.check),

@@ -4,7 +4,7 @@ import 'package:ouvinos_caprinos/observacao/db/observacao_database.dart';
 class Observacao{
 
   int idObservacao;
-  int idAnimal;
+  int animalId;
   String data;
   String descricao;
 
@@ -12,7 +12,7 @@ class Observacao{
   Observacao(
     {
       this.idObservacao,
-      this.idAnimal,
+      this.animalId,
       this.data,
       this.descricao,
     }
@@ -20,14 +20,14 @@ class Observacao{
 
   Observacao.fromMap(Map map) {
   idObservacao = map[idObservacaoColumn];
-  idAnimal = map[idAnimalColumn];
+  animalId = map[idAnimalColumn];
   data = map[dataColumn];
   descricao = map[descricaoColumn];
   }
 
   Map toMap() {
     Map<String, dynamic> map = {
-      idAnimalColumn: idAnimal,
+      idAnimalColumn: animalId,
       dataColumn: data,
       descricaoColumn: descricao 
     };

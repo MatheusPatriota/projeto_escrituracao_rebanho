@@ -3,7 +3,7 @@ import 'package:ouvinos_caprinos/pesagem/db/pesagem_database.dart';
 class Pesagem{
 
   int idPesagem;
-  int idAnimal;
+  int animalId;
   String data;
   String peso;
 
@@ -11,7 +11,7 @@ class Pesagem{
   Pesagem(
     {
       this.idPesagem,
-      this.idAnimal,
+      this.animalId,
       this.data,
       this.peso,
     }
@@ -19,14 +19,14 @@ class Pesagem{
 
   Pesagem.fromMap(Map map) {
   idPesagem = map[idPesagemColumn];
-  idAnimal = map[idAnimalColumn];
+  animalId = map[idAnimalColumn];
   data = map[dataColumn];
   peso = map[pesoColumn];
   }
 
   Map toMap() {
     Map<String, dynamic> map = {
-      idAnimalColumn: idAnimal,
+      idAnimalColumn: animalId,
       dataColumn: data,
       pesoColumn: peso 
     };
@@ -38,7 +38,7 @@ class Pesagem{
 
    @override
   String toString() {
-    return "Pesagem(id: $idPesagem, peso:$peso )";
+    return "Pesagem(id: $idPesagem,data: $data,animalId: $animalId, peso:$peso )";
   }
   
   

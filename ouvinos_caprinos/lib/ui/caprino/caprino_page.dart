@@ -294,6 +294,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
             builder: (context) => CaprinoInformation(
                   caprino: animal,
                 )));
+    _getAllAnimals();
   }
 
   // direciona para a pagina de cadastro do caprino

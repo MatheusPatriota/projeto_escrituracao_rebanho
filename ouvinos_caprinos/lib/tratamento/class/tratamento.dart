@@ -35,11 +35,11 @@ class Tratamento {
 
   Map toMap() {
     Map<String, dynamic> map = {
-      animalIdColumn: id,
+      animalIdColumn: animalId,
       dataColumn: data,
       motivoColumn: motivo,
       medicacaoColumn: medicacao,
-      periodoCarencia: periodoCarencia,
+      periodoCarenciaColumn: periodoCarencia,
       custoColumn: custo,
       anotacoesColumn: anotacoes
       };
@@ -51,6 +51,6 @@ class Tratamento {
 
   @override
   String toString() {
-    return "Tratamento(id: $id, anotacoes:$anotacoes )";
+    return "Tratamento(id: $id,animalId: $animalId, medicacao: $medicacao, custo: $custo, anotacoes:$anotacoes )";
   }
 }
