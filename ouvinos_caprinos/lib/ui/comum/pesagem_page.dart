@@ -15,7 +15,6 @@ class PesagemPage extends StatefulWidget {
 }
 
 class _PesagemPageState extends State<PesagemPage> {
-
   Animal _animalSelecionado;
 
   Pesagem _pesoCadastrado;
@@ -27,11 +26,11 @@ class _PesagemPageState extends State<PesagemPage> {
 
   final _formKey = GlobalKey<FormState>();
 
-   @override
+  @override
   void initState() {
     super.initState();
     _animalSelecionado = Animal.fromMap(widget.animalPesagem.toMap());
-    if(_pesoCadastrado == null){
+    if (_pesoCadastrado == null) {
       _pesoCadastrado = Pesagem(animalId: _animalSelecionado.idAnimal);
       _pesoCadastrado.data = _dataFormatada(_dataSelecionada);
       // _pesoCadastrado.idAnimal = 1;
@@ -42,7 +41,7 @@ class _PesagemPageState extends State<PesagemPage> {
     return "${_dataSelecionada.day}/${_dataSelecionada.month}/${_dataSelecionada.year}";
   }
 
-   Future<Null> _selectDataPesagem(BuildContext context) async {
+  Future<Null> _selectDataPesagem(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
       initialDate: _dataSelecionada,
@@ -66,47 +65,44 @@ class _PesagemPageState extends State<PesagemPage> {
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-          onPressed: () {           
-            
-            Navigator.pop(context, _pesoCadastrado);
-          },
-          child: Icon(Icons.check),
-          backgroundColor: Colors.green,
-        ),
+        onPressed: () {
+          Navigator.pop(context, _pesoCadastrado);
+        },
+        child: Icon(Icons.check),
+        backgroundColor: Colors.green,
+      ),
       body: Form(
         key: _formKey,
         child: Container(
           padding: EdgeInsets.all(13.0),
-          child: ListView(
-            children: [
-              Container(
-                child: Text("Data de Pesagem*"),
-                padding: EdgeInsets.only(top: 10.0),
-              ),
-              RaisedButton(
-                child: Text(_dataFormatada(_dataSelecionada)),
-                onPressed: () {
-                  _selectDataPesagem(context);
-                  setState(() {
-                    
-                    // _userEdited = true;
-                    // _editedAnimal.dataNascimento = _dataNascimentoFormatada;
-                  });
-                },
-              ),
-              TextField(
-                decoration: InputDecoration(labelText: "Peso(KG)*"),
-                // controller: _selectedNome,
-                onChanged: (text) {
-                  setState(() {                  
-                    _pesoCadastrado.peso = text;
-                    // _userEdited = true;
-                    // _editedAnimal.nome = text;
-                  });
-                },
-              ),
-            ]
-          ),
+          child: ListView(children: [
+            Container(
+              child: Text("Data de Pesagem*"),
+              padding: EdgeInsets.only(top: 10.0),
+            ),
+            RaisedButton(
+              child: Text(_dataFormatada(_dataSelecionada)),
+              onPressed: () {
+                _selectDataPesagem(context);
+                setState(() {
+                  // _userEdited = true;
+                  // _editedAnimal.dataNascimento = _dataNascimentoFormatada;
+                });
+              },
+            ),
+            TextField(
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(labelText: "Peso(KG)*"),
+              // controller: _selectedNome,
+              onChanged: (text) {
+                setState(() {
+                  _pesoCadastrado.peso = text;
+                  // _userEdited = true;
+                  // _editedAnimal.nome = text;
+                });
+              },
+            ),
+          ]),
         ),
       ),
     );

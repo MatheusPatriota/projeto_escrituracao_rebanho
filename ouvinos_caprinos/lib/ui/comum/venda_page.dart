@@ -98,7 +98,8 @@ class _VendaPageState extends State<VendaPage> {
                 },
               ),
               TextField(
-                decoration: InputDecoration(labelText: "Comprador*"),
+                decoration: InputDecoration(labelText: "Comprador*", prefixText: "R\$"),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
                 // controller: _selectedNome,]
                 onChanged: (text) {
                   setState(() {

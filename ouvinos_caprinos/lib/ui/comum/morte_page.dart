@@ -21,7 +21,7 @@ class _MortePageState extends State<MortePage> {
 
   final _formKey = GlobalKey<FormState>();
 
-   @override
+  @override
   void initState() {
     super.initState();
     _animalSelecionado = Animal.fromMap(widget.animalMorte.toMap());
@@ -32,7 +32,7 @@ class _MortePageState extends State<MortePage> {
     return "${_dataSelecionada.day}/${_dataSelecionada.month}/${_dataSelecionada.year}";
   }
 
-   Future<Null> _selectDataPesagem(BuildContext context) async {
+  Future<Null> _selectDataPesagem(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
       initialDate: _dataSelecionada,
@@ -43,7 +43,6 @@ class _MortePageState extends State<MortePage> {
       setState(() {
         _dataSelecionada = picked;
         _animalSelecionado.dataMorte = _dataFormatada(picked);
-       
       });
     }
   }
@@ -57,45 +56,43 @@ class _MortePageState extends State<MortePage> {
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _animalSelecionado.status = "2";
-            Navigator.pop(context, _animalSelecionado);
-          },
-          child: Icon(Icons.check),
-          backgroundColor: Colors.green,
-        ),
+        onPressed: () {
+          _animalSelecionado.status = "2";
+          Navigator.pop(context, _animalSelecionado);
+        },
+        child: Icon(Icons.check),
+        backgroundColor: Colors.green,
+      ),
       body: Form(
         key: _formKey,
         child: Container(
           padding: EdgeInsets.all(13.0),
-          child: ListView(
-            children: [
-              Container(
-                child: Text("Data da Morte*"),
-                padding: EdgeInsets.only(top: 10.0),
-              ),
-              RaisedButton(
-                child: Text(_dataFormatada(_dataSelecionada)),
-                onPressed: () {
-                  _selectDataPesagem(context);
-                  setState(() {
-                    // _userEdited = true;
-                    // _editedAnimal.dataNascimento = _dataNascimentoFormatada;
-                  });
-                },
-              ),
-              TextField(
-                decoration: InputDecoration(labelText: "Motivo da Morte*"),
-                // controller: _selectedNome,
-                onChanged: (text) {
-                  setState(() {
-                    // _userEdited = true;
-                    _animalSelecionado.descricaoMorte = text;
-                  });
-                },
-              ),
-            ]
-          ),
+          child: ListView(children: [
+            Container(
+              child: Text("Data da Morte*"),
+              padding: EdgeInsets.only(top: 10.0),
+            ),
+            RaisedButton(
+              child: Text(_dataFormatada(_dataSelecionada)),
+              onPressed: () {
+                _selectDataPesagem(context);
+                setState(() {
+                  // _userEdited = true;
+                  // _editedAnimal.dataNascimento = _dataNascimentoFormatada;
+                });
+              },
+            ),
+            TextField(
+              decoration: InputDecoration(labelText: "Motivo da Morte*"),
+              // controller: _selectedNome,
+              onChanged: (text) {
+                setState(() {
+                  // _userEdited = true;
+                  _animalSelecionado.descricaoMorte = text;
+                });
+              },
+            ),
+          ]),
         ),
       ),
     );
