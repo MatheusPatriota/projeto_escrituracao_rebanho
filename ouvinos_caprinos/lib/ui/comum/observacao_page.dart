@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/observacao/class/observacao.dart';
+import 'package:ouvinos_caprinos/util/funcoes.dart';
 
 class ObservacaoPage extends StatefulWidget {
   final Animal animalObservacao;
@@ -87,8 +88,9 @@ class _ObservacaoPageState extends State<ObservacaoPage> {
                 });
               },
             ),
+            espacamentoPadrao(),
             TextField(
-              decoration: InputDecoration(labelText: "Observação"),
+              decoration: estiloPadrao("Observação*", 1),
               // controller: _selectedNome,
               onChanged: (text) {
                 setState(() {

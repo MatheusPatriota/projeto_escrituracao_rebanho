@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
+import 'package:ouvinos_caprinos/util/funcoes.dart';
 
 class VendaPage extends StatefulWidget {
   final Animal animalVenda;
@@ -85,8 +86,9 @@ class _VendaPageState extends State<VendaPage> {
                   });
                 },
               ),
+              espacamentoPadrao(),
               TextField(
-                decoration: InputDecoration(labelText: "Valor da Venda*"),
+                decoration: estiloPadrao("Valor da Venda*", 2),
                 // controller: _selectedNome,
                 keyboardType: TextInputType.number,
                 onChanged: (text) {
@@ -97,8 +99,9 @@ class _VendaPageState extends State<VendaPage> {
                   });
                 },
               ),
+              espacamentoPadrao(),
               TextField(
-                decoration: InputDecoration(labelText: "Comprador*", prefixText: "R\$"),
+                decoration: estiloPadrao("Comprador*", 1),
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 // controller: _selectedNome,]
                 onChanged: (text) {
@@ -109,8 +112,9 @@ class _VendaPageState extends State<VendaPage> {
                   });
                 },
               ),
+              espacamentoPadrao(),
               TextField(
-                decoration: InputDecoration(labelText: "Anotações"),
+                decoration: estiloPadrao("Anotações", 1),
                 // controller: _selectedNome,
                 onChanged: (text) {
                   setState(() {

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:groovin_widgets/groovin_expansion_tile.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
@@ -42,8 +43,8 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
   ObservacaoHelper observacaoHelper = ObservacaoHelper();
   PesagemHelper pesagemHelper = PesagemHelper();
 
-  List<Categoria> categorias = List();
-  List<Raca> racas = List();
+  String categoriaSelecionada = "";
+  String racaSelecionada = "";
 
   //listas de eventos
   List<Tratamento> tratamentos = List();
@@ -52,13 +53,15 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
 
   List<String> _dataComSplit;
 
+  bool isExpanded = false;
+
   Future<void> _getAllCategorias() async {
     await categoriaHelper.getAllCategorias().then((listaC) {
       print(listaC);
       print(_caprinoSelecionado);
-
       setState(() {
-        categorias = listaC;
+        categoriaSelecionada =
+            listaC[_caprinoSelecionado.idCategoria].descricao;
       });
     });
   }
@@ -68,7 +71,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       print(listaR);
 
       setState(() {
-        racas = listaR;
+        racaSelecionada = listaR[_caprinoSelecionado.idRaca].descricao;
       });
     });
   }
@@ -148,6 +151,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       ),
       floatingActionButton: SpeedDial(
         // both default to 16
+
         marginRight: 18,
         marginBottom: 20,
         animatedIcon: AnimatedIcons.menu_close,
@@ -339,15 +343,11 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                       ]),
                       DataRow(cells: [
                         DataCell(Text("Categoria")),
-                        DataCell(Text(
-                            categorias[_caprinoSelecionado.idCategoria]
-                                    .descricao ??
-                                ""))
+                        DataCell(Text(categoriaSelecionada))
                       ]),
                       DataRow(cells: [
                         DataCell(Text("Raça")),
-                        DataCell(Text(
-                            racas[_caprinoSelecionado.idRaca].descricao ?? ""))
+                        DataCell(Text(racaSelecionada))
                       ]),
                     ],
                   ),
@@ -366,6 +366,78 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                     rows: listaEventos(),
                   ),
                 ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 16.0,
+                  right: 70.0,
+                ),
+                child: Material(
+                  elevation: 2.0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                  child: GroovinExpansionTile(
+                    defaultTrailingIconColor: Colors.indigoAccent,
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.indigoAccent,
+                      child: Icon(
+                        MdiIcons.needle,
+                        color: Colors.white,
+                      ),
+                    ),
+                    title: Text(
+                      "Data",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    subtitle: Text("Descricao"),
+                    onExpansionChanged: (value) {
+                      setState(() {
+                        isExpanded = value;
+                      });
+                    },
+                    inkwellRadius: !isExpanded
+                        ? BorderRadius.all(Radius.circular(8.0))
+                        : BorderRadius.only(
+                            topRight: Radius.circular(8.0),
+                            topLeft: Radius.circular(8.0),
+                          ),
+                    children: <Widget>[
+                      ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(5.0),
+                          bottomRight: Radius.circular(5.0),
+                        ),
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 4.0, right: 4.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(Icons.delete),
+                                    color: Colors.red,
+                                    onPressed: () {},
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.edit),
+                                    onPressed: () {},
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.remove_red_eye),
+                                    onPressed: () {},
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
