@@ -239,14 +239,23 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
 
   void loadPaiList() {
     paiList = [];
+    String nomePaiExibicao;
     paiList.add(new DropdownMenuItem(
       child: new Text("Não Selecionado"),
       value: 0,
     ));
     if (pais.isNotEmpty) {
       for (var i = 0; i < pais.length; i++) {
+        nomePaiExibicao = pais[i].idAnimal.toString();
+        if (pais[i].brincoControle != null) {
+          nomePaiExibicao += " - " + pais[i].brincoControle;
+        }
+        if (pais[i].nome != null) {
+          nomePaiExibicao += " - " + pais[i].nome;
+        }
+
         paiList.add(new DropdownMenuItem(
-          child: Text(pais[i].nome ?? pais[i].idAnimal.toString()),
+          child: Text(nomePaiExibicao),
           value: i + 1,
         ));
       }
@@ -255,14 +264,22 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
 
   void loadMaeList() {
     maeList = [];
+    String nomeExibicaoMae;
     maeList.add(new DropdownMenuItem(
       child: new Text("Não Selecionada"),
       value: 0,
     ));
     if (maes.isNotEmpty) {
       for (var i = 0; i < maes.length; i++) {
+         nomeExibicaoMae = maes[i].idAnimal.toString();
+        if (maes[i].brincoControle != null) {
+          nomeExibicaoMae += " - " + maes[i].brincoControle;
+        }
+        if (maes[i].nome != null) {
+          nomeExibicaoMae += " - " + maes[i].nome;
+        }
         maeList.add(new DropdownMenuItem(
-          child: new Text(maes[i].nome ?? maes[i].idAnimal.toString()),
+          child: new Text(nomeExibicaoMae),
           value: i + 1,
         ));
       }
@@ -439,7 +456,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
         },
       ),
     );
-    
+
     formWidget.add(Container(
       child: Text("Pai"),
       padding: EdgeInsets.only(top: 10.0),

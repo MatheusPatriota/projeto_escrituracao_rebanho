@@ -103,7 +103,7 @@ class _TratamentoPageState extends State<TratamentoPage> {
               ),
               espacamentoPadrao(),
               TextField(
-                decoration: estiloPadrao("Medicação*", 1),
+                decoration: estiloPadrao("Medicação/Vacinação*", 1),
                 // controller: _selectedNome,
                 onChanged: (text) {
                   setState(() {

@@ -45,119 +45,120 @@ class _CaprinoPageState extends State<CaprinoPage> {
       home: DefaultTabController(
         length: 4,
         child: Scaffold(
-            appBar: AppBar(
-              title: Text("Rebanho Caprino"),
-              backgroundColor: Colors.green,
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () {},
-                ),
-                PopupMenuButton<OrderOptions>(
-                  icon: Icon(Icons.sort),
-                  itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
-                    const PopupMenuItem<OrderOptions>(
-                      child: Text("Ordenar de A-Z"),
-                      value: OrderOptions.orderaz,
-                    ),
-                    const PopupMenuItem<OrderOptions>(
-                      child: Text("Ordenar de Z-A"),
-                      value: OrderOptions.orderza,
-                    ),
-                    const PopupMenuItem<OrderOptions>(
-                      child: Text("Ordenar pelo Id"),
-                      value: OrderOptions.orderbyid,
-                    ),
-                  ],
-                  onSelected: _orderList,
-                ),
-              ],
-              bottom: TabBar(
-                isScrollable: true,
-                tabs: [
-                  Tab(text: "Disponíveis"),
-                  Tab(text: "Vendidos"),
-                  Tab(text: "Mortos"),
-                  Tab(text: "Excluídos"),
-                ],
+          appBar: AppBar(
+            title: Text("Rebanho Caprino"),
+            backgroundColor: Colors.green,
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {},
               ),
-            ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: _showCadastroCaprinoPage,
-              child: Icon(Icons.add),
-              backgroundColor: Colors.green,
-            ),
-            drawer: Drawer(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: <Widget>[
-                  DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                    ),
-                    child: Text(
-                      'Espécies Disponiveis',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 25,
-                      ),
-                    ),
+              PopupMenuButton<OrderOptions>(
+                icon: Icon(Icons.sort),
+                itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
+                  const PopupMenuItem<OrderOptions>(
+                    child: Text("Ordenar de A-Z"),
+                    value: OrderOptions.orderaz,
                   ),
-                  ListTile(
-                    leading: Icon(Icons.change_history),
-                    title: Text('Caprinos'),
+                  const PopupMenuItem<OrderOptions>(
+                    child: Text("Ordenar de Z-A"),
+                    value: OrderOptions.orderza,
                   ),
-                  ListTile(
-                    leading: Icon(Icons.account_circle),
-                    title: Text('Ovinos'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            // builder: (context) => OvinoPage(),
-                            ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.settings),
-                    title: Text('Settings'),
+                  const PopupMenuItem<OrderOptions>(
+                    child: Text("Ordenar pelo Id"),
+                    value: OrderOptions.orderbyid,
                   ),
                 ],
+                onSelected: _orderList,
               ),
+            ],
+            bottom: TabBar(
+              isScrollable: true,
+              tabs: [
+                Tab(text: "Disponíveis"),
+                Tab(text: "Vendidos"),
+                Tab(text: "Mortos"),
+                Tab(text: "Excluídos"),
+              ],
             ),
-            body: TabBarView(
-              children: [
-                ListView.builder(
-                  padding: EdgeInsets.all(10.0),
-                  itemCount: animaisCaprinos.length,
-                  itemBuilder: (context, index) {
-                    return _animalCard(context, index, animaisCaprinos);
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: _showCadastroCaprinoPage,
+            child: Icon(Icons.add),
+            backgroundColor: Colors.green,
+          ),
+          drawer: Drawer(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                DrawerHeader(
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                  ),
+                  child: Text(
+                    'Espécies Disponiveis',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 25,
+                    ),
+                  ),
+                ),
+                ListTile(
+                  leading: Icon(Icons.change_history),
+                  title: Text('Caprinos'),
+                ),
+                ListTile(
+                  leading: Icon(Icons.account_circle),
+                  title: Text('Ovinos'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          // builder: (context) => OvinoPage(),
+                          ),
+                    );
                   },
                 ),
-                ListView.builder(
-                  padding: EdgeInsets.all(10.0),
-                  itemCount: animaisCaprinosVendidos.length,
-                  itemBuilder: (context, index) {
-                    return _animalCard(context, index, animaisCaprinosVendidos);
-                  },
-                ),
-                ListView.builder(
-                  padding: EdgeInsets.all(10.0),
-                  itemCount: animaisCaprinosMortos.length,
-                  itemBuilder: (context, index) {
-                    return _animalCard(context, index, animaisCaprinosMortos);
-                  },
-                ),
-                ListView.builder(
-                  padding: EdgeInsets.all(10.0),
-                  itemCount: animaisCaprinosEcluidos.length,
-                  itemBuilder: (context, index) {
-                    return _animalCard(context, index, animaisCaprinosEcluidos);
-                  },
+                ListTile(
+                  leading: Icon(Icons.settings),
+                  title: Text('Settings'),
                 ),
               ],
-            )),
+            ),
+          ),
+          body: TabBarView(
+            children: [
+              ListView.builder(
+                padding: EdgeInsets.all(10.0),
+                itemCount: animaisCaprinos.length,
+                itemBuilder: (context, index) {
+                  return _animalCard(context, index, animaisCaprinos);
+                },
+              ),
+              ListView.builder(
+                padding: EdgeInsets.all(10.0),
+                itemCount: animaisCaprinosVendidos.length,
+                itemBuilder: (context, index) {
+                  return _animalCard(context, index, animaisCaprinosVendidos);
+                },
+              ),
+              ListView.builder(
+                padding: EdgeInsets.all(10.0),
+                itemCount: animaisCaprinosMortos.length,
+                itemBuilder: (context, index) {
+                  return _animalCard(context, index, animaisCaprinosMortos);
+                },
+              ),
+              ListView.builder(
+                padding: EdgeInsets.all(10.0),
+                itemCount: animaisCaprinosEcluidos.length,
+                itemBuilder: (context, index) {
+                  return _animalCard(context, index, animaisCaprinosEcluidos);
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
