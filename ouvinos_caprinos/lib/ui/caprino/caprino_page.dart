@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/categoria/db/categoria_database.dart';
@@ -104,11 +105,11 @@ class _CaprinoPageState extends State<CaprinoPage> {
                   ),
                 ),
                 ListTile(
-                  leading: Icon(Icons.change_history),
+                  leading: Icon(MdiIcons.sheep),
                   title: Text('Caprinos'),
                 ),
                 ListTile(
-                  leading: Icon(Icons.account_circle),
+                  leading: Icon((MdiIcons.sheep)),
                   title: Text('Ovinos'),
                   onTap: () {
                     Navigator.push(
