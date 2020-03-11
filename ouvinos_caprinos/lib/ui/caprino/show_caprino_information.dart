@@ -408,10 +408,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         List<String> dataEventoComSplit = lista[index].data.split("/");
         iconeSelecionado = MdiIcons.needle;
         selected = Text(lista[index].medicacao);
-        exibeLateral = Text(
-          "X dias",
-          style: TextStyle(color: Colors.red),
-        );
+        exibeLateral = calculoDiasRestantes(dataEventoComSplit[0],dataEventoComSplit[1],dataEventoComSplit[2],lista[index].periodoCarencia);
         break;
       case 3:
         iconeSelecionado = MdiIcons.alert;
@@ -557,4 +554,6 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       ],
     );
   }
+
+
 }

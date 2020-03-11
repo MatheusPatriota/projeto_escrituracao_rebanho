@@ -47,3 +47,27 @@ Container espacamentoPadrao(){
     padding: EdgeInsets.all(5.0),
   );
 }
+
+
+  Widget calculoDiasRestantes(String dia, String mes, String ano, String data){
+  int newData = int.parse(data);
+  var berlinWallFell = new DateTime.utc(int.parse(ano), int.parse(mes), int.parse(dia));
+  DateTime dataAtual = DateTime.now();
+  var dDay = new DateTime.utc(dataAtual.year,dataAtual.month, dataAtual.day); 
+  Duration difference = berlinWallFell.difference(dDay);
+  int diferenca = difference.inDays.abs();
+  String texto ="";
+   if(diferenca > newData){
+    texto = "Ja passou da data";
+    
+  }else if(diferenca == newData){
+   texto = "1 dias";
+  }
+  else if(diferenca < newData){
+   return Text((newData -diferenca).toString() + " dias", style: TextStyle(color: Colors.red));
+  }
+
+  return Text(texto, style: TextStyle(color: Colors.red));
+
+
+}
