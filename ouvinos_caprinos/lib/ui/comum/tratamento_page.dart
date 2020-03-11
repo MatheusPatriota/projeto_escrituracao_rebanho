@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/tratamento/class/tratamento.dart';
+import 'package:ouvinos_caprinos/util/funcoes.dart';
 
 class TratamentoPage extends StatefulWidget {
   final Animal animalTratamento;
@@ -88,8 +89,9 @@ class _TratamentoPageState extends State<TratamentoPage> {
                   });
                 },
               ),
+              espacamentoPadrao(),
               TextField(
-                decoration: InputDecoration(labelText: "Motivo do Tratamento*"),
+                decoration: estiloPadrao("Motivo*", 1),
                 // controller: _selectedNome,
                 onChanged: (text) {
                   setState(() {
@@ -99,8 +101,9 @@ class _TratamentoPageState extends State<TratamentoPage> {
                   });
                 },
               ),
+              espacamentoPadrao(),
               TextField(
-                decoration: InputDecoration(labelText: "Medicação*"),
+                decoration: estiloPadrao("Medicação/Vacinação*", 1),
                 // controller: _selectedNome,
                 onChanged: (text) {
                   setState(() {
@@ -110,10 +113,10 @@ class _TratamentoPageState extends State<TratamentoPage> {
                   });
                 },
               ),
+              espacamentoPadrao(),
               TextField(
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
-                decoration:
-                    InputDecoration(labelText: "Periodo de Carencia(DIAS)"),
+                decoration:estiloPadrao("Periodo de Carência", 1),
                 // controller: _selectedNome,
                 onChanged: (text) {
                   setState(() {
@@ -123,10 +126,10 @@ class _TratamentoPageState extends State<TratamentoPage> {
                   });
                 },
               ),
+              espacamentoPadrao(),
               TextField(
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
-                decoration:
-                    InputDecoration(labelText: "Custo*", prefixText: "R\$"),
+                decoration:estiloPadrao("Custo*", 2),
                 // controller: _selectedNome,
                 onChanged: (text) {
                   setState(() {
@@ -136,8 +139,9 @@ class _TratamentoPageState extends State<TratamentoPage> {
                   });
                 },
               ),
+              espacamentoPadrao(),
               TextField(
-                decoration: InputDecoration(labelText: "Anotações"),
+                decoration: estiloPadrao("Anotações", 1),
                 // controller: _selectedNome,
                 onChanged: (text) {
                   setState(() {

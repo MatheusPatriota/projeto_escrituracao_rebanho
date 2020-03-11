@@ -1,16 +1,15 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:groovin_widgets/groovin_expansion_tile.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
-import 'package:ouvinos_caprinos/categoria/class/categoria.dart';
 import 'package:ouvinos_caprinos/categoria/db/categoria_database.dart';
 import 'package:ouvinos_caprinos/observacao/class/observacao.dart';
 import 'package:ouvinos_caprinos/observacao/db/observacao_database.dart';
 import 'package:ouvinos_caprinos/pesagem/class/pesagem.dart';
 import 'package:ouvinos_caprinos/pesagem/db/pesagem_database.dart';
-import 'package:ouvinos_caprinos/raca/class/raca.dart';
 import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
 import 'package:ouvinos_caprinos/tratamento/class/tratamento.dart';
 import 'package:ouvinos_caprinos/tratamento/db/tratamento_database.dart';
@@ -42,8 +41,8 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
   ObservacaoHelper observacaoHelper = ObservacaoHelper();
   PesagemHelper pesagemHelper = PesagemHelper();
 
-  List<Categoria> categorias = List();
-  List<Raca> racas = List();
+  String categoriaSelecionada = "";
+  String racaSelecionada = "";
 
   //listas de eventos
   List<Tratamento> tratamentos = List();
@@ -52,13 +51,15 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
 
   List<String> _dataComSplit;
 
+  bool isExpanded = false;
+
   Future<void> _getAllCategorias() async {
     await categoriaHelper.getAllCategorias().then((listaC) {
       print(listaC);
       print(_caprinoSelecionado);
-
       setState(() {
-        categorias = listaC;
+        categoriaSelecionada =
+            listaC[_caprinoSelecionado.idCategoria].descricao;
       });
     });
   }
@@ -68,7 +69,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       print(listaR);
 
       setState(() {
-        racas = listaR;
+        racaSelecionada = listaR[_caprinoSelecionado.idRaca].descricao;
       });
     });
   }
@@ -76,14 +77,15 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
   Future<void> _getAllTratamentos() async {
     List<Tratamento> tratamentosFinal = List();
     await tratamentoHelper.getAllTratamentos().then((listaT) {
+      print(listaT);
       if (listaT.isNotEmpty) {
         for (var tratamento in listaT) {
           if (tratamento.animalId == _caprinoSelecionado.idAnimal) {
             tratamentosFinal.add(tratamento);
           }
         }
-        print(listaT);
         setState(() {
+          ordenaEventos(tratamentosFinal);
           tratamentos = tratamentosFinal;
         });
       }
@@ -93,14 +95,15 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
   Future<void> _getAllObservacoes() async {
     List<Observacao> observacoesFinal = List();
     await observacaoHelper.getAllObservacaos().then((listaO) {
+      print(listaO);
       if (listaO.isNotEmpty) {
         for (var observacao in listaO) {
           if (observacao.animalId == _caprinoSelecionado.idAnimal) {
             observacoesFinal.add(observacao);
           }
         }
-
         setState(() {
+          ordenaEventos(observacoesFinal);
           observacoes = observacoesFinal;
         });
       }
@@ -119,13 +122,13 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         }
         print(pesagemFinal);
         setState(() {
+          ordenaEventos(pesagemFinal);
           pesos = pesagemFinal;
         });
       }
     });
   }
 
-  final _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
@@ -140,232 +143,193 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.green,
-        title: Text("Informações Sobre Caprino"),
-        centerTitle: true,
-      ),
-      floatingActionButton: SpeedDial(
-        // both default to 16
-        marginRight: 18,
-        marginBottom: 20,
-        animatedIcon: AnimatedIcons.menu_close,
-        animatedIconTheme: IconThemeData(size: 22.0),
-        // this is ignored if animatedIcon is non null
-        // child: Icon(Icons.add),
-        visible: true,
-        // If true user is forced to close dial manually
-        // by tapping main button and overlay is not rendered.
-        closeManually: false,
-        curve: Curves.bounceIn,
-        overlayColor: Colors.black,
-        overlayOpacity: 0.5,
-        onOpen: () => print('OPENING DIAL'),
-        onClose: () => print('DIAL CLOSED'),
-        tooltip: 'Speed Dial',
-        heroTag: 'speed-dial-hero-tag',
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
-        elevation: 8.0,
-        shape: CircleBorder(),
-        children: [
-          SpeedDialChild(
-            child: Icon(MdiIcons.needle),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: DefaultTabController(
+        length: 4,
+        child: Scaffold(
+          appBar: AppBar(
             backgroundColor: Colors.green,
-            label: 'Tratamento',
-            labelStyle: TextStyle(fontSize: 18.0),
-            onTap: () async {
-              final recTratamento = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => TratamentoPage(
-                            animalTratamento: _caprinoSelecionado,
-                          )));
-              if (recTratamento != null) {
-                if (_caprinoSelecionado != null) {
-                  tratamentoHelper.saveTratamento(recTratamento);
-                  _getAllTratamentos();
-                }
-              }
-            },
+            title: Text("Informações Sobre Caprino"),
+            centerTitle: true,
+            bottom: TabBar(
+              isScrollable: true,
+              tabs: [
+                Tab(text: "Informações"),
+                Tab(text: "Tratamentos"),
+                Tab(text: "Pesagens"),
+                Tab(text: "Observações"),
+              ],
+            ),
           ),
-          SpeedDialChild(
-            child: Icon(MdiIcons.weightKilogram),
+          floatingActionButton: SpeedDial(
+            marginRight: 18,
+            marginBottom: 20,
+            animatedIcon: AnimatedIcons.menu_close,
+            animatedIconTheme: IconThemeData(size: 22.0),
+            visible: true,
+            closeManually: false,
+            curve: Curves.bounceIn,
+            overlayColor: Colors.black,
+            overlayOpacity: 0.5,
+            onOpen: () => print('OPENING DIAL'),
+            onClose: () => print('DIAL CLOSED'),
+            tooltip: 'Speed Dial',
+            heroTag: 'speed-dial-hero-tag',
             backgroundColor: Colors.green,
-            label: 'Pesagem',
-            labelStyle: TextStyle(fontSize: 18.0),
-            onTap: () async {
-              final recPesagem = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => PesagemPage(
-                            animalPesagem: _caprinoSelecionado,
-                          )));
-              if (recPesagem != null) {
-                if (_caprinoSelecionado != null) {
-                  pesagemHelper.savePesagem(recPesagem);
-                  _getAllPesagens();
-                }
-              }
-            },
-          ),
-          SpeedDialChild(
-            child: Icon(MdiIcons.cashUsd),
-            backgroundColor: Colors.green,
-            label: 'Venda',
-            labelStyle: TextStyle(fontSize: 18.0),
-            onTap: () async {
-              final recAnimal = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => VendaPage(
-                            animalVenda: _caprinoSelecionado,
-                          )));
-              if (recAnimal != null) {
-                print(recAnimal);
-                if (_caprinoSelecionado != null) {
-                  await animalHelper.updateAnimal(recAnimal);
-                }
-              }
-            },
-          ),
-          SpeedDialChild(
-            child: Icon(MdiIcons.skullCrossbones),
-            backgroundColor: Colors.green,
-            label: 'Morte',
-            labelStyle: TextStyle(fontSize: 18.0),
-            onTap: () async {
-              final recAnimal = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => MortePage(
-                            animalMorte: _caprinoSelecionado,
-                          )));
-              if (recAnimal != null) {
-                if (_caprinoSelecionado != null) {
-                  animalHelper.updateAnimal(recAnimal);
-                }
-              }
-            },
-          ),
-          SpeedDialChild(
-            child: Icon(MdiIcons.alert),
-            backgroundColor: Colors.green,
-            label: 'Observações',
-            labelStyle: TextStyle(fontSize: 18.0),
-            onTap: () async {
-              final recObservacao = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ObservacaoPage(
-                            animalObservacao: _caprinoSelecionado,
-                          )));
-              if (recObservacao != null) {
-                if (_caprinoSelecionado != null) {
-                  observacaoHelper.saveObservacao(recObservacao);
-                  _getAllObservacoes();
-                }
-              }
-            },
-          ),
-        ],
-      ),
-      //  FloatingActionButton(
-      //   onPressed: () {},
-      //   child: Icon(Icons.arrow_drop_down_circle),
-      //   backgroundColor: Colors.green,
-      // ),
-      body: Form(
-        key: _formKey,
-        child: new Container(
-          padding: EdgeInsets.all(13.0),
-          child: ListView(
+            foregroundColor: Colors.white,
+            elevation: 8.0,
+            shape: CircleBorder(),
             children: [
-              Column(
-                children: <Widget>[
-                  GestureDetector(
-                    child: Container(
-                      width: 140.0,
-                      height: 140.0,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            image: _caprinoSelecionado.img != null
-                                ? FileImage(File(_caprinoSelecionado.img))
-                                : AssetImage("images/caprino.png"),
-                            fit: BoxFit.cover),
-                      ),
-                    ),
-                  ),
-                  DataTable(
-                    columns: <DataColumn>[
-                      DataColumn(
-                        label: Text(''),
-                      ),
-                      DataColumn(
-                        label: Text(''),
-                      ),
-                    ],
-                    rows: [
-                      DataRow(cells: [
-                        DataCell(Text("Patrimônio")),
-                        DataCell(Text(ehvazio(_caprinoSelecionado.patrimonio)))
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text("Brinco")),
-                        DataCell(
-                            Text(ehvazio(_caprinoSelecionado.brincoControle)))
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text("ID")),
-                        DataCell(Text(_caprinoSelecionado.idAnimal.toString()))
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text("Idade")),
-                        DataCell(
-                          Text(
-                            idadeAnimal(_dataComSplit[2], _dataComSplit[1]),
+              SpeedDialChild(
+                child: Icon(MdiIcons.needle),
+                backgroundColor: Colors.green,
+                label: 'Tratamento',
+                labelStyle: TextStyle(fontSize: 18.0),
+                onTap: () async {
+                  final recTratamento = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => TratamentoPage(
+                                animalTratamento: _caprinoSelecionado,
+                              )));
+                  if (recTratamento != null) {
+                    if (_caprinoSelecionado != null) {
+                      tratamentoHelper.saveTratamento(recTratamento);
+                      _getAllTratamentos();
+                    }
+                  }
+                },
+              ),
+              SpeedDialChild(
+                child: Icon(MdiIcons.weightKilogram),
+                backgroundColor: Colors.green,
+                label: 'Pesagem',
+                labelStyle: TextStyle(fontSize: 18.0),
+                onTap: () async {
+                  final recPesagem = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PesagemPage(
+                                animalPesagem: _caprinoSelecionado,
+                              )));
+                  if (recPesagem != null) {
+                    if (_caprinoSelecionado != null) {
+                      pesagemHelper.savePesagem(recPesagem);
+                      _getAllPesagens();
+                    }
+                  }
+                },
+              ),
+              SpeedDialChild(
+                child: Icon(MdiIcons.cashUsd),
+                backgroundColor: Colors.green,
+                label: 'Venda',
+                labelStyle: TextStyle(fontSize: 18.0),
+                onTap: () async {
+                  final recAnimal = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => VendaPage(
+                                animalVenda: _caprinoSelecionado,
+                              )));
+                  if (recAnimal != null) {
+                    print(recAnimal);
+                    if (_caprinoSelecionado != null) {
+                      await animalHelper.updateAnimal(recAnimal);
+                    }
+                  }
+                },
+              ),
+              SpeedDialChild(
+                child: Icon(MdiIcons.skullCrossbones),
+                backgroundColor: Colors.green,
+                label: 'Morte',
+                labelStyle: TextStyle(fontSize: 18.0),
+                onTap: () async {
+                  final recAnimal = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MortePage(
+                                animalMorte: _caprinoSelecionado,
+                              )));
+                  if (recAnimal != null) {
+                    if (_caprinoSelecionado != null) {
+                      animalHelper.updateAnimal(recAnimal);
+                    }
+                  }
+                },
+              ),
+              SpeedDialChild(
+                child: Icon(MdiIcons.alert),
+                backgroundColor: Colors.green,
+                label: 'Observações',
+                labelStyle: TextStyle(fontSize: 18.0),
+                onTap: () async {
+                  final recObservacao = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ObservacaoPage(
+                                animalObservacao: _caprinoSelecionado,
+                              )));
+                  if (recObservacao != null) {
+                    if (_caprinoSelecionado != null) {
+                      observacaoHelper.saveObservacao(recObservacao);
+                      _getAllObservacoes();
+                    }
+                  }
+                },
+              ),
+            ],
+          ),
+          body: TabBarView(
+            children: [
+              Container(
+                padding: EdgeInsets.all(13.0),
+                child: ListView(
+                  children: [
+                    Column(
+                      children: <Widget>[
+                        GestureDetector(
+                          child: Container(
+                            width: 140.0,
+                            height: 140.0,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                  image: _caprinoSelecionado.img != null
+                                      ? FileImage(File(_caprinoSelecionado.img))
+                                      : AssetImage("images/caprino.png"),
+                                  fit: BoxFit.cover),
+                            ),
                           ),
                         ),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text("Nome")),
-                        DataCell(Text(ehvazio(_caprinoSelecionado.nome)))
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text("Sexo")),
-                        DataCell(Text(_caprinoSelecionado.sexo))
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text("Categoria")),
-                        DataCell(Text(
-                            categorias[_caprinoSelecionado.idCategoria]
-                                    .descricao ??
-                                ""))
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text("Raça")),
-                        DataCell(Text(
-                            racas[_caprinoSelecionado.idRaca].descricao ?? ""))
-                      ]),
-                    ],
-                  ),
-                  DataTable(
-                    columns: <DataColumn>[
-                      DataColumn(
-                        label: Text(''),
-                      ),
-                      DataColumn(
-                        label: Text(''),
-                      ),
-                      DataColumn(
-                        label: Text(''),
-                      ),
-                    ],
-                    rows: listaEventos(),
-                  ),
-                ],
+                      ],
+                    ),
+                    _informacoesAnimal(_caprinoSelecionado),
+                  ],
+                ),
+              ),
+              ListView.builder(
+                padding: EdgeInsets.all(10.0),
+                itemCount: tratamentos.length,
+                itemBuilder: (context, index) {
+                  return exibicaoPadraoDeEvento(context, index, tratamentos, 1);
+                },
+              ),
+              ListView.builder(
+                padding: EdgeInsets.all(10.0),
+                itemCount: pesos.length,
+                itemBuilder: (context, index) {
+                  return exibicaoPadraoDeEvento(context, index, pesos, 2);
+                },
+              ),
+              ListView.builder(
+                padding: EdgeInsets.all(10.0),
+                itemCount: observacoes.length,
+                itemBuilder: (context, index) {
+                  return exibicaoPadraoDeEvento(context, index, observacoes, 3);
+                },
               ),
             ],
           ),
@@ -374,65 +338,222 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     );
   }
 
-  List<DataRow> listaEventos() {
-    List<DataRow> lista = [];
-    //data nascimento
+  secaoSelecionada(int a) {
+    _getAllObservacoes();
+    _getAllTratamentos();
+    _getAllPesagens();
+    if (a == 1) {
+      if (tratamentos.isNotEmpty) {
+        ListView.builder(
+          padding: EdgeInsets.all(10.0),
+          itemCount: tratamentos.length,
+          itemBuilder: (context, index) {
+            return exibicaoPadraoDeEvento(context, index, tratamentos, 1);
+          },
+        );
 
-    lista.add(DataRow(cells: [
-      DataCell(Icon(MdiIcons.cake)),
-      DataCell(Text(_caprinoSelecionado.dataNascimento)),
-      DataCell(Text("Nascimento")),
-    ]));
+        // backgroundColor: Colors.green,
 
-    // pesagem
-    if (pesos.isNotEmpty) {
-      for (var peso in pesos) {
-        lista.add(DataRow(cells: [
-          DataCell(Icon(MdiIcons.weightKilogram)),
-          DataCell(Text(peso.data)),
-          DataCell(Text(peso.peso + "KG"))
-        ]));
+      } else {
+        return Text("");
       }
-    }
-
-    // morte
-    if (_caprinoSelecionado.status == "2") {
-      lista.add(DataRow(cells: [
-        DataCell(Icon(MdiIcons.skullCrossbones)),
-        DataCell(Text(_caprinoSelecionado.dataMorte)),
-        DataCell(Text(_caprinoSelecionado.descricaoMorte))
-      ]));
-    }
-    // tratamento
-    if (tratamentos.isNotEmpty) {
-      for (var tratamento in tratamentos) {
-        lista.add(DataRow(cells: [
-          DataCell(Icon(MdiIcons.needle)),
-          DataCell(Text(tratamento.data)),
-          DataCell(Text(tratamento.medicacao))
-        ]));
+      if (a == 2) {
+        ListView.builder(
+          padding: EdgeInsets.all(10.0),
+          itemCount: pesos.length,
+          itemBuilder: (context, index) {
+            return exibicaoPadraoDeEvento(context, index, pesos, 2);
+          },
+        );
+      } else {
+        return Text("");
       }
-    }
-
-    //venda
-    if (_caprinoSelecionado.status == "1") {
-      lista.add(DataRow(cells: [
-        DataCell(Icon(MdiIcons.cashUsd)),
-        DataCell(Text(_caprinoSelecionado.dataVendaAnimal)),
-        DataCell(Text(_caprinoSelecionado.valorVenda))
-      ]));
-    }
-    //observacoes
-    if (observacoes.isNotEmpty) {
-      for (var observacao in observacoes) {
-        lista.add(DataRow(cells: [
-          DataCell(Icon(MdiIcons.alert)),
-          DataCell(Text(observacao.data)),
-          DataCell(Text(observacao.descricao))
-        ]));
+      if (a == 3) {
+        if (observacoes.isNotEmpty) {
+          ListView.builder(
+            padding: EdgeInsets.all(10.0),
+            itemCount: observacoes.length,
+            itemBuilder: (context, index) {
+              return exibicaoPadraoDeEvento(context, index, observacoes, 3);
+            },
+          );
+        } else {
+          return Text("");
+        }
       }
+    } else {
+      return Text("");
     }
-
-    return lista;
   }
+
+  ordenaEventos(List a) {
+    a.sort((a, b) {
+      var adate = a.data; //before -> var adate = a.expiry;
+      var bdate = b.data; //before -> var bdate = b.expiry;
+      return bdate.compareTo(
+          adate); //to get the order other way just switch `adate & bdate
+    });
+  }
+
+  // tipos podem ser 1 - tratamento 2- pesagem 3- Venda 4 - Morte 5 Observacao
+  Padding exibicaoPadraoDeEvento(
+      BuildContext context, int index, List lista, int tipo) {
+    bool isExpanded = false;
+    Text selected;
+    IconData iconeSelecionado;
+    dynamic exibeLateral;
+    
+    switch (tipo) {
+      case 1:
+        List<String> dataEventoComSplit = lista[index].data.split("/");
+        iconeSelecionado = MdiIcons.needle;
+        selected = Text(lista[index].medicacao);
+        exibeLateral = calculoDiasRestantes(dataEventoComSplit[0],dataEventoComSplit[1],dataEventoComSplit[2],lista[index].periodoCarencia);
+        break;
+      case 3:
+        iconeSelecionado = MdiIcons.alert;
+        selected = Text(lista[index].descricao);
+        exibeLateral = Icon(Icons.arrow_drop_down);
+        break;
+      case 2:
+        iconeSelecionado = MdiIcons.weightKilogram;
+        selected = Text(lista[index].peso);
+        exibeLateral = Icon(Icons.arrow_drop_down);
+        break;
+      case 4:
+        iconeSelecionado = MdiIcons.cashUsd;
+        break;
+      case 5:
+        iconeSelecionado = MdiIcons.skullCrossbones;
+        break;
+      default:
+    }
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 5.0,
+        left: 16.0,
+        right: 70.0,
+      ),
+      child: Material(
+        elevation: 2.0,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8.0))),
+        child: GroovinExpansionTile(
+          defaultTrailingIconColor: Colors.green,
+          trailing: exibeLateral,
+          leading: CircleAvatar(
+            backgroundColor: Colors.green,
+            child: Icon(
+              iconeSelecionado,
+              color: Colors.white,
+            ),
+          ),
+          title: Text(
+            lista[index].data,
+            style: TextStyle(color: Colors.black),
+          ),
+          subtitle: selected,
+          onExpansionChanged: (value) {
+            setState(() {
+              isExpanded = value;
+            });
+          },
+          inkwellRadius: !isExpanded
+              ? BorderRadius.all(Radius.circular(8.0))
+              : BorderRadius.only(
+                  topRight: Radius.circular(8.0),
+                  topLeft: Radius.circular(8.0),
+                ),
+          children: <Widget>[
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(5.0),
+                bottomRight: Radius.circular(5.0),
+              ),
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.delete),
+                          color: Colors.red,
+                          onPressed: () {},
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.edit),
+                          onPressed: () {},
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.remove_red_eye),
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _informacoesAnimal(Animal caprinoSelecionado) {
+    return DataTable(
+      columns: <DataColumn>[
+        DataColumn(
+          label: Text(''),
+        ),
+        DataColumn(
+          label: Text(''),
+        ),
+      ],
+      rows: [
+        DataRow(cells: [
+          DataCell(Text("Patrimônio")),
+          DataCell(Text(ehvazio(_caprinoSelecionado.patrimonio)))
+        ]),
+        DataRow(cells: [
+          DataCell(Text("Brinco")),
+          DataCell(Text(ehvazio(_caprinoSelecionado.brincoControle)))
+        ]),
+        DataRow(cells: [
+          DataCell(Text("ID")),
+          DataCell(Text(_caprinoSelecionado.idAnimal.toString()))
+        ]),
+        DataRow(cells: [
+          DataCell(Text("Idade")),
+          DataCell(
+            Text(
+              idadeAnimal(_dataComSplit[2], _dataComSplit[1]),
+            ),
+          ),
+        ]),
+        DataRow(cells: [
+          DataCell(Text("Nome")),
+          DataCell(Text(ehvazio(_caprinoSelecionado.nome)))
+        ]),
+        DataRow(cells: [
+          DataCell(Text("Sexo")),
+          DataCell(Text(_caprinoSelecionado.sexo))
+        ]),
+        DataRow(cells: [
+          DataCell(Text("Categoria")),
+          DataCell(Text(categoriaSelecionada))
+        ]),
+        DataRow(
+            cells: [DataCell(Text("Raça")), DataCell(Text(racaSelecionada))]),
+        DataRow(cells: [
+          DataCell(Text(_caprinoSelecionado.dataNascimento)),
+          DataCell(Text("Nascimento")),
+        ]),
+      ],
+    );
+  }
+
+
 }

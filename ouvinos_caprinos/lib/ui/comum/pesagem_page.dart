@@ -4,6 +4,7 @@ import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/pesagem/class/pesagem.dart';
 import 'package:ouvinos_caprinos/pesagem/db/pesagem_database.dart';
+import 'package:ouvinos_caprinos/util/funcoes.dart';
 
 class PesagemPage extends StatefulWidget {
   final Animal animalPesagem;
@@ -90,9 +91,10 @@ class _PesagemPageState extends State<PesagemPage> {
                 });
               },
             ),
+            espacamentoPadrao(),
             TextField(
               keyboardType: TextInputType.numberWithOptions(decimal: true),
-              decoration: InputDecoration(labelText: "Peso(KG)*"),
+              decoration: estiloPadrao("Peso(KG)*", 1) ,
               // controller: _selectedNome,
               onChanged: (text) {
                 setState(() {

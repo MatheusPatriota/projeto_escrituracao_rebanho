@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
+import 'package:ouvinos_caprinos/util/funcoes.dart';
 
 class MortePage extends StatefulWidget {
   final Animal animalMorte;
@@ -82,8 +83,9 @@ class _MortePageState extends State<MortePage> {
                 });
               },
             ),
+            espacamentoPadrao(),
             TextField(
-              decoration: InputDecoration(labelText: "Motivo da Morte*"),
+              decoration: estiloPadrao("Motivo da Morte*", 1),
               // controller: _selectedNome,
               onChanged: (text) {
                 setState(() {
