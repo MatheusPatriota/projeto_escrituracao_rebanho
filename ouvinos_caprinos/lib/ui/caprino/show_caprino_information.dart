@@ -18,6 +18,7 @@ import 'package:ouvinos_caprinos/ui/comum/observacao_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/pesagem_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/tratamento_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/venda_page.dart';
+import 'package:ouvinos_caprinos/ui/comum/visualizar_evento.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
 
 class CaprinoInformation extends StatefulWidget {
@@ -502,7 +503,12 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                         ),
                         IconButton(
                           icon: Icon(Icons.remove_red_eye),
-                          onPressed: () {},
+                          onPressed: () {
+                            _showEventoPage(
+                              evento: lista[index],
+                              opcao: opcao,
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -515,6 +521,13 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       ),
     );
   }
+  
+   void _showEventoPage({dynamic evento, int opcao}) async {
+      dynamic op =VisualizarEvento(evento: evento,tipoEvento: opcao,);
+      await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => op));
+   }
+
 
   void _showCadastroPage({dynamic evento, int opcao, int idAnimal}) async {
     dynamic op;
@@ -523,7 +536,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     } else if (opcao == 2) {
       op = new PesagemPage(peso: evento, animalId: idAnimal);
     } else {
-      op = new ObservacaoPage(observacao: evento,animalId: idAnimal);
+      op = new ObservacaoPage(observacao: evento, animalId: idAnimal);
     }
     final recEvento = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => op));
