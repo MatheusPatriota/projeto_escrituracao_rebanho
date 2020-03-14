@@ -187,12 +187,12 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                 label: 'Tratamento',
                 labelStyle: TextStyle(fontSize: 18.0),
                 onTap: () async {
-                  final recTratamento = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => TratamentoPage(
-                                animalTratamento: _caprinoSelecionado,
-                              )));
+                  TratamentoPage novoTratamento = TratamentoPage(
+                    tratamento: null,
+                    animalId: _caprinoSelecionado.idAnimal,
+                  );
+                  final recTratamento = await Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => novoTratamento));
                   if (recTratamento != null) {
                     if (_caprinoSelecionado != null) {
                       tratamentoHelper.saveTratamento(recTratamento);
@@ -207,12 +207,12 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                 label: 'Pesagem',
                 labelStyle: TextStyle(fontSize: 18.0),
                 onTap: () async {
-                  final recPesagem = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => PesagemPage(
-                                animalPesagem: _caprinoSelecionado,
-                              )));
+                  PesagemPage novaPesagem = PesagemPage(
+                    peso: null,
+                    animalId: _caprinoSelecionado.idAnimal,
+                  );
+                  final recPesagem = await Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => novaPesagem));
                   if (recPesagem != null) {
                     if (_caprinoSelecionado != null) {
                       pesagemHelper.savePesagem(recPesagem);
@@ -227,16 +227,16 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                 label: 'Venda',
                 labelStyle: TextStyle(fontSize: 18.0),
                 onTap: () async {
-                  final recAnimal = await Navigator.push(
+                  final recEvento = await Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => VendaPage(
                                 animalVenda: _caprinoSelecionado,
                               )));
-                  if (recAnimal != null) {
-                    print(recAnimal);
+                  if (recEvento != null) {
+                    print(recEvento);
                     if (_caprinoSelecionado != null) {
-                      await animalHelper.updateAnimal(recAnimal);
+                      await animalHelper.updateAnimal(recEvento);
                     }
                   }
                 },
@@ -247,15 +247,15 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                 label: 'Morte',
                 labelStyle: TextStyle(fontSize: 18.0),
                 onTap: () async {
-                  final recAnimal = await Navigator.push(
+                  final recEvento = await Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => MortePage(
                                 animalMorte: _caprinoSelecionado,
                               )));
-                  if (recAnimal != null) {
+                  if (recEvento != null) {
                     if (_caprinoSelecionado != null) {
-                      animalHelper.updateAnimal(recAnimal);
+                      animalHelper.updateAnimal(recEvento);
                     }
                   }
                 },
@@ -266,12 +266,12 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                 label: 'Observações',
                 labelStyle: TextStyle(fontSize: 18.0),
                 onTap: () async {
+                  ObservacaoPage obs = ObservacaoPage(
+                    observacao: null,
+                    animalId: _caprinoSelecionado.idAnimal,
+                  );
                   final recObservacao = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ObservacaoPage(
-                                animalObservacao: _caprinoSelecionado,
-                              )));
+                      context, MaterialPageRoute(builder: (context) => obs));
                   if (recObservacao != null) {
                     if (_caprinoSelecionado != null) {
                       observacaoHelper.saveObservacao(recObservacao);
@@ -395,30 +395,39 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     });
   }
 
-  // tipos podem ser 1 - tratamento 2- pesagem 3- Venda 4 - Morte 5 Observacao
+  // tipos podem ser 1 - tratamento 3- pesagem  2 Observacao
   Padding exibicaoPadraoDeEvento(
       BuildContext context, int index, List lista, int tipo) {
     bool isExpanded = false;
     Text selected;
     IconData iconeSelecionado;
     dynamic exibeLateral;
-    
+    // 1- tratamento 3 - observacao 2- pesagem
+    int opcao;
+
     switch (tipo) {
       case 1:
         List<String> dataEventoComSplit = lista[index].data.split("/");
         iconeSelecionado = MdiIcons.needle;
         selected = Text(lista[index].medicacao);
-        exibeLateral = calculoDiasRestantes(dataEventoComSplit[0],dataEventoComSplit[1],dataEventoComSplit[2],lista[index].periodoCarencia);
+        exibeLateral = calculoDiasRestantes(
+            dataEventoComSplit[0],
+            dataEventoComSplit[1],
+            dataEventoComSplit[2],
+            lista[index].periodoCarencia);
+        opcao = 1;
         break;
       case 3:
         iconeSelecionado = MdiIcons.alert;
         selected = Text(lista[index].descricao);
         exibeLateral = Icon(Icons.arrow_drop_down);
+        opcao = 3;
         break;
       case 2:
         iconeSelecionado = MdiIcons.weightKilogram;
         selected = Text(lista[index].peso);
         exibeLateral = Icon(Icons.arrow_drop_down);
+        opcao = 2;
         break;
       case 4:
         iconeSelecionado = MdiIcons.cashUsd;
@@ -484,7 +493,12 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                         ),
                         IconButton(
                           icon: Icon(Icons.edit),
-                          onPressed: () {},
+                          onPressed: () {
+                            _showCadastroPage(
+                                evento: lista[index],
+                                opcao: opcao,
+                                idAnimal: lista[index].animalId);
+                          },
                         ),
                         IconButton(
                           icon: Icon(Icons.remove_red_eye),
@@ -500,6 +514,30 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         ),
       ),
     );
+  }
+
+  void _showCadastroPage({dynamic evento, int opcao, int idAnimal}) async {
+    dynamic op;
+    if (opcao == 1) {
+      op = new TratamentoPage(tratamento: evento, animalId: idAnimal);
+    } else if (opcao == 2) {
+      op = new PesagemPage(peso: evento, animalId: idAnimal);
+    } else {
+      op = new ObservacaoPage(observacao: evento,animalId: idAnimal);
+    }
+    final recEvento = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => op));
+    if (recEvento != null) {
+      if (evento != null) {
+        await animalHelper.updateAnimal(recEvento);
+      } else {
+        await animalHelper.saveAnimal(recEvento);
+      }
+
+      _getAllTratamentos();
+      _getAllObservacoes();
+      _getAllPesagens();
+    }
   }
 
   Widget _informacoesAnimal(Animal caprinoSelecionado) {
@@ -554,6 +592,4 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       ],
     );
   }
-
-
 }
