@@ -6,16 +6,17 @@ import 'package:ouvinos_caprinos/observacao/class/observacao.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
 
 class ObservacaoPage extends StatefulWidget {
-  final Animal animalObservacao;
+  final Observacao observacao;
+  final int animalId;
 
-  ObservacaoPage({this.animalObservacao});
+  ObservacaoPage({this.observacao, this.animalId});
 
   @override
   _ObservacaoPageState createState() => _ObservacaoPageState();
 }
 
 class _ObservacaoPageState extends State<ObservacaoPage> {
-  Animal _animalSelecionado;
+ 
   Observacao _observacaoCriada;
 
   DateTime _dataSelecionada = DateTime.now();
@@ -24,14 +25,19 @@ class _ObservacaoPageState extends State<ObservacaoPage> {
 
   final _formKey = GlobalKey<FormState>();
 
+  final _selectedObservacao = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-    _animalSelecionado = Animal.fromMap(widget.animalObservacao.toMap());
+    
 
-    if (_observacaoCriada == null) {
-      _observacaoCriada = Observacao(animalId: _animalSelecionado.idAnimal);
+    if (widget.observacao == null) {
+      _observacaoCriada = Observacao(animalId: widget.animalId);
       _observacaoCriada.data = _dataFormatada(_dataSelecionada);
+    }else{
+      _observacaoCriada = Observacao.fromMap(widget.observacao.toMap());
+      _selectedObservacao.text = _observacaoCriada.descricao;
     }
   }
 
@@ -91,7 +97,7 @@ class _ObservacaoPageState extends State<ObservacaoPage> {
             espacamentoPadrao(),
             TextField(
               decoration: estiloPadrao("Observação*", 1),
-              // controller: _selectedNome,
+              controller: _selectedObservacao,
               onChanged: (text) {
                 setState(() {
                   _observacaoCriada.descricao = text;

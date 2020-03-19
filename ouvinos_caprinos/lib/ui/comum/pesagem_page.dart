@@ -1,22 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/pesagem/class/pesagem.dart';
 import 'package:ouvinos_caprinos/pesagem/db/pesagem_database.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
 
 class PesagemPage extends StatefulWidget {
-  final Animal animalPesagem;
-
-  PesagemPage({this.animalPesagem});
+  final Pesagem peso;
+  final animalId;
+  PesagemPage({this.peso, this.animalId});
 
   @override
   _PesagemPageState createState() => _PesagemPageState();
 }
 
 class _PesagemPageState extends State<PesagemPage> {
-  Animal _animalSelecionado;
+
+
+  final _selectedPeso = TextEditingController();
 
   Pesagem _pesoCadastrado;
 
@@ -30,11 +31,15 @@ class _PesagemPageState extends State<PesagemPage> {
   @override
   void initState() {
     super.initState();
-    _animalSelecionado = Animal.fromMap(widget.animalPesagem.toMap());
-    if (_pesoCadastrado == null) {
-      _pesoCadastrado = Pesagem(animalId: _animalSelecionado.idAnimal);
+   
+    if (widget.peso == null) {
+      _pesoCadastrado = Pesagem(animalId: widget.animalId);
       _pesoCadastrado.data = _dataFormatada(_dataSelecionada);
       // _pesoCadastrado.idAnimal = 1;
+    }else{
+      _pesoCadastrado = Pesagem.fromMap(widget.peso.toMap());
+      _selectedPeso.text = _pesoCadastrado.peso;
+
     }
   }
 
@@ -95,7 +100,7 @@ class _PesagemPageState extends State<PesagemPage> {
             TextField(
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               decoration: estiloPadrao("Peso(KG)*", 1) ,
-              // controller: _selectedNome,
+              controller: _selectedPeso,
               onChanged: (text) {
                 setState(() {
                   _pesoCadastrado.peso = text;
