@@ -65,7 +65,7 @@ class PesagemHelper {
   Future<int> deletePesagem(int id) async {
     Database dbPesagem = await db;
     return await dbPesagem
-        .delete(tableName, where: "$id = ?", whereArgs: [id]);
+        .delete(tableName, where: "$idPesagemColumn = ?", whereArgs: [id]);
   }
 
   Future<int> updatePesagem(Pesagem pesagem) async {

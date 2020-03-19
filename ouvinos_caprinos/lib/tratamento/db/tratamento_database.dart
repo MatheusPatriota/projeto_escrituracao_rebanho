@@ -53,7 +53,7 @@ class TratamentoHelper {
   Future<Tratamento> saveTratamento(Tratamento tratamento) async {
     Database dbTratamento = await db;
     print(dbTratamento);
-    tratamento.id = await dbTratamento.insert(tableName, tratamento.toMap());
+    tratamento.idTratamento = await dbTratamento.insert(tableName, tratamento.toMap());
     print("Tratamento Salvo");
     return tratamento;
   }
@@ -83,13 +83,13 @@ class TratamentoHelper {
   Future<int> deleteTratamento(int id) async {
     Database dbTratamento = await db;
     return await dbTratamento
-        .delete(tableName, where: "$id = ?", whereArgs: [id]);
+        .delete(tableName, where: "$idTratamentoColumn = ?", whereArgs: [id]);
   }
 
   Future<int> updateTratamento(Tratamento tratamento) async {
     Database dbTratamento = await db;
     return await dbTratamento.update(tableName, tratamento.toMap(),
-        where: "$idTratamentoColumn = ?", whereArgs: [tratamento.id]);
+        where: "$idTratamentoColumn = ?", whereArgs: [tratamento.idTratamento]);
   }
 
   Future<List> getAllTratamentos() async {

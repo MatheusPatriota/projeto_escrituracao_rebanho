@@ -32,7 +32,7 @@ class Observacao{
       descricaoColumn: descricao 
     };
     if (idObservacao != null) {
-      map[idObservacao.toString()] = idObservacao;
+      map[idObservacaoColumn] = idObservacao;
     }
     return map;
   }

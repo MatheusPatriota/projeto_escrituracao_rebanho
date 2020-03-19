@@ -264,19 +264,26 @@ class _CaprinoPageState extends State<CaprinoPage> {
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
                         ),
                         onPressed: () {
-                          if (lista[index].status != "3") {
-                            lista[index].status = "3";
-                            animalHelper.updateAnimal(lista[index]);
-                            setState(() {
-                              _getAllAnimals();
-                              lista.removeAt(index);
-                              Navigator.pop(context);
-                            });
-                          } else {
-                            setState(() {
-                              Navigator.pop(context);
-                            });
-                          }
+                          // if (lista[index].status != "3") {
+                          //   lista[index].status = "3";
+                          //   animalHelper.updateAnimal(lista[index]);
+                          //   setState(() {
+                          //     _getAllAnimals();
+                          //     lista.removeAt(index);
+                          //     Navigator.pop(context);
+                          //   });
+                          // } else {
+                          //   setState(() {
+                          //     Navigator.pop(context);
+                          // }
+                          // );
+                          // }
+
+                          animalHelper.deleteAnimal(lista[index].idAnimal);
+                          setState(() {
+                            lista.removeAt(index);
+                            Navigator.pop(context);
+                          });
                         },
                       ),
                     ),

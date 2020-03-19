@@ -403,9 +403,6 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     Text selected;
     IconData iconeSelecionado;
     dynamic exibeLateral;
-    // 1- tratamento 3 - observacao 2- pesagem
-    int opcao;
-
     switch (tipo) {
       case 1:
         List<String> dataEventoComSplit = lista[index].data.split("/");
@@ -415,20 +412,17 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
             dataEventoComSplit[0],
             dataEventoComSplit[1],
             dataEventoComSplit[2],
-            lista[index].periodoCarencia);
-        opcao = 1;
+            lista[index].periodoCarencia);      
         break;
       case 3:
         iconeSelecionado = MdiIcons.alert;
         selected = Text(lista[index].descricao);
-        exibeLateral = Icon(Icons.arrow_drop_down);
-        opcao = 3;
+        exibeLateral = Icon(Icons.arrow_drop_down);       
         break;
       case 2:
         iconeSelecionado = MdiIcons.weightKilogram;
         selected = Text(lista[index].peso);
         exibeLateral = Icon(Icons.arrow_drop_down);
-        opcao = 2;
         break;
       case 4:
         iconeSelecionado = MdiIcons.cashUsd;
@@ -490,14 +484,19 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                         IconButton(
                           icon: Icon(Icons.delete),
                           color: Colors.red,
-                          onPressed: () {},
+                          onPressed: () {
+                            _excluirEvento(lista[index], tipo);
+                            setState(() {
+                              lista.removeAt(index);
+                            });
+                          },
                         ),
                         IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: () {
                             _showCadastroPage(
                                 evento: lista[index],
-                                opcao: opcao,
+                                tipo: tipo,
                                 idAnimal: lista[index].animalId);
                           },
                         ),
@@ -506,7 +505,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                           onPressed: () {
                             _showEventoPage(
                               evento: lista[index],
-                              opcao: opcao,
+                              tipo: tipo,
                             );
                           },
                         ),
@@ -521,19 +520,68 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       ),
     );
   }
-  
-   void _showEventoPage({dynamic evento, int opcao}) async {
-      dynamic op =VisualizarEvento(evento: evento,tipoEvento: opcao,);
-      await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => op));
-   }
 
-
-  void _showCadastroPage({dynamic evento, int opcao, int idAnimal}) async {
+  void _excluirEvento(dynamic evento, int tipo) {
     dynamic op;
-    if (opcao == 1) {
+    if (tipo == 1) {
+      op = new TratamentoHelper();
+    } else if (tipo == 2) {
+      op = new PesagemHelper();
+    } else {
+      op = new ObservacaoHelper();
+    }
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Deseja Excluir o Evento?"),
+            content: Text(
+                "Se excluir todos os dados sobre o evento serão excluídos."),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Não"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+                child: Text("Sim"),
+                onPressed: () {
+                  delete(op, tipo, evento);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  void delete(dynamic helper, int tipo, dynamic evento) {
+    if (tipo == 1) {
+      helper.deleteTratamento(evento.idTratamento);
+      _getAllTratamentos();
+    } else if (tipo == 2) {
+      helper.deletePesagem(evento.idPesagem);
+      _getAllPesagens();
+    } else {
+      helper.deleteObservacao(evento.idObservacao);
+      _getAllObservacoes();
+    }
+  }
+
+  void _showEventoPage({dynamic evento, int tipo}) async {
+    dynamic op = VisualizarEvento(
+      evento: evento,
+      tipoEvento: tipo,
+    );
+    await Navigator.push(context, MaterialPageRoute(builder: (context) => op));
+  }
+
+  void _showCadastroPage({dynamic evento, int tipo, int idAnimal}) async {
+    dynamic op;
+    if (tipo == 1) {
       op = new TratamentoPage(tratamento: evento, animalId: idAnimal);
-    } else if (opcao == 2) {
+    } else if (tipo == 2) {
       op = new PesagemPage(peso: evento, animalId: idAnimal);
     } else {
       op = new ObservacaoPage(observacao: evento, animalId: idAnimal);
@@ -541,10 +589,12 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     final recEvento = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => op));
     if (recEvento != null) {
-      if (evento != null) {
-        await animalHelper.updateAnimal(recEvento);
-      } else {
-        await animalHelper.saveAnimal(recEvento);
+      if (evento != null && tipo == 1) {
+        await tratamentoHelper.updateTratamento(recEvento);
+      } else if (evento != null && tipo == 2) {
+        await pesagemHelper.updatePesagem(recEvento);
+      } else if (evento != null && tipo == 3) {
+        await observacaoHelper.updateObservacao(recEvento);
       }
 
       _getAllTratamentos();

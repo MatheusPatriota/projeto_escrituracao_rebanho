@@ -1,7 +1,7 @@
 import 'package:ouvinos_caprinos/tratamento/db/tratamento_database.dart';
 
 class Tratamento {
-  int id;
+  int idTratamento;
   int animalId;
   String data;
   String motivo;
@@ -11,7 +11,7 @@ class Tratamento {
   String anotacoes;
 
   Tratamento({
-    this.id,
+    this.idTratamento,
     this.animalId,
     this.data,
     this.motivo,
@@ -22,7 +22,7 @@ class Tratamento {
   });
 
   Tratamento.fromMap(Map map) {
-    id = map[idTratamentoColumn];
+    idTratamento = map[idTratamentoColumn];
     animalId = map[animalIdColumn];
     data = map[dataColumn];
     motivo = map[motivoColumn];
@@ -43,14 +43,14 @@ class Tratamento {
       custoColumn: custo,
       anotacoesColumn: anotacoes
       };
-    if (id != null) {
-      map[id.toString()] = id;
+    if (idTratamento != null) {
+      map[idTratamentoColumn] = idTratamento;
     }
     return map;
   }
 
   @override
   String toString() {
-    return "Tratamento(id: $id,animalId: $animalId, medicacao: $medicacao, custo: $custo, anotacoes:$anotacoes )";
+    return "Tratamento(id: $idTratamento,animalId: $animalId, medicacao: $medicacao, pc: $periodoCarencia, custo: $custo, anotacoes:$anotacoes )";
   }
 }

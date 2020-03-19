@@ -31,7 +31,7 @@ class Pesagem{
       pesoColumn: peso 
     };
     if (idPesagem != null) {
-      map[idPesagem.toString()] = idPesagem;
+      map[idPesagemColumn] = idPesagem;
     }
     return map;
   }

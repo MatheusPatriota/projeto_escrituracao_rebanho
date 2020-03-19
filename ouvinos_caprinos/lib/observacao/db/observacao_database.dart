@@ -65,7 +65,7 @@ class ObservacaoHelper {
   Future<int> deleteObservacao(int id) async {
     Database dbObservacao = await db;
     return await dbObservacao
-        .delete(tableName, where: "$id = ?", whereArgs: [id]);
+        .delete(tableName, where: "$idObservacaoColumn = ?", whereArgs: [id]);
   }
 
   Future<int> updateObservacao(Observacao observacao) async {

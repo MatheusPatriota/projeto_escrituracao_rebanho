@@ -40,12 +40,13 @@ class _VisualizarEventoState extends State<VisualizarEvento> {
         backgroundColor: Colors.green,
         centerTitle: true,
       ),
-      body: ListView(
+      body: Center(child: ListView(
         children: <Widget>[
           Column(
             children:  _listagem(),
           )
         ],
+      ),
       ),
     );
   }
