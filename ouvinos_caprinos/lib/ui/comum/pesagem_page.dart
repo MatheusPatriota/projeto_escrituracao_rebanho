@@ -15,8 +15,6 @@ class PesagemPage extends StatefulWidget {
 }
 
 class _PesagemPageState extends State<PesagemPage> {
-
-
   final _selectedPeso = TextEditingController();
 
   Pesagem _pesoCadastrado;
@@ -31,15 +29,14 @@ class _PesagemPageState extends State<PesagemPage> {
   @override
   void initState() {
     super.initState();
-   
+
     if (widget.peso == null) {
       _pesoCadastrado = Pesagem(animalId: widget.animalId);
       _pesoCadastrado.data = _dataFormatada(_dataSelecionada);
       // _pesoCadastrado.idAnimal = 1;
-    }else{
+    } else {
       _pesoCadastrado = Pesagem.fromMap(widget.peso.toMap());
       _selectedPeso.text = _pesoCadastrado.peso;
-
     }
   }
 
@@ -72,7 +69,12 @@ class _PesagemPageState extends State<PesagemPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pop(context, _pesoCadastrado);
+          if (_formKey.currentState.validate()) {
+            // If the form is valid, display a Snackbar.
+            Scaffold.of(context)
+                .showSnackBar(SnackBar(content: Text('Processing Data')));
+            Navigator.pop(context, _pesoCadastrado);
+          }
         },
         child: Icon(Icons.check),
         backgroundColor: Colors.green,
@@ -97,9 +99,15 @@ class _PesagemPageState extends State<PesagemPage> {
               },
             ),
             espacamentoPadrao(),
-            TextField(
+            TextFormField(
               keyboardType: TextInputType.numberWithOptions(decimal: true),
-              decoration: estiloPadrao("Peso(KG)*", 1) ,
+              decoration: estiloPadrao("Peso(KG)*", 1),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Por favor, insira o Peso';
+                }
+                return null;
+              },
               controller: _selectedPeso,
               onChanged: (text) {
                 setState(() {

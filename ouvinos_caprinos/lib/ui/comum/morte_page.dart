@@ -20,6 +20,8 @@ class _MortePageState extends State<MortePage> {
 
   AnimalHelper animalHelper = AnimalHelper();
 
+  final _motivoMorte = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -58,8 +60,13 @@ class _MortePageState extends State<MortePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _animalSelecionado.status = "2";
-          Navigator.pop(context, _animalSelecionado);
+          if (_formKey.currentState.validate()) {
+            // If the form is valid, display a Snackbar.
+            Scaffold.of(context)
+                .showSnackBar(SnackBar(content: Text('Processing Data')));
+            _animalSelecionado.status = "2";
+            Navigator.pop(context, _animalSelecionado);
+          }
         },
         child: Icon(Icons.check),
         backgroundColor: Colors.green,
@@ -84,12 +91,17 @@ class _MortePageState extends State<MortePage> {
               },
             ),
             espacamentoPadrao(),
-            TextField(
+            TextFormField(
               decoration: estiloPadrao("Motivo da Morte*", 1),
-              // controller: _selectedNome,
+              controller: _motivoMorte,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Por favor, insira o motivo da morte';
+                }
+                return null;
+              },
               onChanged: (text) {
                 setState(() {
-                  // _userEdited = true;
                   _animalSelecionado.descricaoMorte = text;
                 });
               },

@@ -22,7 +22,7 @@ class _VendaPageState extends State<VendaPage> {
 
   final _formKey = GlobalKey<FormState>();
 
-   @override
+  @override
   void initState() {
     super.initState();
     _animalSelecionado = Animal.fromMap(widget.animalVenda.toMap());
@@ -33,7 +33,7 @@ class _VendaPageState extends State<VendaPage> {
     return "${_dataSelecionada.day}/${_dataSelecionada.month}/${_dataSelecionada.year}";
   }
 
-   Future<Null> _selectDataPesagem(BuildContext context) async {
+  Future<Null> _selectDataPesagem(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
       initialDate: _dataSelecionada,
@@ -57,75 +57,90 @@ class _VendaPageState extends State<VendaPage> {
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-          onPressed: () {
+        onPressed: () {
+          if (_formKey.currentState.validate()) {
+            // If the form is valid, display a Snackbar.
+            Scaffold.of(context)
+                .showSnackBar(SnackBar(content: Text('Processing Data')));
             _animalSelecionado.status = "1";
             Navigator.pop(context, _animalSelecionado);
-
-          },
-          child: Icon(Icons.check),
-          backgroundColor: Colors.green,
-        ),
+          }
+        },
+        child: Icon(Icons.check),
+        backgroundColor: Colors.green,
+      ),
       body: Form(
         key: _formKey,
         child: Container(
           padding: EdgeInsets.all(13.0),
-          child: ListView(
-            children: [
-              Container(
-                child: Text("Data da Venda*"),
-                padding: EdgeInsets.only(top: 10.0),
-              ),
-              RaisedButton(
-                child: Text(_dataFormatada(_dataSelecionada)),
-                onPressed: () {
-                  _selectDataPesagem(context);
-                  setState(() {
-                    _animalSelecionado.dataVendaAnimal = _dataFormatada(_dataSelecionada);
-                    // _userEdited = true;
-                    // _editedAnimal.dataNascimento = _dataNascimentoFormatada;
-                  });
-                },
-              ),
-              espacamentoPadrao(),
-              TextField(
-                decoration: estiloPadrao("Valor da Venda*", 2),
-                // controller: _selectedNome,
-                keyboardType: TextInputType.number,
-                onChanged: (text) {
-                  setState(() {
-                    _animalSelecionado.valorVenda = text;
-                    // _userEdited = true;
-                    // _editedAnimal.nome = text;
-                  });
-                },
-              ),
-              espacamentoPadrao(),
-              TextField(
-                decoration: estiloPadrao("Comprador*", 1),
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                // controller: _selectedNome,]
-                onChanged: (text) {
-                  setState(() {
-                    _animalSelecionado.nomeComprador = text;
-                    // _userEdited = true;
-                    // _editedAnimal.nome = text;
-                  });
-                },
-              ),
-              espacamentoPadrao(),
-              TextField(
-                decoration: estiloPadrao("Anotações", 1),
-                // controller: _selectedNome,
-                onChanged: (text) {
-                  setState(() {
-                    _animalSelecionado.anotacoesVenda = text;
-                    // _userEdited = true;
-                    // _editedAnimal.nome = text;
-                  });
-                },
-              ),
-            ]
-          ),
+          child: ListView(children: [
+            Container(
+              child: Text("Data da Venda*"),
+              padding: EdgeInsets.only(top: 10.0),
+            ),
+            RaisedButton(
+              child: Text(_dataFormatada(_dataSelecionada)),
+              onPressed: () {
+                _selectDataPesagem(context);
+                setState(() {
+                  _animalSelecionado.dataVendaAnimal =
+                      _dataFormatada(_dataSelecionada);
+                  // _userEdited = true;
+                  // _editedAnimal.dataNascimento = _dataNascimentoFormatada;
+                });
+              },
+            ),
+            espacamentoPadrao(),
+            TextFormField(
+              decoration: estiloPadrao("Valor da Venda*", 2),
+              // controller: _selectedNome,
+              keyboardType: TextInputType.number,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Por favor, insira o valor da venda';
+                }
+                return null;
+              },
+              onChanged: (text) {
+                setState(() {
+                  _animalSelecionado.valorVenda = text;
+                  // _userEdited = true;
+                  // _editedAnimal.nome = text;
+                });
+              },
+            ),
+            espacamentoPadrao(),
+            TextFormField(
+              decoration: estiloPadrao("Comprador*", 1),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Por favor, insira a o nome do Comprador';
+                }
+                return null;
+              },
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              // controller: _selectedNome,]
+              onChanged: (text) {
+                setState(() {
+                  _animalSelecionado.nomeComprador = text;
+                  // _userEdited = true;
+                  // _editedAnimal.nome = text;
+                });
+              },
+            ),
+            espacamentoPadrao(),
+            TextField(
+              decoration: estiloPadrao("Anotações", 1),
+              // controller: _selectedNome,
+              onChanged: (text) {
+                setState(() {
+                  _animalSelecionado.anotacoesVenda = text;
+                  // _userEdited = true;
+                  // _editedAnimal.nome = text;
+                });
+              },
+            ),
+          ]),
         ),
       ),
     );

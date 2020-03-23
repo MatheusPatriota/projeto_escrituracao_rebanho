@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/observacao/class/observacao.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
@@ -16,7 +15,6 @@ class ObservacaoPage extends StatefulWidget {
 }
 
 class _ObservacaoPageState extends State<ObservacaoPage> {
- 
   Observacao _observacaoCriada;
 
   DateTime _dataSelecionada = DateTime.now();
@@ -30,12 +28,11 @@ class _ObservacaoPageState extends State<ObservacaoPage> {
   @override
   void initState() {
     super.initState();
-    
 
     if (widget.observacao == null) {
       _observacaoCriada = Observacao(animalId: widget.animalId);
       _observacaoCriada.data = _dataFormatada(_dataSelecionada);
-    }else{
+    } else {
       _observacaoCriada = Observacao.fromMap(widget.observacao.toMap());
       _selectedObservacao.text = _observacaoCriada.descricao;
     }
@@ -70,7 +67,12 @@ class _ObservacaoPageState extends State<ObservacaoPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pop(context, _observacaoCriada);
+          if (_formKey.currentState.validate()) {
+            // If the form is valid, display a Snackbar.
+            Scaffold.of(context)
+                .showSnackBar(SnackBar(content: Text('Processing Data')));
+            Navigator.pop(context, _observacaoCriada);
+          }
         },
         child: Icon(Icons.check),
         backgroundColor: Colors.green,
@@ -95,9 +97,15 @@ class _ObservacaoPageState extends State<ObservacaoPage> {
               },
             ),
             espacamentoPadrao(),
-            TextField(
+            TextFormField(
               decoration: estiloPadrao("Observação*", 1),
               controller: _selectedObservacao,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Por favor, insira a observação';
+                }
+                return null;
+              },
               onChanged: (text) {
                 setState(() {
                   _observacaoCriada.descricao = text;

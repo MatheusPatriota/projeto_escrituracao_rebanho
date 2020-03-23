@@ -83,7 +83,12 @@ class _TratamentoPageState extends State<TratamentoPage> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              Navigator.pop(context, _tratamentoCadastrado);
+              if (_formKey.currentState.validate()) {
+                // If the form is valid, display a Snackbar.
+                Scaffold.of(context)
+                    .showSnackBar(SnackBar(content: Text('Processing Data')));
+                Navigator.pop(context, _tratamentoCadastrado);
+              }
             },
             child: Icon(Icons.check),
             backgroundColor: Colors.green,
@@ -103,15 +108,21 @@ class _TratamentoPageState extends State<TratamentoPage> {
                     onPressed: () {
                       _selectDataTratamento(context);
                       setState(() {
-                         _edited = true;
+                        _edited = true;
                         // _editedAnimal.dataNascimento = _dataNascimentoFormatada;
                       });
                     },
                   ),
                   espacamentoPadrao(),
-                  TextField(
+                  TextFormField(
                     controller: _selectedMotivo,
                     decoration: estiloPadrao("Motivo*", 1),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Por favor, insira o Motivo';
+                      }
+                      return null;
+                    },
                     onChanged: (text) {
                       setState(() {
                         _tratamentoCadastrado.motivo = text;
@@ -121,8 +132,14 @@ class _TratamentoPageState extends State<TratamentoPage> {
                     },
                   ),
                   espacamentoPadrao(),
-                  TextField(
+                  TextFormField(
                     decoration: estiloPadrao("Medicação/Vacinação*", 1),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Por favor, insira a Medicação/Vacinação';
+                      }
+                      return null;
+                    },
                     controller: _selectedMedicacaoVacinacao,
                     onChanged: (text) {
                       setState(() {
@@ -133,10 +150,16 @@ class _TratamentoPageState extends State<TratamentoPage> {
                     },
                   ),
                   espacamentoPadrao(),
-                  TextField(
+                  TextFormField(
                     keyboardType:
                         TextInputType.numberWithOptions(decimal: true),
-                    decoration: estiloPadrao("Periodo de Carência", 1),
+                    decoration: estiloPadrao("Periodo de Carência*", 1),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Por favor, insira o Periodo de Carência';
+                      }
+                      return null;
+                    },
                     controller: _selectedPeriodoCarencia,
                     onChanged: (text) {
                       setState(() {
@@ -147,10 +170,16 @@ class _TratamentoPageState extends State<TratamentoPage> {
                     },
                   ),
                   espacamentoPadrao(),
-                  TextField(
+                  TextFormField(
                     keyboardType:
                         TextInputType.numberWithOptions(decimal: true),
                     decoration: estiloPadrao("Custo*", 2),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Por favor, insira o Custo';
+                      }
+                      return null;
+                    },
                     controller: _selectedCusto,
                     onChanged: (text) {
                       setState(() {
