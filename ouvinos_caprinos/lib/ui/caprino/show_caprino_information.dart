@@ -332,21 +332,38 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                 padding: EdgeInsets.all(10.0),
                 itemCount: tratamentos.length,
                 itemBuilder: (context, index) {
-                  return exibicaoPadraoDeEvento(context, index, tratamentos, 1);
+                  return exibicaoPadraoDeEvento(
+                      context, index, tratamentos, 1, 3);
                 },
               ),
               ListView.builder(
                 padding: EdgeInsets.all(10.0),
                 itemCount: pesos.length,
                 itemBuilder: (context, index) {
-                  return exibicaoPadraoDeEvento(context, index, pesos, 2);
+                  if (index < pesos.length - 1) {
+                    if (int.parse(pesos[index].peso) <
+                        int.parse(pesos[index + 1].peso)) {
+                      return exibicaoPadraoDeEvento(
+                          context, index, pesos, 2, 1);
+                    } else if (int.parse(pesos[index].peso) >
+                        int.parse(pesos[index + 1].peso)) {
+                      return exibicaoPadraoDeEvento(
+                          context, index, pesos, 2, 0);
+                    } else {
+                      return exibicaoPadraoDeEvento(
+                          context, index, pesos, 2, 2);
+                    }
+                  } else {
+                    return exibicaoPadraoDeEvento(context, index, pesos, 2, 2);
+                  }
                 },
               ),
               ListView.builder(
                 padding: EdgeInsets.all(10.0),
                 itemCount: observacoes.length,
                 itemBuilder: (context, index) {
-                  return exibicaoPadraoDeEvento(context, index, observacoes, 3);
+                  return exibicaoPadraoDeEvento(
+                      context, index, observacoes, 3, 3);
                 },
               ),
             ],
@@ -356,57 +373,10 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     );
   }
 
-  secaoSelecionada(int a) {
-    _getAllObservacoes();
-    _getAllTratamentos();
-    _getAllPesagens();
-    if (a == 1) {
-      if (tratamentos.isNotEmpty) {
-        ListView.builder(
-          padding: EdgeInsets.all(10.0),
-          itemCount: tratamentos.length,
-          itemBuilder: (context, index) {
-            return exibicaoPadraoDeEvento(context, index, tratamentos, 1);
-          },
-        );
-
-        // backgroundColor: Colors.green,
-
-      } else {
-        return Text("");
-      }
-      if (a == 2) {
-        ListView.builder(
-          padding: EdgeInsets.all(10.0),
-          itemCount: pesos.length,
-          itemBuilder: (context, index) {
-            return exibicaoPadraoDeEvento(context, index, pesos, 2);
-          },
-        );
-      } else {
-        return Text("");
-      }
-      if (a == 3) {
-        if (observacoes.isNotEmpty) {
-          ListView.builder(
-            padding: EdgeInsets.all(10.0),
-            itemCount: observacoes.length,
-            itemBuilder: (context, index) {
-              return exibicaoPadraoDeEvento(context, index, observacoes, 3);
-            },
-          );
-        } else {
-          return Text("");
-        }
-      }
-    } else {
-      return Text("");
-    }
-  }
-
   // tipos podem ser 1 - tratamento 3- pesagem  2 Observacao
+  //aumentou  1 -  0 -  abaixou  2-   manteve 3- ignora
   Padding exibicaoPadraoDeEvento(
-      BuildContext context, int index, List lista, int tipo) {
+      BuildContext context, int index, List lista, int tipo, int aumentou) {
     bool isExpanded = false;
     Text selected;
     IconData iconeSelecionado;
@@ -430,7 +400,26 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       case 2:
         iconeSelecionado = MdiIcons.weightKilogram;
         selected = Text(lista[index].peso + " Kg");
-        exibeLateral = Icon(Icons.arrow_drop_down);
+
+        switch (aumentou) {
+          case 0:
+            exibeLateral = Icon(
+              Icons.trending_up,
+              color: Colors.green,
+            );
+            break;
+          case 1:
+            exibeLateral = Icon(
+              Icons.trending_down,
+              color: Colors.red,
+            );
+            break;
+          case 2:
+            exibeLateral = Icon(Icons.trending_flat);
+            break;
+
+          default:
+        }
         break;
       case 4:
         iconeSelecionado = MdiIcons.cashUsd;
