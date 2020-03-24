@@ -15,8 +15,6 @@ class PesagemPage extends StatefulWidget {
 }
 
 class _PesagemPageState extends State<PesagemPage> {
-
-
   final _selectedPeso = TextEditingController();
 
   Pesagem _pesoCadastrado;
@@ -31,20 +29,33 @@ class _PesagemPageState extends State<PesagemPage> {
   @override
   void initState() {
     super.initState();
-   
+
     if (widget.peso == null) {
       _pesoCadastrado = Pesagem(animalId: widget.animalId);
-      _pesoCadastrado.data = _dataFormatada(_dataSelecionada);
-      // _pesoCadastrado.idAnimal = 1;
-    }else{
+      _pesoCadastrado.data = _dataFormatada();    
+    } else {
       _pesoCadastrado = Pesagem.fromMap(widget.peso.toMap());
       _selectedPeso.text = _pesoCadastrado.peso;
-
     }
   }
 
-  String _dataFormatada(data) {
-    return "${_dataSelecionada.day}/${_dataSelecionada.month}/${_dataSelecionada.year}";
+  //  essa funcao eh uma possivel fatoracao de codigo 
+  String _dataFormatada() {
+    String dia = "${_dataSelecionada.day}";
+    String nd = "";
+    String mes = "${_dataSelecionada.month}";
+    String nm = "";
+    if (dia.length < 2) {
+      nd = "0" + dia;
+    } else {
+      nd = dia;
+    }
+    if (mes.length < 2) {
+      nm = "0" + mes;
+    } else {
+      nm = mes;
+    }
+    return "${_dataSelecionada.year}-" + nm + "-" + nd;
   }
 
   Future<Null> _selectDataPesagem(BuildContext context) async {
@@ -57,7 +68,7 @@ class _PesagemPageState extends State<PesagemPage> {
     if (picked != null && picked != _dataSelecionada) {
       setState(() {
         _dataSelecionada = picked;
-        _pesoCadastrado.data = _dataFormatada(_dataSelecionada);
+        _pesoCadastrado.data = _dataFormatada();
       });
     }
   }
@@ -72,7 +83,9 @@ class _PesagemPageState extends State<PesagemPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pop(context, _pesoCadastrado);
+          if (_formKey.currentState.validate()) {
+            Navigator.pop(context, _pesoCadastrado);
+          }
         },
         child: Icon(Icons.check),
         backgroundColor: Colors.green,
@@ -87,7 +100,7 @@ class _PesagemPageState extends State<PesagemPage> {
               padding: EdgeInsets.only(top: 10.0),
             ),
             RaisedButton(
-              child: Text(_dataFormatada(_dataSelecionada)),
+              child: exibicaoDataPadrao(_dataFormatada()),
               onPressed: () {
                 _selectDataPesagem(context);
                 setState(() {
@@ -97,9 +110,15 @@ class _PesagemPageState extends State<PesagemPage> {
               },
             ),
             espacamentoPadrao(),
-            TextField(
+            TextFormField(
               keyboardType: TextInputType.numberWithOptions(decimal: true),
-              decoration: estiloPadrao("Peso(KG)*", 1) ,
+              decoration: estiloPadrao("Peso(KG)*", 1),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Por favor, insira o Peso';
+                }
+                return null;
+              },
               controller: _selectedPeso,
               onChanged: (text) {
                 setState(() {

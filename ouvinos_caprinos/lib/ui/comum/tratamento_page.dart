@@ -38,8 +38,8 @@ class _TratamentoPageState extends State<TratamentoPage> {
     if (widget.tratamento == null) {
       _tratamentoCadastrado = Tratamento();
       _tratamentoCadastrado.animalId = widget.animalId;
-      _tratamentoCadastrado.data = _dataFormatada(_dataSelecionada);
-      _selectedData = _dataFormatada(_dataSelecionada);
+      _tratamentoCadastrado.data = _dataFormatada();
+      _selectedData = _dataFormatada();
     } else {
       _tratamentoCadastrado = Tratamento.fromMap(widget.tratamento.toMap());
       _selectedMotivo.text = _tratamentoCadastrado.motivo;
@@ -51,8 +51,22 @@ class _TratamentoPageState extends State<TratamentoPage> {
     }
   }
 
-  String _dataFormatada(data) {
-    return "${_dataSelecionada.day}/${_dataSelecionada.month}/${_dataSelecionada.year}";
+  String _dataFormatada() {
+    String dia = "${_dataSelecionada.day}";
+    String nd = "";
+    String mes = "${_dataSelecionada.month}";
+    String nm = "";
+    if (dia.length < 2) {
+      nd = "0" + dia;
+    } else {
+      nd = dia;
+    }
+    if (mes.length < 2) {
+      nm = "0" + mes;
+    } else {
+      nm = mes;
+    }
+    return "${_dataSelecionada.year}-" + nm + "-" + nd;
   }
 
   Future<Null> _selectDataTratamento(BuildContext context) async {
@@ -66,8 +80,8 @@ class _TratamentoPageState extends State<TratamentoPage> {
       setState(() {
         _edited = true;
         _dataSelecionada = picked;
-        _selectedData = _dataFormatada(picked);
-        _tratamentoCadastrado.data = _dataFormatada(picked);
+        _selectedData = _dataFormatada();
+        _tratamentoCadastrado.data = _dataFormatada();
       });
     }
   }
@@ -83,7 +97,9 @@ class _TratamentoPageState extends State<TratamentoPage> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              Navigator.pop(context, _tratamentoCadastrado);
+              if (_formKey.currentState.validate()) {
+                Navigator.pop(context, _tratamentoCadastrado);
+              }
             },
             child: Icon(Icons.check),
             backgroundColor: Colors.green,
@@ -99,19 +115,25 @@ class _TratamentoPageState extends State<TratamentoPage> {
                     padding: EdgeInsets.only(top: 10.0),
                   ),
                   RaisedButton(
-                    child: Text("$_selectedData"),
+                    child: exibicaoDataPadrao(_dataFormatada()),
                     onPressed: () {
                       _selectDataTratamento(context);
                       setState(() {
-                         _edited = true;
+                        _edited = true;
                         // _editedAnimal.dataNascimento = _dataNascimentoFormatada;
                       });
                     },
                   ),
                   espacamentoPadrao(),
-                  TextField(
+                  TextFormField(
                     controller: _selectedMotivo,
                     decoration: estiloPadrao("Motivo*", 1),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Por favor, insira o Motivo';
+                      }
+                      return null;
+                    },
                     onChanged: (text) {
                       setState(() {
                         _tratamentoCadastrado.motivo = text;
@@ -121,8 +143,14 @@ class _TratamentoPageState extends State<TratamentoPage> {
                     },
                   ),
                   espacamentoPadrao(),
-                  TextField(
+                  TextFormField(
                     decoration: estiloPadrao("Medicação/Vacinação*", 1),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Por favor, insira a Medicação/Vacinação';
+                      }
+                      return null;
+                    },
                     controller: _selectedMedicacaoVacinacao,
                     onChanged: (text) {
                       setState(() {
@@ -133,10 +161,16 @@ class _TratamentoPageState extends State<TratamentoPage> {
                     },
                   ),
                   espacamentoPadrao(),
-                  TextField(
+                  TextFormField(
                     keyboardType:
                         TextInputType.numberWithOptions(decimal: true),
-                    decoration: estiloPadrao("Periodo de Carência", 1),
+                    decoration: estiloPadrao("Periodo de Carência*", 1),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Por favor, insira o Periodo de Carência';
+                      }
+                      return null;
+                    },
                     controller: _selectedPeriodoCarencia,
                     onChanged: (text) {
                       setState(() {
@@ -147,10 +181,16 @@ class _TratamentoPageState extends State<TratamentoPage> {
                     },
                   ),
                   espacamentoPadrao(),
-                  TextField(
+                  TextFormField(
                     keyboardType:
                         TextInputType.numberWithOptions(decimal: true),
                     decoration: estiloPadrao("Custo*", 2),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Por favor, insira o Custo';
+                      }
+                      return null;
+                    },
                     controller: _selectedCusto,
                     onChanged: (text) {
                       setState(() {

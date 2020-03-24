@@ -86,7 +86,12 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
           }
         }
         setState(() {
-          ordenaEventos(tratamentosFinal);
+          Comparator<Tratamento> tratamentoComparator = (a, b) {
+            DateTime dateTimeA = DateTime.parse("${a.data}" + " 00:00:00");
+            DateTime dateTimeB = DateTime.parse("${b.data}" + " 00:00:00");
+            return dateTimeB.compareTo(dateTimeA);
+          };
+          tratamentosFinal.sort(tratamentoComparator);
           tratamentos = tratamentosFinal;
         });
       }
@@ -104,7 +109,12 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
           }
         }
         setState(() {
-          ordenaEventos(observacoesFinal);
+          Comparator<Observacao> observacaoComparator = (a, b) {
+            DateTime dateTimeA = DateTime.parse("${a.data}" + " 00:00:00");
+            DateTime dateTimeB = DateTime.parse("${b.data}" + " 00:00:00");
+            return dateTimeB.compareTo(dateTimeA);
+          };
+          observacoesFinal.sort(observacaoComparator);
           observacoes = observacoesFinal;
         });
       }
@@ -121,9 +131,16 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
             pesagemFinal.add(peso);
           }
         }
-        print(pesagemFinal);
         setState(() {
-          ordenaEventos(pesagemFinal);
+          Comparator<Pesagem> pesagemComparator = (a, b) {
+            DateTime dateTimeA = DateTime.parse("${a.data}" + " 00:00:00");
+            DateTime dateTimeB = DateTime.parse("${b.data}" + " 00:00:00");
+            return dateTimeB.compareTo(dateTimeA);
+          };
+          pesagemFinal.sort(pesagemComparator);
+          pesagemFinal.forEach((Pesagem item) {
+            print('${item.idPesagem} - ${item.data} - ${item.peso}');
+          });
           pesos = pesagemFinal;
         });
       }
@@ -315,21 +332,38 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                 padding: EdgeInsets.all(10.0),
                 itemCount: tratamentos.length,
                 itemBuilder: (context, index) {
-                  return exibicaoPadraoDeEvento(context, index, tratamentos, 1);
+                  return exibicaoPadraoDeEvento(
+                      context, index, tratamentos, 1, 3);
                 },
               ),
               ListView.builder(
                 padding: EdgeInsets.all(10.0),
                 itemCount: pesos.length,
                 itemBuilder: (context, index) {
-                  return exibicaoPadraoDeEvento(context, index, pesos, 2);
+                  if (index < pesos.length - 1) {
+                    if (int.parse(pesos[index].peso) <
+                        int.parse(pesos[index + 1].peso)) {
+                      return exibicaoPadraoDeEvento(
+                          context, index, pesos, 2, 1);
+                    } else if (int.parse(pesos[index].peso) >
+                        int.parse(pesos[index + 1].peso)) {
+                      return exibicaoPadraoDeEvento(
+                          context, index, pesos, 2, 0);
+                    } else {
+                      return exibicaoPadraoDeEvento(
+                          context, index, pesos, 2, 2);
+                    }
+                  } else {
+                    return exibicaoPadraoDeEvento(context, index, pesos, 2, 2);
+                  }
                 },
               ),
               ListView.builder(
                 padding: EdgeInsets.all(10.0),
                 itemCount: observacoes.length,
                 itemBuilder: (context, index) {
-                  return exibicaoPadraoDeEvento(context, index, observacoes, 3);
+                  return exibicaoPadraoDeEvento(
+                      context, index, observacoes, 3, 3);
                 },
               ),
             ],
@@ -339,90 +373,53 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     );
   }
 
-  secaoSelecionada(int a) {
-    _getAllObservacoes();
-    _getAllTratamentos();
-    _getAllPesagens();
-    if (a == 1) {
-      if (tratamentos.isNotEmpty) {
-        ListView.builder(
-          padding: EdgeInsets.all(10.0),
-          itemCount: tratamentos.length,
-          itemBuilder: (context, index) {
-            return exibicaoPadraoDeEvento(context, index, tratamentos, 1);
-          },
-        );
-
-        // backgroundColor: Colors.green,
-
-      } else {
-        return Text("");
-      }
-      if (a == 2) {
-        ListView.builder(
-          padding: EdgeInsets.all(10.0),
-          itemCount: pesos.length,
-          itemBuilder: (context, index) {
-            return exibicaoPadraoDeEvento(context, index, pesos, 2);
-          },
-        );
-      } else {
-        return Text("");
-      }
-      if (a == 3) {
-        if (observacoes.isNotEmpty) {
-          ListView.builder(
-            padding: EdgeInsets.all(10.0),
-            itemCount: observacoes.length,
-            itemBuilder: (context, index) {
-              return exibicaoPadraoDeEvento(context, index, observacoes, 3);
-            },
-          );
-        } else {
-          return Text("");
-        }
-      }
-    } else {
-      return Text("");
-    }
-  }
-
-  ordenaEventos(List a) {
-    a.sort((a, b) {
-      var adate = a.data; //before -> var adate = a.expiry;
-      var bdate = b.data; //before -> var bdate = b.expiry;
-      return bdate.compareTo(
-          adate); //to get the order other way just switch `adate & bdate
-    });
-  }
-
   // tipos podem ser 1 - tratamento 3- pesagem  2 Observacao
+  //aumentou  1 -  0 -  abaixou  2-   manteve 3- ignora
   Padding exibicaoPadraoDeEvento(
-      BuildContext context, int index, List lista, int tipo) {
+      BuildContext context, int index, List lista, int tipo, int aumentou) {
     bool isExpanded = false;
     Text selected;
     IconData iconeSelecionado;
     dynamic exibeLateral;
     switch (tipo) {
       case 1:
-        List<String> dataEventoComSplit = lista[index].data.split("/");
+        List<String> dataEventoComSplit = lista[index].data.split("-");
         iconeSelecionado = MdiIcons.needle;
         selected = Text(lista[index].medicacao);
         exibeLateral = calculoDiasRestantes(
-            dataEventoComSplit[0],
-            dataEventoComSplit[1],
             dataEventoComSplit[2],
-            lista[index].periodoCarencia);      
+            dataEventoComSplit[1],
+            dataEventoComSplit[0],
+            lista[index].periodoCarencia);
         break;
       case 3:
         iconeSelecionado = MdiIcons.alert;
         selected = Text(lista[index].descricao);
-        exibeLateral = Icon(Icons.arrow_drop_down);       
+        exibeLateral = Icon(Icons.arrow_drop_down);
         break;
       case 2:
         iconeSelecionado = MdiIcons.weightKilogram;
-        selected = Text(lista[index].peso);
-        exibeLateral = Icon(Icons.arrow_drop_down);
+        selected = Text(lista[index].peso + " Kg");
+
+        switch (aumentou) {
+          case 0:
+            exibeLateral = Icon(
+              Icons.trending_up,
+              color: Colors.green,
+            );
+            break;
+          case 1:
+            exibeLateral = Icon(
+              Icons.trending_down,
+              color: Colors.red,
+            );
+            break;
+          case 2:
+            exibeLateral = Icon(Icons.trending_flat);
+            break;
+
+          default:
+        }
         break;
       case 4:
         iconeSelecionado = MdiIcons.cashUsd;
@@ -452,10 +449,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
               color: Colors.white,
             ),
           ),
-          title: Text(
-            lista[index].data,
-            style: TextStyle(color: Colors.black),
-          ),
+          title: exibicaoDataPadrao(lista[index].data),
           subtitle: selected,
           onExpansionChanged: (value) {
             setState(() {
@@ -485,10 +479,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                           icon: Icon(Icons.delete),
                           color: Colors.red,
                           onPressed: () {
-                            _excluirEvento(lista[index], tipo);
-                            setState(() {
-                              lista.removeAt(index);
-                            });
+                            _excluirEvento(lista[index], tipo, lista, index);
                           },
                         ),
                         IconButton(
@@ -521,7 +512,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     );
   }
 
-  void _excluirEvento(dynamic evento, int tipo) {
+  void _excluirEvento(dynamic evento, int tipo, dynamic lista, int index) {
     dynamic op;
     if (tipo == 1) {
       op = new TratamentoHelper();
@@ -547,7 +538,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
               FlatButton(
                 child: Text("Sim"),
                 onPressed: () {
-                  delete(op, tipo, evento);
+                  delete(op, tipo, evento, lista, index);
                   Navigator.pop(context);
                 },
               ),
@@ -556,12 +547,16 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         });
   }
 
-  void delete(dynamic helper, int tipo, dynamic evento) {
+  void delete(
+      dynamic helper, int tipo, dynamic evento, dynamic lista, int index) {
     if (tipo == 1) {
       helper.deleteTratamento(evento.idTratamento);
       _getAllTratamentos();
     } else if (tipo == 2) {
       helper.deletePesagem(evento.idPesagem);
+      setState(() {
+        lista.removeAt(index);
+      });
       _getAllPesagens();
     } else {
       helper.deleteObservacao(evento.idObservacao);

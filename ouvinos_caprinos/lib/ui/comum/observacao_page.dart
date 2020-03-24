@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/observacao/class/observacao.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
@@ -16,7 +15,6 @@ class ObservacaoPage extends StatefulWidget {
 }
 
 class _ObservacaoPageState extends State<ObservacaoPage> {
- 
   Observacao _observacaoCriada;
 
   DateTime _dataSelecionada = DateTime.now();
@@ -30,19 +28,32 @@ class _ObservacaoPageState extends State<ObservacaoPage> {
   @override
   void initState() {
     super.initState();
-    
 
     if (widget.observacao == null) {
       _observacaoCriada = Observacao(animalId: widget.animalId);
-      _observacaoCriada.data = _dataFormatada(_dataSelecionada);
-    }else{
+      _observacaoCriada.data = _dataFormatada();
+    } else {
       _observacaoCriada = Observacao.fromMap(widget.observacao.toMap());
       _selectedObservacao.text = _observacaoCriada.descricao;
     }
   }
 
-  String _dataFormatada(data) {
-    return "${_dataSelecionada.day}/${_dataSelecionada.month}/${_dataSelecionada.year}";
+  String _dataFormatada() {
+    String dia = "${_dataSelecionada.day}";
+    String nd = "";
+    String mes = "${_dataSelecionada.month}";
+    String nm = "";
+    if (dia.length < 2) {
+      nd = "0" + dia;
+    } else {
+      nd = dia;
+    }
+    if (mes.length < 2) {
+      nm = "0" + mes;
+    } else {
+      nm = mes;
+    }
+    return "${_dataSelecionada.year}-" + nm + "-" + nd;
   }
 
   Future<Null> _selectDataPesagem(BuildContext context) async {
@@ -55,7 +66,7 @@ class _ObservacaoPageState extends State<ObservacaoPage> {
     if (picked != null && picked != _dataSelecionada) {
       setState(() {
         _dataSelecionada = picked;
-        _observacaoCriada.data = _dataFormatada(picked);
+        _observacaoCriada.data = _dataFormatada();
       });
     }
   }
@@ -70,7 +81,9 @@ class _ObservacaoPageState extends State<ObservacaoPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pop(context, _observacaoCriada);
+          if (_formKey.currentState.validate()) {       
+            Navigator.pop(context, _observacaoCriada);
+          }
         },
         child: Icon(Icons.check),
         backgroundColor: Colors.green,
@@ -85,7 +98,7 @@ class _ObservacaoPageState extends State<ObservacaoPage> {
               padding: EdgeInsets.only(top: 10.0),
             ),
             RaisedButton(
-              child: Text(_dataFormatada(_dataSelecionada)),
+              child: exibicaoDataPadrao(_dataFormatada()),
               onPressed: () {
                 _selectDataPesagem(context);
                 setState(() {
@@ -95,9 +108,15 @@ class _ObservacaoPageState extends State<ObservacaoPage> {
               },
             ),
             espacamentoPadrao(),
-            TextField(
+            TextFormField(
               decoration: estiloPadrao("Observação*", 1),
               controller: _selectedObservacao,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Por favor, insira a observação';
+                }
+                return null;
+              },
               onChanged: (text) {
                 setState(() {
                   _observacaoCriada.descricao = text;

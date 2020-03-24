@@ -20,17 +20,33 @@ class _MortePageState extends State<MortePage> {
 
   AnimalHelper animalHelper = AnimalHelper();
 
+  final _motivoMorte = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
     _animalSelecionado = Animal.fromMap(widget.animalMorte.toMap());
-    _animalSelecionado.dataMorte = _dataFormatada(_dataSelecionada);
+    _animalSelecionado.dataMorte = _dataFormatada();
   }
 
-  String _dataFormatada(data) {
-    return "${_dataSelecionada.day}/${_dataSelecionada.month}/${_dataSelecionada.year}";
+  String _dataFormatada() {
+    String dia = "${_dataSelecionada.day}";
+    String nd = "";
+    String mes = "${_dataSelecionada.month}";
+    String nm = "";
+    if (dia.length < 2) {
+      nd = "0" + dia;
+    } else {
+      nd = dia;
+    }
+    if (mes.length < 2) {
+      nm = "0" + mes;
+    } else {
+      nm = mes;
+    }
+    return "${_dataSelecionada.year}-" + nm + "-" + nd;
   }
 
   Future<Null> _selectDataPesagem(BuildContext context) async {
@@ -43,7 +59,7 @@ class _MortePageState extends State<MortePage> {
     if (picked != null && picked != _dataSelecionada) {
       setState(() {
         _dataSelecionada = picked;
-        _animalSelecionado.dataMorte = _dataFormatada(picked);
+        _animalSelecionado.dataMorte = _dataFormatada();
       });
     }
   }
@@ -58,8 +74,10 @@ class _MortePageState extends State<MortePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _animalSelecionado.status = "2";
-          Navigator.pop(context, _animalSelecionado);
+          if (_formKey.currentState.validate()) {
+            _animalSelecionado.status = "2";
+            Navigator.pop(context, _animalSelecionado);
+          }
         },
         child: Icon(Icons.check),
         backgroundColor: Colors.green,
@@ -74,7 +92,7 @@ class _MortePageState extends State<MortePage> {
               padding: EdgeInsets.only(top: 10.0),
             ),
             RaisedButton(
-              child: Text(_dataFormatada(_dataSelecionada)),
+              child: exibicaoDataPadrao(_dataFormatada()),
               onPressed: () {
                 _selectDataPesagem(context);
                 setState(() {
@@ -84,12 +102,17 @@ class _MortePageState extends State<MortePage> {
               },
             ),
             espacamentoPadrao(),
-            TextField(
+            TextFormField(
               decoration: estiloPadrao("Motivo da Morte*", 1),
-              // controller: _selectedNome,
+              controller: _motivoMorte,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Por favor, insira o motivo da morte';
+                }
+                return null;
+              },
               onChanged: (text) {
                 setState(() {
-                  // _userEdited = true;
                   _animalSelecionado.descricaoMorte = text;
                 });
               },
