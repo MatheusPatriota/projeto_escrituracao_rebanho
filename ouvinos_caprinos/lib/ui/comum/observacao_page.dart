@@ -81,10 +81,7 @@ class _ObservacaoPageState extends State<ObservacaoPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (_formKey.currentState.validate()) {
-            // If the form is valid, display a Snackbar.
-            Scaffold.of(context)
-                .showSnackBar(SnackBar(content: Text('Processing Data')));
+          if (_formKey.currentState.validate()) {       
             Navigator.pop(context, _observacaoCriada);
           }
         },
