@@ -38,8 +38,8 @@ class _TratamentoPageState extends State<TratamentoPage> {
     if (widget.tratamento == null) {
       _tratamentoCadastrado = Tratamento();
       _tratamentoCadastrado.animalId = widget.animalId;
-      _tratamentoCadastrado.data = _dataFormatada(_dataSelecionada);
-      _selectedData = _dataFormatada(_dataSelecionada);
+      _tratamentoCadastrado.data = _dataFormatada();
+      _selectedData = _dataFormatada();
     } else {
       _tratamentoCadastrado = Tratamento.fromMap(widget.tratamento.toMap());
       _selectedMotivo.text = _tratamentoCadastrado.motivo;
@@ -51,8 +51,22 @@ class _TratamentoPageState extends State<TratamentoPage> {
     }
   }
 
-  String _dataFormatada(data) {
-    return "${_dataSelecionada.day}/${_dataSelecionada.month}/${_dataSelecionada.year}";
+  String _dataFormatada() {
+    String dia = "${_dataSelecionada.day}";
+    String nd = "";
+    String mes = "${_dataSelecionada.month}";
+    String nm = "";
+    if (dia.length < 2) {
+      nd = "0" + dia;
+    } else {
+      nd = dia;
+    }
+    if (mes.length < 2) {
+      nm = "0" + mes;
+    } else {
+      nm = mes;
+    }
+    return "${_dataSelecionada.year}-" + nm + "-" + nd;
   }
 
   Future<Null> _selectDataTratamento(BuildContext context) async {
@@ -66,8 +80,8 @@ class _TratamentoPageState extends State<TratamentoPage> {
       setState(() {
         _edited = true;
         _dataSelecionada = picked;
-        _selectedData = _dataFormatada(picked);
-        _tratamentoCadastrado.data = _dataFormatada(picked);
+        _selectedData = _dataFormatada();
+        _tratamentoCadastrado.data = _dataFormatada();
       });
     }
   }
@@ -84,9 +98,6 @@ class _TratamentoPageState extends State<TratamentoPage> {
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               if (_formKey.currentState.validate()) {
-                // If the form is valid, display a Snackbar.
-                Scaffold.of(context)
-                    .showSnackBar(SnackBar(content: Text('Processing Data')));
                 Navigator.pop(context, _tratamentoCadastrado);
               }
             },
@@ -104,7 +115,7 @@ class _TratamentoPageState extends State<TratamentoPage> {
                     padding: EdgeInsets.only(top: 10.0),
                   ),
                   RaisedButton(
-                    child: Text("$_selectedData"),
+                    child: exibicaoDataPadrao(_dataFormatada()),
                     onPressed: () {
                       _selectDataTratamento(context);
                       setState(() {

@@ -86,7 +86,12 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
           }
         }
         setState(() {
-          ordenaEventos(tratamentosFinal);
+          Comparator<Tratamento> tratamentoComparator = (a, b) {
+            DateTime dateTimeA = DateTime.parse("${a.data}" + " 00:00:00");
+            DateTime dateTimeB = DateTime.parse("${b.data}" + " 00:00:00");
+            return dateTimeB.compareTo(dateTimeA);
+          };
+          tratamentosFinal.sort(tratamentoComparator);
           tratamentos = tratamentosFinal;
         });
       }
@@ -104,7 +109,12 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
           }
         }
         setState(() {
-          ordenaEventos(observacoesFinal);
+          Comparator<Observacao> observacaoComparator = (a, b) {
+            DateTime dateTimeA = DateTime.parse("${a.data}" + " 00:00:00");
+            DateTime dateTimeB = DateTime.parse("${b.data}" + " 00:00:00");
+            return dateTimeB.compareTo(dateTimeA);
+          };
+          observacoesFinal.sort(observacaoComparator);
           observacoes = observacoesFinal;
         });
       }
@@ -121,9 +131,16 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
             pesagemFinal.add(peso);
           }
         }
-        print(pesagemFinal);
         setState(() {
-          ordenaEventos(pesagemFinal);
+          Comparator<Pesagem> pesagemComparator = (a, b) {
+            DateTime dateTimeA = DateTime.parse("${a.data}" + " 00:00:00");
+            DateTime dateTimeB = DateTime.parse("${b.data}" + " 00:00:00");
+            return dateTimeB.compareTo(dateTimeA);
+          };
+          pesagemFinal.sort(pesagemComparator);
+          pesagemFinal.forEach((Pesagem item) {
+            print('${item.idPesagem} - ${item.data} - ${item.peso}');
+          });
           pesos = pesagemFinal;
         });
       }
@@ -387,15 +404,6 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     }
   }
 
-  ordenaEventos(List a) {
-    a.sort((a, b) {
-      var adate = a.data; //before -> var adate = a.expiry;
-      var bdate = b.data; //before -> var bdate = b.expiry;
-      return bdate.compareTo(
-          adate); //to get the order other way just switch `adate & bdate
-    });
-  }
-
   // tipos podem ser 1 - tratamento 3- pesagem  2 Observacao
   Padding exibicaoPadraoDeEvento(
       BuildContext context, int index, List lista, int tipo) {
@@ -405,23 +413,23 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     dynamic exibeLateral;
     switch (tipo) {
       case 1:
-        List<String> dataEventoComSplit = lista[index].data.split("/");
+        List<String> dataEventoComSplit = lista[index].data.split("-");
         iconeSelecionado = MdiIcons.needle;
         selected = Text(lista[index].medicacao);
         exibeLateral = calculoDiasRestantes(
-            dataEventoComSplit[0],
-            dataEventoComSplit[1],
             dataEventoComSplit[2],
-            lista[index].periodoCarencia);      
+            dataEventoComSplit[1],
+            dataEventoComSplit[0],
+            lista[index].periodoCarencia);
         break;
       case 3:
         iconeSelecionado = MdiIcons.alert;
         selected = Text(lista[index].descricao);
-        exibeLateral = Icon(Icons.arrow_drop_down);       
+        exibeLateral = Icon(Icons.arrow_drop_down);
         break;
       case 2:
         iconeSelecionado = MdiIcons.weightKilogram;
-        selected = Text(lista[index].peso);
+        selected = Text(lista[index].peso + " Kg");
         exibeLateral = Icon(Icons.arrow_drop_down);
         break;
       case 4:
@@ -452,10 +460,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
               color: Colors.white,
             ),
           ),
-          title: Text(
-            lista[index].data,
-            style: TextStyle(color: Colors.black),
-          ),
+          title: exibicaoDataPadrao(lista[index].data),
           subtitle: selected,
           onExpansionChanged: (value) {
             setState(() {
@@ -485,10 +490,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                           icon: Icon(Icons.delete),
                           color: Colors.red,
                           onPressed: () {
-                            _excluirEvento(lista[index], tipo);
-                            setState(() {
-                              lista.removeAt(index);
-                            });
+                            _excluirEvento(lista[index], tipo, lista, index);
                           },
                         ),
                         IconButton(
@@ -521,7 +523,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     );
   }
 
-  void _excluirEvento(dynamic evento, int tipo) {
+  void _excluirEvento(dynamic evento, int tipo, dynamic lista, int index) {
     dynamic op;
     if (tipo == 1) {
       op = new TratamentoHelper();
@@ -547,7 +549,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
               FlatButton(
                 child: Text("Sim"),
                 onPressed: () {
-                  delete(op, tipo, evento);
+                  delete(op, tipo, evento, lista, index);
                   Navigator.pop(context);
                 },
               ),
@@ -556,12 +558,16 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         });
   }
 
-  void delete(dynamic helper, int tipo, dynamic evento) {
+  void delete(
+      dynamic helper, int tipo, dynamic evento, dynamic lista, int index) {
     if (tipo == 1) {
       helper.deleteTratamento(evento.idTratamento);
       _getAllTratamentos();
     } else if (tipo == 2) {
       helper.deletePesagem(evento.idPesagem);
+      setState(() {
+        lista.removeAt(index);
+      });
       _getAllPesagens();
     } else {
       helper.deleteObservacao(evento.idObservacao);

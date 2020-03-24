@@ -32,16 +32,30 @@ class _PesagemPageState extends State<PesagemPage> {
 
     if (widget.peso == null) {
       _pesoCadastrado = Pesagem(animalId: widget.animalId);
-      _pesoCadastrado.data = _dataFormatada(_dataSelecionada);
-      // _pesoCadastrado.idAnimal = 1;
+      _pesoCadastrado.data = _dataFormatada();    
     } else {
       _pesoCadastrado = Pesagem.fromMap(widget.peso.toMap());
       _selectedPeso.text = _pesoCadastrado.peso;
     }
   }
 
-  String _dataFormatada(data) {
-    return "${_dataSelecionada.day}/${_dataSelecionada.month}/${_dataSelecionada.year}";
+  //  essa funcao eh uma possivel fatoracao de codigo 
+  String _dataFormatada() {
+    String dia = "${_dataSelecionada.day}";
+    String nd = "";
+    String mes = "${_dataSelecionada.month}";
+    String nm = "";
+    if (dia.length < 2) {
+      nd = "0" + dia;
+    } else {
+      nd = dia;
+    }
+    if (mes.length < 2) {
+      nm = "0" + mes;
+    } else {
+      nm = mes;
+    }
+    return "${_dataSelecionada.year}-" + nm + "-" + nd;
   }
 
   Future<Null> _selectDataPesagem(BuildContext context) async {
@@ -54,7 +68,7 @@ class _PesagemPageState extends State<PesagemPage> {
     if (picked != null && picked != _dataSelecionada) {
       setState(() {
         _dataSelecionada = picked;
-        _pesoCadastrado.data = _dataFormatada(_dataSelecionada);
+        _pesoCadastrado.data = _dataFormatada();
       });
     }
   }
@@ -70,9 +84,6 @@ class _PesagemPageState extends State<PesagemPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (_formKey.currentState.validate()) {
-            // If the form is valid, display a Snackbar.
-            Scaffold.of(context)
-                .showSnackBar(SnackBar(content: Text('Processing Data')));
             Navigator.pop(context, _pesoCadastrado);
           }
         },
@@ -89,7 +100,7 @@ class _PesagemPageState extends State<PesagemPage> {
               padding: EdgeInsets.only(top: 10.0),
             ),
             RaisedButton(
-              child: Text(_dataFormatada(_dataSelecionada)),
+              child: exibicaoDataPadrao(_dataFormatada()),
               onPressed: () {
                 _selectDataPesagem(context);
                 setState(() {

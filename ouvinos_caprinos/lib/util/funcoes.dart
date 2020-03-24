@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//funcao que checa se o atributo vino do db eh vazio
 String ehvazio(dynamic a) {
   String stringFinal = a;
   if (a == null) {
@@ -8,6 +9,7 @@ String ehvazio(dynamic a) {
   return stringFinal;
 }
 
+//funcao que calcula a idade do animal
 String idadeAnimal(String ano, String mes) {
   DateTime _dataAtual = new DateTime.now();
   String anoAtual = "${_dataAtual.year}";
@@ -28,6 +30,7 @@ String idadeAnimal(String ano, String mes) {
   return resultado;
 }
 
+//funcao que retorna o estilo padrao da caixa de entrada de informacoes
 // tipo 1 para texto, tipo 2 para valores de compra
 InputDecoration estiloPadrao(String texto, int tipo) {
   if (tipo == 1) {
@@ -44,21 +47,28 @@ InputDecoration estiloPadrao(String texto, int tipo) {
   }
 }
 
+//funcao para padronizar o espacamento e
 Container espacamentoPadrao() {
   return Container(
     padding: EdgeInsets.all(5.0),
   );
 }
 
+//funcao para calculo dos dias restantes do periodo de carencia
 Widget calculoDiasRestantes(String dia, String mes, String ano, String data) {
   int newData = int.parse(data);
   var berlinWallFell =
       new DateTime.utc(int.parse(ano), int.parse(mes), int.parse(dia));
+
   DateTime dataAtual = DateTime.now();
+
   var dDay = new DateTime.utc(dataAtual.year, dataAtual.month, dataAtual.day);
+
   Duration difference = berlinWallFell.difference(dDay);
+
   int diferenca = difference.inDays.abs();
   String texto = "";
+  
   if (diferenca > newData) {
     texto = "Ja passou da data";
   } else if (diferenca == newData) {
@@ -68,4 +78,13 @@ Widget calculoDiasRestantes(String dia, String mes, String ano, String data) {
         style: TextStyle(color: Colors.red));
   }
   return Text(texto, style: TextStyle(color: Colors.red));
+}
+
+//funcao para exibir a data no formato brasileiro
+Text exibicaoDataPadrao(String dataSelecionada){
+  dynamic date = dataSelecionada.split("-");
+  String dia = date[2];
+  String mes = date[1];
+  String ano = date[0];
+  return Text(dia+"/"+mes+"/"+ano);
 }

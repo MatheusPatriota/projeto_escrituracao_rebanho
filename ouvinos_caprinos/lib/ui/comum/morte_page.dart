@@ -28,11 +28,25 @@ class _MortePageState extends State<MortePage> {
   void initState() {
     super.initState();
     _animalSelecionado = Animal.fromMap(widget.animalMorte.toMap());
-    _animalSelecionado.dataMorte = _dataFormatada(_dataSelecionada);
+    _animalSelecionado.dataMorte = _dataFormatada();
   }
 
-  String _dataFormatada(data) {
-    return "${_dataSelecionada.day}/${_dataSelecionada.month}/${_dataSelecionada.year}";
+  String _dataFormatada() {
+    String dia = "${_dataSelecionada.day}";
+    String nd = "";
+    String mes = "${_dataSelecionada.month}";
+    String nm = "";
+    if (dia.length < 2) {
+      nd = "0" + dia;
+    } else {
+      nd = dia;
+    }
+    if (mes.length < 2) {
+      nm = "0" + mes;
+    } else {
+      nm = mes;
+    }
+    return "${_dataSelecionada.year}-" + nm + "-" + nd;
   }
 
   Future<Null> _selectDataPesagem(BuildContext context) async {
@@ -45,7 +59,7 @@ class _MortePageState extends State<MortePage> {
     if (picked != null && picked != _dataSelecionada) {
       setState(() {
         _dataSelecionada = picked;
-        _animalSelecionado.dataMorte = _dataFormatada(picked);
+        _animalSelecionado.dataMorte = _dataFormatada();
       });
     }
   }
@@ -61,9 +75,6 @@ class _MortePageState extends State<MortePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (_formKey.currentState.validate()) {
-            // If the form is valid, display a Snackbar.
-            Scaffold.of(context)
-                .showSnackBar(SnackBar(content: Text('Processing Data')));
             _animalSelecionado.status = "2";
             Navigator.pop(context, _animalSelecionado);
           }
@@ -81,7 +92,7 @@ class _MortePageState extends State<MortePage> {
               padding: EdgeInsets.only(top: 10.0),
             ),
             RaisedButton(
-              child: Text(_dataFormatada(_dataSelecionada)),
+              child: exibicaoDataPadrao(_dataFormatada()),
               onPressed: () {
                 _selectDataPesagem(context);
                 setState(() {
