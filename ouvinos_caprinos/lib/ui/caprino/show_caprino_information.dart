@@ -87,8 +87,10 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         }
         setState(() {
           Comparator<Tratamento> tratamentoComparator = (a, b) {
-            DateTime dateTimeA = DateTime.parse("${a.data}" + " 00:00:00");
-            DateTime dateTimeB = DateTime.parse("${b.data}" + " 00:00:00");
+            DateTime dateTimeA =
+                DateTime.parse("${a.dataTratamento}" + " 00:00:00");
+            DateTime dateTimeB =
+                DateTime.parse("${b.dataTratamento}" + " 00:00:00");
             return dateTimeB.compareTo(dateTimeA);
           };
           tratamentosFinal.sort(tratamentoComparator);
@@ -383,7 +385,8 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     dynamic exibeLateral;
     switch (tipo) {
       case 1:
-        List<String> dataEventoComSplit = lista[index].data.split("-");
+        List<String> dataEventoComSplit =
+            lista[index].dataTratamento.split("-");
         iconeSelecionado = MdiIcons.needle;
         selected = Text(lista[index].medicacao);
         exibeLateral = calculoDiasRestantes(
@@ -449,7 +452,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
               color: Colors.white,
             ),
           ),
-          title: exibicaoDataPadrao(lista[index].data),
+          title: Text(exibicaoDataPadrao(lista[index].dataTratamento)),
           subtitle: selected,
           onExpansionChanged: (value) {
             setState(() {
@@ -551,6 +554,9 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       dynamic helper, int tipo, dynamic evento, dynamic lista, int index) {
     if (tipo == 1) {
       helper.deleteTratamento(evento.idTratamento);
+      setState(() {
+        lista.removeAt(index);
+      });
       _getAllTratamentos();
     } else if (tipo == 2) {
       helper.deletePesagem(evento.idPesagem);
@@ -560,6 +566,9 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       _getAllPesagens();
     } else {
       helper.deleteObservacao(evento.idObservacao);
+      setState(() {
+        lista.removeAt(index);
+      });
       _getAllObservacoes();
     }
   }
@@ -650,4 +659,5 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       ],
     );
   }
+
 }

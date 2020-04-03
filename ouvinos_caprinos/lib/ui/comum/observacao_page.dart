@@ -98,7 +98,7 @@ class _ObservacaoPageState extends State<ObservacaoPage> {
               padding: EdgeInsets.only(top: 10.0),
             ),
             RaisedButton(
-              child: exibicaoDataPadrao(_dataFormatada()),
+              child: Text(exibicaoDataPadrao(_dataFormatada())),
               onPressed: () {
                 _selectDataPesagem(context);
                 setState(() {

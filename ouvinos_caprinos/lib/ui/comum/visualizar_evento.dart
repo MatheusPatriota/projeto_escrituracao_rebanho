@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ouvinos_caprinos/observacao/class/observacao.dart';
 import 'package:ouvinos_caprinos/pesagem/class/pesagem.dart';
 import 'package:ouvinos_caprinos/tratamento/class/tratamento.dart';
+import 'package:ouvinos_caprinos/util/funcoes.dart';
 
 class VisualizarEvento extends StatefulWidget {
   final dynamic evento;
@@ -40,36 +41,51 @@ class _VisualizarEventoState extends State<VisualizarEvento> {
         backgroundColor: Colors.green,
         centerTitle: true,
       ),
-      body: Center(child: ListView(
-        children: <Widget>[
-          Column(
-            children:  _listagem(),
-          )
-        ],
-      ),
+      body: Center(
+        child: ListView(
+          children: <Widget>[
+            Column(
+              children: _listagem(),
+            )
+          ],
+        ),
       ),
     );
   }
 
   List<Widget> _listagem() {
     List<Widget> lista = new List();
-    lista.add(Padding(padding: EdgeInsets.all(50.0),));
+    lista.add(Padding(
+      padding: EdgeInsets.all(50.0),
+    ));
     if (_tratamentoSelecionado != null) {
       lista.add(fontePadrao("Data do Tratamento"));
-      lista.add(fontePadrao(_tratamentoSelecionado.data));
+      lista.add(fontePadrao(
+          exibicaoDataPadrao(_tratamentoSelecionado.dataTratamento)));
+      lista.add(Text(""));
       lista.add(fontePadrao("Motivo do Tratamento"));
       lista.add(fontePadrao(_tratamentoSelecionado.motivo));
+      lista.add(Text(""));
       lista.add(fontePadrao("Medicação/Vacinação Utilizada"));
       lista.add(fontePadrao(_tratamentoSelecionado.medicacao));
+      lista.add(Text(""));
       lista.add(fontePadrao("Perídodo de Carência"));
-      lista.add(fontePadrao(_tratamentoSelecionado.periodoCarencia + "dias"));
+      lista.add(fontePadrao(_tratamentoSelecionado.periodoCarencia + " dias"));
+      lista.add(Text(""));
       lista.add(fontePadrao("Custo do Tratamento"));
-      lista.add(fontePadrao("R\$ "+_tratamentoSelecionado.custo));
+      lista.add(fontePadrao("R\$ " + _tratamentoSelecionado.custo));
+      lista.add(Text(""));
       if (_tratamentoSelecionado.anotacoes == null) {
         lista.add(fontePadrao("Não Possui Anotações"));
       } else {
         lista.add(fontePadrao("Anotações"));
         lista.add(fontePadrao(_tratamentoSelecionado.anotacoes));
+      }
+      lista.add(Text(""));
+      if (_tratamentoSelecionado.dataAgendamento != null) {
+        lista.add(fontePadrao("Data Agendada para proxima aplicação"));
+        lista.add(fontePadrao(
+            exibicaoDataPadrao(_tratamentoSelecionado.dataAgendamento)));
       }
     } else if (_pesoSelecionado != null) {
       lista.add(fontePadrao("Data da Pesagem"));
@@ -84,10 +100,12 @@ class _VisualizarEventoState extends State<VisualizarEvento> {
     }
     return lista;
   }
-  Text fontePadrao(String texto){
-    return Text(texto, style: TextStyle(fontSize: 20), textAlign: TextAlign.center,);
 
+  Text fontePadrao(String texto) {
+    return Text(
+      texto,
+      style: TextStyle(fontSize: 20),
+      textAlign: TextAlign.center,
+    );
   }
-
-
 }

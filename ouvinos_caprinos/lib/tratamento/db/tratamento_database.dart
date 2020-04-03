@@ -6,7 +6,8 @@ import 'package:path/path.dart';
 final String tableName = "Tratamento";
 final String idTratamentoColumn = "id_tratamento";
 final String animalIdColumn = "id_animal";
-final String dataColumn = "data";
+final String dataTratamentoColumn = "data_tratamento";
+final String dataAgendamentoColumn = "data_agendamento";
 final String motivoColumn = "motivo";
 final String medicacaoColumn = "medicacao";
 final String periodoCarenciaColumn = "periodo_carencia";
@@ -40,7 +41,8 @@ class TratamentoHelper {
       await db.execute(
           "CREATE TABLE IF NOT EXISTS $tableName (  $idTratamentoColumn INTEGER PRIMARY KEY  ,"
           "$animalIdColumn INTEGER,"
-          "$dataColumn TEXT,"
+          "$dataTratamentoColumn TEXT,"
+          "$dataAgendamentoColumn TEXT,"
           "$motivoColumn TEXT,"
           "$medicacaoColumn TEXT,"
           "$periodoCarenciaColumn TEXT,"
@@ -64,7 +66,8 @@ class TratamentoHelper {
         columns: [
           idTratamentoColumn,
           animalIdColumn,
-          dataColumn,
+          dataTratamentoColumn,
+          dataAgendamentoColumn,
           motivoColumn,
           medicacaoColumn,
           periodoCarenciaColumn,

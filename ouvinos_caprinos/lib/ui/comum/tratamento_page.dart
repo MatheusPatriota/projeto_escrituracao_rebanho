@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/tratamento/class/tratamento.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
@@ -20,41 +21,24 @@ class _TratamentoPageState extends State<TratamentoPage> {
   final _selectedPeriodoCarencia = TextEditingController();
   final _selectedCusto = TextEditingController();
   final _selectedAnotacoes = TextEditingController();
-  String _selectedData = "";
+
   bool _edited = false;
 
   Tratamento _tratamentoCadastrado;
 
-  DateTime _dataSelecionada = DateTime.now();
+  DateTime _dataTratamentoSelecionada = DateTime.now();
+  DateTime _dataAgendamentoSelecionada = DateTime.now();
 
   AnimalHelper animalHelper = AnimalHelper();
 
   final _formKey = GlobalKey<FormState>();
 
-  @override
-  void initState() {
-    super.initState();
+  bool agendamento = false;
 
-    if (widget.tratamento == null) {
-      _tratamentoCadastrado = Tratamento();
-      _tratamentoCadastrado.animalId = widget.animalId;
-      _tratamentoCadastrado.data = _dataFormatada();
-      _selectedData = _dataFormatada();
-    } else {
-      _tratamentoCadastrado = Tratamento.fromMap(widget.tratamento.toMap());
-      _selectedMotivo.text = _tratamentoCadastrado.motivo;
-      _selectedMedicacaoVacinacao.text = _tratamentoCadastrado.medicacao;
-      _selectedCusto.text = _tratamentoCadastrado.custo;
-      _selectedPeriodoCarencia.text = _tratamentoCadastrado.periodoCarencia;
-      _selectedAnotacoes.text = _tratamentoCadastrado.anotacoes;
-      _selectedData = _tratamentoCadastrado.data;
-    }
-  }
-
-  String _dataFormatada() {
-    String dia = "${_dataSelecionada.day}";
+  String _dataFormatada(data) {
+    String dia = "${data.day}";
     String nd = "";
-    String mes = "${_dataSelecionada.month}";
+    String mes = "${data.month}";
     String nm = "";
     if (dia.length < 2) {
       nd = "0" + dia;
@@ -66,24 +50,129 @@ class _TratamentoPageState extends State<TratamentoPage> {
     } else {
       nm = mes;
     }
-    return "${_dataSelecionada.year}-" + nm + "-" + nd;
+    return "${_dataTratamentoSelecionada.year}-" + nm + "-" + nd;
   }
 
-  Future<Null> _selectDataTratamento(BuildContext context) async {
+  Future<Null> _selectDataTratamento(BuildContext context, int opcao) async {
     final DateTime picked = await showDatePicker(
       context: context,
-      initialDate: _dataSelecionada,
+      initialDate: _dataTratamentoSelecionada,
       firstDate: new DateTime(1900),
       lastDate: new DateTime(2100),
     );
-    if (picked != null && picked != _dataSelecionada) {
-      setState(() {
-        _edited = true;
-        _dataSelecionada = picked;
-        _selectedData = _dataFormatada();
-        _tratamentoCadastrado.data = _dataFormatada();
-      });
+    if (picked != null && picked != _dataTratamentoSelecionada) {
+      if (opcao == 0) {
+        setState(() {
+          _edited = true;
+          _dataTratamentoSelecionada = picked;
+
+          _tratamentoCadastrado.dataTratamento =
+              _dataFormatada(_dataTratamentoSelecionada);
+        });
+      } else {
+        setState(() {
+          _edited = true;
+          _dataAgendamentoSelecionada = picked;
+          _tratamentoCadastrado.dataAgendamento =
+              _dataFormatada(_dataAgendamentoSelecionada);
+        });
+      }
     }
+  }
+
+  Widget agendar(bool a) {
+    if (a == true) {
+      return RaisedButton(
+        child: Text(
+            exibicaoDataPadrao(_dataFormatada(_dataAgendamentoSelecionada))),
+        onPressed: () {
+          _selectDataTratamento(context, 1);
+          setState(() {
+            _edited = true;
+            // _editedAnimal.dataNascimento = _dataNascimentoFormatada;
+          });
+        },
+      );
+    } else {
+      return Text("");
+    }
+  }
+
+  Future<bool> _requestPop() {
+    if (_edited) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Descartar Alterações?"),
+              content: Text("Se sair as alterações serão perdidas."),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Cancelar"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                FlatButton(
+                  child: Text("Sim"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          });
+      return Future.value(false);
+    } else {
+      return Future.value(true);
+    }
+  }
+
+  FlutterLocalNotificationsPlugin localNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  initializeNotifications() async {
+    var initializeAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializeIOS = IOSInitializationSettings();
+    var initSettings = InitializationSettings(initializeAndroid, initializeIOS);
+    await localNotificationsPlugin.initialize(initSettings);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initializeNotifications();
+    if (widget.tratamento == null) {
+      _tratamentoCadastrado = Tratamento();
+      _tratamentoCadastrado.animalId = widget.animalId;
+      _tratamentoCadastrado.dataTratamento =
+          _dataFormatada(_dataTratamentoSelecionada);
+    } else {
+      _tratamentoCadastrado = Tratamento.fromMap(widget.tratamento.toMap());
+      _selectedMotivo.text = _tratamentoCadastrado.motivo;
+      _selectedMedicacaoVacinacao.text = _tratamentoCadastrado.medicacao;
+      _selectedCusto.text = _tratamentoCadastrado.custo;
+      _selectedPeriodoCarencia.text = _tratamentoCadastrado.periodoCarencia;
+      _selectedAnotacoes.text = _tratamentoCadastrado.anotacoes;
+    }
+  }
+
+  Future singleNotification(
+      DateTime datetime, String message, String subtext, int hashcode,
+      {String sound}) async {
+    var androidChannel = AndroidNotificationDetails(
+      'channel-id',
+      'channel-name',
+      'channel-description',
+      importance: Importance.Max,
+      priority: Priority.Max,
+    );
+
+    var iosChannel = IOSNotificationDetails();
+    var platformChannel = NotificationDetails(androidChannel, iosChannel);
+    localNotificationsPlugin.schedule(
+        hashcode, message, subtext, datetime, platformChannel,
+        payload: hashcode.toString());
   }
 
   @override
@@ -94,15 +183,6 @@ class _TratamentoPageState extends State<TratamentoPage> {
             backgroundColor: Colors.green,
             title: Text("Registrar Tratamento"),
             centerTitle: true,
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              if (_formKey.currentState.validate()) {
-                Navigator.pop(context, _tratamentoCadastrado);
-              }
-            },
-            child: Icon(Icons.check),
-            backgroundColor: Colors.green,
           ),
           body: Form(
             key: _formKey,
@@ -115,9 +195,10 @@ class _TratamentoPageState extends State<TratamentoPage> {
                     padding: EdgeInsets.only(top: 10.0),
                   ),
                   RaisedButton(
-                    child: exibicaoDataPadrao(_dataFormatada()),
+                    child: Text(exibicaoDataPadrao(
+                        _dataFormatada(_dataTratamentoSelecionada))),
                     onPressed: () {
-                      _selectDataTratamento(context);
+                      _selectDataTratamento(context, 0);
                       setState(() {
                         _edited = true;
                         // _editedAnimal.dataNascimento = _dataNascimentoFormatada;
@@ -212,42 +293,41 @@ class _TratamentoPageState extends State<TratamentoPage> {
                       });
                     },
                   ),
+                  Column(
+                    children: <Widget>[
+                      Text("Agendamento"),
+                      Checkbox(
+                        value: agendamento,
+                        onChanged: (bool value) {
+                          setState(() {
+                            agendamento = value;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  agendar(agendamento),
                 ],
               ),
             ),
           ),
+          floatingActionButton: FloatingActionButton(
+            child: Icon(Icons.check),
+            backgroundColor: Colors.green,
+            onPressed: () async {
+              DateTime now = DateTime.now().toUtc().add(
+                    Duration(seconds: 10),
+                  );
+              await singleNotification(
+                now,
+                "Oi lindo",
+                "Tú eh lindo demais mano",
+                98123871,
+              );
+              Navigator.pop(context,_tratamentoCadastrado);
+            },
+          ),
         ),
         onWillPop: _requestPop);
-  }
-
-  Future<bool> _requestPop() {
-    if (_edited) {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text("Descartar Alterações?"),
-              content: Text("Se sair as alterações serão perdidas."),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("Cancelar"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                FlatButton(
-                  child: Text("Sim"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            );
-          });
-      return Future.value(false);
-    } else {
-      return Future.value(true);
-    }
   }
 }
