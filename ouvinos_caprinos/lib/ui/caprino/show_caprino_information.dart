@@ -383,6 +383,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     Text selected;
     IconData iconeSelecionado;
     dynamic exibeLateral;
+    String data = "";
     switch (tipo) {
       case 1:
         List<String> dataEventoComSplit =
@@ -394,16 +395,18 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
             dataEventoComSplit[1],
             dataEventoComSplit[0],
             lista[index].periodoCarencia);
+        data = exibicaoDataPadrao(lista[index].dataTratamento);
         break;
       case 3:
         iconeSelecionado = MdiIcons.alert;
         selected = Text(lista[index].descricao);
         exibeLateral = Icon(Icons.arrow_drop_down);
+        data = exibicaoDataPadrao(lista[index].data);
         break;
       case 2:
         iconeSelecionado = MdiIcons.weightKilogram;
         selected = Text(lista[index].peso + " Kg");
-
+        data = exibicaoDataPadrao(lista[index].data);
         switch (aumentou) {
           case 0:
             exibeLateral = Icon(
@@ -452,7 +455,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
               color: Colors.white,
             ),
           ),
-          title: Text(exibicaoDataPadrao(lista[index].dataTratamento)),
+          title: Text(data),
           subtitle: selected,
           onExpansionChanged: (value) {
             setState(() {
@@ -659,5 +662,4 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       ],
     );
   }
-
 }
