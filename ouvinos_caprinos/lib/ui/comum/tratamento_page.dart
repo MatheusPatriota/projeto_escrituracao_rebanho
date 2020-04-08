@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/tratamento/class/tratamento.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
@@ -19,7 +20,8 @@ class _TratamentoPageState extends State<TratamentoPage> {
   final _selectedMotivo = TextEditingController();
   final _selectedMedicacaoVacinacao = TextEditingController();
   final _selectedPeriodoCarencia = TextEditingController();
-  final _selectedCusto = TextEditingController();
+  var _selectedCusto = MoneyMaskedTextController();
+
   final _selectedAnotacoes = TextEditingController();
 
   bool _edited = false;
@@ -132,7 +134,8 @@ class _TratamentoPageState extends State<TratamentoPage> {
   FlutterLocalNotificationsPlugin localNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   initializeNotifications() async {
-    var initializeAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializeAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializeIOS = IOSInitializationSettings();
     var initSettings = InitializationSettings(initializeAndroid, initializeIOS);
     await localNotificationsPlugin.initialize(initSettings);
@@ -245,7 +248,7 @@ class _TratamentoPageState extends State<TratamentoPage> {
                   TextFormField(
                     keyboardType:
                         TextInputType.numberWithOptions(decimal: true),
-                    decoration: estiloPadrao("Periodo de Carência*", 1),
+                    decoration: estiloPadrao("Periodo de Carência(Dias)*", 1),
                     validator: (value) {
                       if (value.isEmpty) {
                         return 'Por favor, insira o Periodo de Carência';
@@ -265,7 +268,7 @@ class _TratamentoPageState extends State<TratamentoPage> {
                   TextFormField(
                     keyboardType:
                         TextInputType.numberWithOptions(decimal: true),
-                    decoration: estiloPadrao("Custo*", 2),
+                    decoration: estiloPadrao("Custo(R\$)*", 2),
                     validator: (value) {
                       if (value.isEmpty) {
                         return 'Por favor, insira o Custo';
@@ -275,7 +278,7 @@ class _TratamentoPageState extends State<TratamentoPage> {
                     controller: _selectedCusto,
                     onChanged: (text) {
                       setState(() {
-                        _tratamentoCadastrado.custo = text;
+                        _tratamentoCadastrado.custo = _selectedCusto.text;
                         _edited = true;
                         // _editedAnimal.nome = text;
                       });
@@ -324,7 +327,9 @@ class _TratamentoPageState extends State<TratamentoPage> {
                 "Tú eh lindo demais mano",
                 98123871,
               );
-              Navigator.pop(context,_tratamentoCadastrado);
+              if (_formKey.currentState.validate()) {
+                Navigator.pop(context, _tratamentoCadastrado);
+              }
             },
           ),
         ),

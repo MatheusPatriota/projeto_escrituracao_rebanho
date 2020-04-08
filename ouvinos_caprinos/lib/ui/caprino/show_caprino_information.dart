@@ -153,8 +153,10 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
   void initState() {
     super.initState();
     _caprinoSelecionado = Animal.fromMap(widget.caprino.toMap());
-    _dataComSplit = _caprinoSelecionado.dataNascimento.split("/");
-    _getAllCategorias();
+    _dataComSplit = _caprinoSelecionado.dataNascimento.split("-");
+    if (_caprinoSelecionado.idCategoria != null) {
+      _getAllCategorias();
+    }
     _getAllRacas();
     _getAllTratamentos();
     _getAllObservacoes();
@@ -637,7 +639,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
           DataCell(Text("Idade")),
           DataCell(
             Text(
-              idadeAnimal(_dataComSplit[2], _dataComSplit[1]),
+              idadeAnimal(_dataComSplit[0], _dataComSplit[1]),
             ),
           ),
         ]),
@@ -651,12 +653,13 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         ]),
         DataRow(cells: [
           DataCell(Text("Categoria")),
-          DataCell(Text(categoriaSelecionada))
+          DataCell(Text(ehvazio(categoriaSelecionada)))
         ]),
         DataRow(
             cells: [DataCell(Text("Raça")), DataCell(Text(racaSelecionada))]),
         DataRow(cells: [
-          DataCell(Text(_caprinoSelecionado.dataNascimento)),
+          DataCell(
+              Text(exibicaoDataPadrao(_caprinoSelecionado.dataNascimento))),
           DataCell(Text("Nascimento")),
         ]),
       ],

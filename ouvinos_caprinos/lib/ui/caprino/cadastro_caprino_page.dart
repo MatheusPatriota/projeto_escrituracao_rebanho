@@ -1,6 +1,8 @@
 // @author: Matheus Patriota
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:groovin_widgets/groovin_widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
@@ -24,6 +26,9 @@ class CadastroCaprinoPage extends StatefulWidget {
 
 class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
   // variavel responsavel pela chave do formulario
+  bool autoValidate = true;
+  bool readOnly = false;
+  bool showSegmentedControl = true;
   final _formKey = GlobalKey<FormState>();
 
   // apontadores para as listas de multipla escolha
@@ -35,7 +40,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
 
   final _selectedNome = TextEditingController();
   final _selectedBrincoControle = TextEditingController();
-  final _selectedValorAquisicao = TextEditingController();
+  final _selectedValorAquisicao = MoneyMaskedTextController();
   final _selectedNomeVendedor = TextEditingController();
   final _selectedPatrimonio = TextEditingController();
 
@@ -61,33 +66,34 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
   DateTime _dataNascimento = new DateTime.now();
   DateTime _dataAquisicao = new DateTime.now();
 
-  String _dataNascimentoFormatada = "";
-  String _dataAquisicaoFormatada = "";
-
   List<Categoria> categorias = List();
   List<Especie> especies = List();
   List<Raca> racas = List();
   List<Animal> pais = List();
   List<Animal> maes = List();
 
-  String _dataFormatada(data) {
-    return "${data.day}/${data.month}/${data.year}";
-  }
+  String textNascimento = "Informa a data de Nascimento";
+  String textoAquisicao = "Informa a data de Aquisição";
+  bool dataAquisicaoInformada = false;
 
   // funcao para o usuario escolhar a data de nascimento
-  Future<Null> _selectDateNascimento(BuildContext context) async {
+  Future<Null> _selectDataNascimento(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
       initialDate: _dataNascimento,
       firstDate: new DateTime(1900),
       lastDate: new DateTime(2100),
     );
-    if (picked != null && picked != _dataNascimento) {
-      setState(() {
-        _dataNascimentoFormatada = _dataFormatada(picked);
-        _dataNascimento = picked;
-        _editedAnimal.dataNascimento = _dataFormatada(picked);
-      });
+    if (picked != null) {
+      if (picked.compareTo(_dataNascimento) > 0) {
+        _showAlert("Você não pode cadastrar uma Data de Nascimento futura", 1);
+      } else if (picked != _dataNascimento) {
+        setState(() {
+          _dataNascimento = picked;
+          textNascimento = exibicaoDataPadrao(dataFormatada(picked));
+          _editedAnimal.dataNascimento = dataFormatada(picked);
+        });
+      }
     }
   }
 
@@ -99,11 +105,15 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
       firstDate: new DateTime(1900),
       lastDate: new DateTime(2100),
     );
-    if (picked != null && picked != _dataAquisicao) {
+    if (picked.compareTo(_dataAquisicao) > 0) {
+      _showAlert("Você não pode cadastrar uma Data de Aquisição futura", 2);
+      _selectDateAquisicao(context);
+    } else if (picked != null && picked != _dataAquisicao) {
       setState(() {
-        _dataAquisicaoFormatada = _dataFormatada(picked);
         _dataAquisicao = picked;
-        _editedAnimal.dataAquisicao = _dataFormatada(picked);
+        textoAquisicao = exibicaoDataPadrao(dataFormatada(picked));
+        dataAquisicaoInformada = true;
+        _editedAnimal.dataAquisicao = dataFormatada(picked);
       });
     }
   }
@@ -115,16 +125,10 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
 
     if (widget.animalCaprino == null) {
       _editedAnimal = Animal();
-      _editedAnimal.sexo = "Macho";
-      _editedAnimal.idRaca = 0;
       _editedAnimal.idEspecie = 1;
-      _editedAnimal.idCategoria = 0;
       _editedAnimal.status = "0";
 
-      _dataNascimentoFormatada = _dataFormatada(_dataNascimento);
-      _dataAquisicaoFormatada = _dataFormatada(_dataAquisicao);
-
-      _editedAnimal.dataNascimento = _dataNascimentoFormatada;
+      _editedAnimal.dataNascimento = dataFormatada(_dataNascimento);
       print(_editedAnimal);
     } else {
       _editedAnimal = Animal.fromMap(widget.animalCaprino.toMap());
@@ -138,7 +142,6 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
       _selectedNomeVendedor.text = _editedAnimal.nomeVendedor;
       _selectedValorAquisicao.text = _editedAnimal.valorAquisicao;
       _selectedPatrimonio.text = _editedAnimal.patrimonio;
-      _dataNascimentoFormatada = _editedAnimal.dataNascimento;
     }
 
     _getAllCategorias();
@@ -205,12 +208,16 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
   void loadGenderList() {
     genderList = [];
     genderList.add(new DropdownMenuItem(
-      child: new Text('Macho'),
+      child: new Text('Não selecionado'),
       value: 0,
     ));
     genderList.add(new DropdownMenuItem(
-      child: new Text('Fêmea'),
+      child: new Text('Macho'),
       value: 1,
+    ));
+    genderList.add(new DropdownMenuItem(
+      child: new Text('Fêmea'),
+      value: 2,
     ));
   }
 
@@ -228,11 +235,14 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
   // carrega a lista de possiveis racas
   void loadRacaList() {
     racaList = [];
-
+    racaList.add(new DropdownMenuItem(
+      child: new Text("Não Selecionado"),
+      value: 0,
+    ));
     for (var i = 0; i < racas.length; i++) {
       racaList.add(new DropdownMenuItem(
         child: new Text(racas[i].descricao),
-        value: i,
+        value: i + 1,
       ));
     }
   }
@@ -271,7 +281,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     ));
     if (maes.isNotEmpty) {
       for (var i = 0; i < maes.length; i++) {
-         nomeExibicaoMae = maes[i].idAnimal.toString();
+        nomeExibicaoMae = maes[i].idAnimal.toString();
         if (maes[i].brincoControle != null) {
           nomeExibicaoMae += " - " + maes[i].brincoControle;
         }
@@ -309,7 +319,13 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
         // botao salvar
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.pop(context, _editedAnimal);
+            if (_formKey.currentState.validate()) {
+              if (textNascimento == "Informa a data de Nascimento") {
+                _showAlert("Data de Nascimento Vazio", 3);
+              } else {
+                Navigator.pop(context, _editedAnimal);
+              }
+            }
           },
           child: Icon(Icons.save),
           backgroundColor: Colors.green,
@@ -329,8 +345,6 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
 
 // Funcao que retorna todos os widgets usados no formulario de cadastro
   List<Widget> getFormWidgets() {
-    // formatando a data para guardar no bd
-
     List<Widget> formWidget = new List();
     // widget para inserir a imagem no formulario
     formWidget.add(
@@ -376,26 +390,38 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
       ),
     );
     formWidget.add(espacamentoPadrao());
+    formWidget.add(Container(
+      child: Text("Genêro"),
+      padding: EdgeInsets.only(top: 10.0),
+    ));
+
     formWidget.add(
-      OutlineDropdownButton(
-        inputDecoration: InputDecoration(
+      DropdownButtonFormField(
+        value: _selectedGender,
+        hint: const Text('Selecione o Genêro'),
+        decoration: InputDecoration(
           border: OutlineInputBorder(),
           contentPadding: EdgeInsets.all(10.0),
         ),
-        hint: new Text('Select Gender'),
         items: genderList,
-        value: _selectedGender,
+        validator: (value) {
+          if (value == 0) {
+            return 'Por favor, selecione o Genêro';
+          }
+          return null;
+        },
         onChanged: (value) {
           setState(() {
             _userEdited = true;
+
             _selectedGender = value;
             _editedAnimal.sexo =
                 removeCaracteres(genderList[value].child.toString());
           });
         },
-        isExpanded: true,
       ),
     );
+
     // formWidget.add(espacamentoPadrao());
     formWidget.add(Container(
       child: Text("Categoria"),
@@ -407,7 +433,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
         border: OutlineInputBorder(),
         contentPadding: EdgeInsets.all(10.0),
       ),
-      hint: new Text('Select Categoria'),
+      hint: new Text('Selecione Categoria'),
       items: categoriaList,
       value: _selectedCategoria,
       onChanged: (value) {
@@ -419,29 +445,37 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
       },
       isExpanded: true,
     ));
-    // formWidget.add(espacamentoPadrao());
+
     formWidget.add(Container(
       child: Text("Raça*"),
       padding: EdgeInsets.only(top: 10.0),
     ));
     // widget para inserir a raca do animal
-    formWidget.add(OutlineDropdownButton(
-      inputDecoration: InputDecoration(
-        border: OutlineInputBorder(),
-        contentPadding: EdgeInsets.all(10.0),
+    formWidget.add(
+      DropdownButtonFormField(
+        value: _selectedRaca,
+        hint: const Text('Selecione o Genêro'),
+        decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          contentPadding: EdgeInsets.all(10.0),
+        ),
+        items: racaList,
+        validator: (value) {
+          if (value == 0) {
+            return 'Por favor, selecione a Raça';
+          }
+          return null;
+        },
+        onChanged: (value) {
+          setState(() {
+            _userEdited = true;
+            _selectedRaca = value;
+            _editedAnimal.idRaca = racaList[value].value;
+          });
+        },
       ),
-      hint: new Text('Selecione a Raça'),
-      items: racaList,
-      value: _selectedRaca,
-      onChanged: (value) {
-        setState(() {
-          _userEdited = true;
-          _selectedRaca = value;
-          _editedAnimal.idRaca = racaList[value].value;
-        });
-      },
-      isExpanded: true,
-    ));
+    );
+
     // widget para inserir o numero do brinco de controle
     formWidget.add(espacamentoPadrao());
     formWidget.add(
@@ -512,13 +546,9 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     formWidget.add(espacamentoPadrao());
     formWidget.add(
       new RaisedButton(
-        child: Text("$_dataNascimentoFormatada"),
+        child: Text(textNascimento),
         onPressed: () {
-          _selectDateNascimento(context);
-          setState(() {
-            _userEdited = true;
-            _editedAnimal.dataNascimento = _dataNascimentoFormatada;
-          });
+          _selectDataNascimento(context);
         },
       ),
     );
@@ -529,58 +559,58 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     ));
     formWidget.add(
       RaisedButton(
-          child: Text("$_dataAquisicaoFormatada"),
+          child: Text(textoAquisicao),
           onPressed: () {
             _selectDateAquisicao(context);
-            setState(() {
-              _userEdited = true;
-              _editedAnimal.dataAquisicao = _dataAquisicaoFormatada;
-            });
           }),
     );
     // widget para o valor da aquisicao do animal
-    formWidget.add(espacamentoPadrao());
-    formWidget.add(
-      new TextField(
-        keyboardType: TextInputType.numberWithOptions(decimal: true),
-        controller: _selectedValorAquisicao,
-        decoration: estiloPadrao("Valor da Aquisição", 2),
-        onChanged: (text) {
-          _userEdited = true;
-          setState(() {
-            _editedAnimal.valorAquisicao = text;
-          });
-        },
-      ),
-    );
-    // widget para o nome do vendedor
-    formWidget.add(espacamentoPadrao());
-    formWidget.add(
-      new TextField(
-        decoration: estiloPadrao("Nome do Vendedor", 1),
-        controller: _selectedNomeVendedor,
-        onChanged: (text) {
-          _userEdited = true;
-          setState(() {
-            _editedAnimal.nomeVendedor = text;
-          });
-        },
-      ),
-    );
-    // widget para o patrimonio
-    formWidget.add(espacamentoPadrao());
-    formWidget.add(
-      new TextField(
-        decoration: estiloPadrao("Número do Patrimonio/Valor do Patrimonio", 1),
-        controller: _selectedPatrimonio,
-        onChanged: (text) {
-          _userEdited = true;
-          setState(() {
-            _editedAnimal.patrimonio = text;
-          });
-        },
-      ),
-    );
+    if (dataAquisicaoInformada) {
+      formWidget.add(espacamentoPadrao());
+      formWidget.add(
+        new TextField(
+          keyboardType: TextInputType.numberWithOptions(decimal: true),
+          controller: _selectedValorAquisicao,
+          decoration: estiloPadrao("Valor da Aquisição", 2),
+          onChanged: (text) {
+            _userEdited = true;
+            setState(() {
+              _editedAnimal.valorAquisicao = text;
+            });
+          },
+        ),
+      );
+      // widget para o nome do vendedor
+      formWidget.add(espacamentoPadrao());
+      formWidget.add(
+        new TextField(
+          decoration: estiloPadrao("Nome do Vendedor", 1),
+          controller: _selectedNomeVendedor,
+          onChanged: (text) {
+            _userEdited = true;
+            setState(() {
+              _editedAnimal.nomeVendedor = text;
+            });
+          },
+        ),
+      );
+      // widget para o patrimonio
+      formWidget.add(espacamentoPadrao());
+      formWidget.add(
+        new TextField(
+          keyboardType: TextInputType.number,
+          decoration:
+              estiloPadrao("Número do Patrimonio/Valor do Patrimonio", 1),
+          controller: _selectedPatrimonio,
+          onChanged: (text) {
+            _userEdited = true;
+            setState(() {
+              _editedAnimal.patrimonio = text;
+            });
+          },
+        ),
+      );
+    }
 
     return formWidget;
   }
@@ -636,5 +666,28 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     } else {
       return Future.value(true);
     }
+  }
+
+  void _showAlert(String text, int opcao) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(text),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("OK"),
+                onPressed: () {
+                  Navigator.pop(context);
+                  if (opcao == 1) {
+                    _selectDataNascimento(context);
+                  } else if (opcao == 2) {
+                    _selectDateAquisicao(context);
+                  }
+                },
+              ),
+            ],
+          );
+        });
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 //funcao que checa se o atributo vino do db eh vazio
 String ehvazio(dynamic a) {
   String stringFinal = a;
-  if (a == null) {
+  if (a == null || a == "") {
     stringFinal = "Não Informado";
   }
   return stringFinal;
@@ -68,7 +68,7 @@ Widget calculoDiasRestantes(String dia, String mes, String ano, String data) {
 
   int diferenca = difference.inDays.abs();
   String texto = "";
-  
+
   if (diferenca > newData) {
     texto = "Ja passou da data";
   } else if (diferenca == newData) {
@@ -81,10 +81,28 @@ Widget calculoDiasRestantes(String dia, String mes, String ano, String data) {
 }
 
 //funcao para exibir a data no formato brasileiro
-String exibicaoDataPadrao(String dataSelecionada){
+String exibicaoDataPadrao(String dataSelecionada) {
   dynamic date = dataSelecionada.split("-");
   String dia = date[2];
   String mes = date[1];
   String ano = date[0];
-  return dia+"/"+mes+"/"+ano;
+  return dia + "/" + mes + "/" + ano;
 }
+
+String dataFormatada(DateTime data) {
+    String dia = "${data.day}";
+    String nd = "";
+    String mes = "${data.month}";
+    String nm = "";
+    if (dia.length < 2) {
+      nd = "0" + dia;
+    } else {
+      nd = dia;
+    }
+    if (mes.length < 2) {
+      nm = "0" + mes;
+    } else {
+      nm = mes;
+    }
+    return "${data.year}-" + nm + "-" + nd;
+  }
