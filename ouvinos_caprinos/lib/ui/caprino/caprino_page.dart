@@ -7,6 +7,7 @@ import 'package:ouvinos_caprinos/categoria/db/categoria_database.dart';
 import 'package:ouvinos_caprinos/especie/db/especie_database.dart';
 import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
 import 'package:ouvinos_caprinos/ui/caprino/show_caprino_information.dart';
+import 'package:ouvinos_caprinos/ui/comum/search_bar.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
 import 'cadastro_caprino_page.dart';
 
@@ -24,6 +25,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
   RacaHelper racaHelper = RacaHelper();
   EspecieHelper especieHelper = EspecieHelper();
   // variaveis para armazenar os estados dos animais
+
   List<Animal> animaisCaprinos = List();
   List<Animal> animaisCaprinosVendidos = List();
   List<Animal> animaisCaprinosMortos = List();
@@ -52,7 +54,9 @@ class _CaprinoPageState extends State<CaprinoPage> {
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.search),
-                onPressed: () {},
+                onPressed: () {
+                  showSearch(context: context, delegate: DataSearch(allAnimals));
+                },
               ),
               PopupMenuButton<OrderOptions>(
                 icon: Icon(Icons.sort),
@@ -264,26 +268,20 @@ class _CaprinoPageState extends State<CaprinoPage> {
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
                         ),
                         onPressed: () {
-                          // if (lista[index].status != "3") {
-                          //   lista[index].status = "3";
-                          //   animalHelper.updateAnimal(lista[index]);
-                          //   setState(() {
-                          //     _getAllAnimals();
-                          //     lista.removeAt(index);
-                          //     Navigator.pop(context);
-                          //   });
-                          // } else {
-                          //   setState(() {
-                          //     Navigator.pop(context);
-                          // }
-                          // );
-                          // }
-
-                          animalHelper.deleteAnimal(lista[index].idAnimal);
-                          setState(() {
-                            lista.removeAt(index);
-                            Navigator.pop(context);
-                          });
+                           if (lista[index].status != "3") {
+                             lista[index].status = "3";
+                             animalHelper.updateAnimal(lista[index]);
+                             setState(() {
+                               _getAllAnimals();
+                               lista.removeAt(index);
+                               Navigator.pop(context);
+                             });
+                           } else {
+                             setState(() {
+                               Navigator.pop(context);
+                           }
+                           );
+                           }
                         },
                       ),
                     ),

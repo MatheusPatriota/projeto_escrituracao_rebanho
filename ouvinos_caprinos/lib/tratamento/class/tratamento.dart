@@ -3,7 +3,8 @@ import 'package:ouvinos_caprinos/tratamento/db/tratamento_database.dart';
 class Tratamento {
   int idTratamento;
   int animalId;
-  String data;
+  String dataTratamento;
+  String dataAgendamento;
   String motivo;
   String medicacao;
   String periodoCarencia;
@@ -13,7 +14,8 @@ class Tratamento {
   Tratamento({
     this.idTratamento,
     this.animalId,
-    this.data,
+    this.dataTratamento,
+    this.dataAgendamento,
     this.motivo,
     this.medicacao,
     this.periodoCarencia,
@@ -24,7 +26,8 @@ class Tratamento {
   Tratamento.fromMap(Map map) {
     idTratamento = map[idTratamentoColumn];
     animalId = map[animalIdColumn];
-    data = map[dataColumn];
+    dataTratamento = map[dataTratamentoColumn];
+    dataAgendamento = map[dataAgendamentoColumn];
     motivo = map[motivoColumn];
     medicacao = map[medicacaoColumn];
     periodoCarencia = map[periodoCarenciaColumn];
@@ -36,7 +39,8 @@ class Tratamento {
   Map toMap() {
     Map<String, dynamic> map = {
       animalIdColumn: animalId,
-      dataColumn: data,
+      dataTratamentoColumn: dataTratamento,
+      dataAgendamentoColumn: dataAgendamento,
       motivoColumn: motivo,
       medicacaoColumn: medicacao,
       periodoCarenciaColumn: periodoCarencia,
@@ -51,6 +55,6 @@ class Tratamento {
 
   @override
   String toString() {
-    return "Tratamento(id: $idTratamento,animalId: $animalId, medicacao: $medicacao, pc: $periodoCarencia, custo: $custo, anotacoes:$anotacoes )";
+    return "Tratamento(id: $idTratamento,animalId: $animalId, medicacao: $medicacao, pc: $periodoCarencia, custo: $custo, anotacoes:$anotacoes, dataTratamento: $dataTratamento, dataAgendamento: $dataAgendamento )";
   }
 }

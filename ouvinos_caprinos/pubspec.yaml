@@ -27,9 +27,14 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   sqflite: ^1.1.5
+  http: ^0.12.0+2
   url_launcher: ^5.0.2
   image_picker: ^0.6.0+3
   async: ^2.4.0
+  flutter_local_notifications:  ^0.7.1+1
+  flutter_launcher_icons: "^0.7.3"  
+  flutter_masked_text: ^0.8.0
+  flutter_form_builder: ^3.8.2
 
 dev_dependencies:
   flutter_test:
@@ -54,6 +59,13 @@ flutter:
   assets:
     - images/ovino.png
     - images/caprino.png
+    - images/icon.png
+
+flutter_icons:
+  ios: true
+  android: true
+  image_path: "images/icon.png"
+ 
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

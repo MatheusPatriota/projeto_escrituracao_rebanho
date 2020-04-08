@@ -32,32 +32,15 @@ class _PesagemPageState extends State<PesagemPage> {
 
     if (widget.peso == null) {
       _pesoCadastrado = Pesagem(animalId: widget.animalId);
-      _pesoCadastrado.data = _dataFormatada();    
+      _pesoCadastrado.data = dataFormatada(_dataSelecionada);
     } else {
       _pesoCadastrado = Pesagem.fromMap(widget.peso.toMap());
       _selectedPeso.text = _pesoCadastrado.peso;
     }
   }
 
-  //  essa funcao eh uma possivel fatoracao de codigo 
-  String _dataFormatada() {
-    String dia = "${_dataSelecionada.day}";
-    String nd = "";
-    String mes = "${_dataSelecionada.month}";
-    String nm = "";
-    if (dia.length < 2) {
-      nd = "0" + dia;
-    } else {
-      nd = dia;
-    }
-    if (mes.length < 2) {
-      nm = "0" + mes;
-    } else {
-      nm = mes;
-    }
-    return "${_dataSelecionada.year}-" + nm + "-" + nd;
-  }
-
+  //  essa funcao eh uma possivel fatoracao de codigo
+  
   Future<Null> _selectDataPesagem(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
@@ -65,10 +48,12 @@ class _PesagemPageState extends State<PesagemPage> {
       firstDate: new DateTime(1900),
       lastDate: new DateTime(2100),
     );
-    if (picked != null && picked != _dataSelecionada) {
+    if (picked.compareTo(_dataSelecionada) > 0) {
+      _showAlert();
+    } else if (picked != null && picked != _dataSelecionada) {
       setState(() {
         _dataSelecionada = picked;
-        _pesoCadastrado.data = _dataFormatada();
+        _pesoCadastrado.data = dataFormatada(picked);
       });
     }
   }
@@ -100,13 +85,9 @@ class _PesagemPageState extends State<PesagemPage> {
               padding: EdgeInsets.only(top: 10.0),
             ),
             RaisedButton(
-              child: exibicaoDataPadrao(_dataFormatada()),
+              child: Text(exibicaoDataPadrao(dataFormatada(_dataSelecionada))),
               onPressed: () {
                 _selectDataPesagem(context);
-                setState(() {
-                  // _userEdited = true;
-                  // _editedAnimal.dataNascimento = _dataNascimentoFormatada;
-                });
               },
             ),
             espacamentoPadrao(),
@@ -123,8 +104,6 @@ class _PesagemPageState extends State<PesagemPage> {
               onChanged: (text) {
                 setState(() {
                   _pesoCadastrado.peso = text;
-                  // _userEdited = true;
-                  // _editedAnimal.nome = text;
                 });
               },
             ),
@@ -132,5 +111,25 @@ class _PesagemPageState extends State<PesagemPage> {
         ),
       ),
     );
+  }
+
+  // alerta para caso o usuario tente cadastra uma pesgem futura(nao permitido)
+  void _showAlert() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Você não pode cadastrar uma pesagem futura!"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("OK"),
+                onPressed: () {
+                  Navigator.pop(context);
+                  _selectDataPesagem(context);
+                },
+              ),
+            ],
+          );
+        });
   }
 }

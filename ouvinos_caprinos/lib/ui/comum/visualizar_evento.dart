@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ouvinos_caprinos/observacao/class/observacao.dart';
 import 'package:ouvinos_caprinos/pesagem/class/pesagem.dart';
 import 'package:ouvinos_caprinos/tratamento/class/tratamento.dart';
+import 'package:ouvinos_caprinos/util/funcoes.dart';
 
 class VisualizarEvento extends StatefulWidget {
   final dynamic evento;
@@ -40,54 +41,95 @@ class _VisualizarEventoState extends State<VisualizarEvento> {
         backgroundColor: Colors.green,
         centerTitle: true,
       ),
-      body: Center(child: ListView(
-        children: <Widget>[
-          Column(
-            children:  _listagem(),
-          )
-        ],
-      ),
+      body: Center(
+        child: ListView(
+          children: [
+            DataTable(
+              columns: <DataColumn>[
+                DataColumn(
+                  label: Text('Categoria'),
+                ),
+                DataColumn(
+                  label: Text('Informação'),
+                ),
+              ],
+              rows: _listagem(),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  List<Widget> _listagem() {
-    List<Widget> lista = new List();
-    lista.add(Padding(padding: EdgeInsets.all(50.0),));
+  List<DataRow> _listagem() {
+    List<DataRow> lista = new List();
     if (_tratamentoSelecionado != null) {
-      lista.add(fontePadrao("Data do Tratamento"));
-      lista.add(fontePadrao(_tratamentoSelecionado.data));
-      lista.add(fontePadrao("Motivo do Tratamento"));
-      lista.add(fontePadrao(_tratamentoSelecionado.motivo));
-      lista.add(fontePadrao("Medicação/Vacinação Utilizada"));
-      lista.add(fontePadrao(_tratamentoSelecionado.medicacao));
-      lista.add(fontePadrao("Perídodo de Carência"));
-      lista.add(fontePadrao(_tratamentoSelecionado.periodoCarencia + "dias"));
-      lista.add(fontePadrao("Custo do Tratamento"));
-      lista.add(fontePadrao("R\$ "+_tratamentoSelecionado.custo));
+      lista.add(DataRow(cells: [
+        DataCell(fontePadrao("Data do Tratamento")),
+        DataCell(fontePadrao(
+            exibicaoDataPadrao(_tratamentoSelecionado.dataTratamento)))
+      ]));
+       lista.add(DataRow(cells: [
+        DataCell(fontePadrao("Motivo do Tratamento")),
+        DataCell(fontePadrao(_tratamentoSelecionado.motivo))
+      ]));
+       lista.add(DataRow(cells: [
+        DataCell(fontePadrao("Medicação/Vacinação")),
+        DataCell(fontePadrao(_tratamentoSelecionado.medicacao))
+      ]));
+      lista.add( DataRow(cells: [
+        DataCell(fontePadrao("Perídodo de Carência")),
+        DataCell(fontePadrao(_tratamentoSelecionado.periodoCarencia + " dias"))
+      ]));
+      lista.add( DataRow(cells: [
+        DataCell(fontePadrao("Custo do Tratamento")),
+        DataCell(fontePadrao("R\$ " + _tratamentoSelecionado.custo))
+      ]));
       if (_tratamentoSelecionado.anotacoes == null) {
-        lista.add(fontePadrao("Não Possui Anotações"));
+         lista.add(DataRow(cells: [
+          DataCell(fontePadrao("Anotações")),
+          DataCell(fontePadrao("Não Possui Anotações"))
+        ]));
       } else {
-        lista.add(fontePadrao("Anotações"));
-        lista.add(fontePadrao(_tratamentoSelecionado.anotacoes));
+         lista.add(DataRow(cells: [
+          DataCell(fontePadrao("Anotações")),
+          DataCell(fontePadrao(_tratamentoSelecionado.anotacoes))
+        ]));
+      }
+      if (_tratamentoSelecionado.dataAgendamento != null) {
+         lista.add(DataRow(cells: [
+          DataCell(fontePadrao("Data Agendada para proxima aplicação")),
+          DataCell(fontePadrao(
+              exibicaoDataPadrao(_tratamentoSelecionado.dataAgendamento)))
+        ]));
       }
     } else if (_pesoSelecionado != null) {
-      lista.add(fontePadrao("Data da Pesagem"));
-      lista.add(fontePadrao(_pesoSelecionado.data));
-      lista.add(fontePadrao("Peso Registrado"));
-      lista.add(fontePadrao(_pesoSelecionado.peso + " KG"));
+       lista.add(DataRow(cells: [
+        DataCell(fontePadrao("Data da Pesagem")),
+        DataCell(fontePadrao(exibicaoDataPadrao(_pesoSelecionado.data)))
+      ]));
+       lista.add(DataRow(cells: [
+        DataCell(fontePadrao("Peso Registrado")),
+        DataCell(fontePadrao(_pesoSelecionado.peso + " KG"))
+      ]));
     } else {
-      lista.add(fontePadrao("Data da Observação"));
-      lista.add(fontePadrao(_observacaoSelecionada.data));
-      lista.add(fontePadrao("Observação"));
-      lista.add(fontePadrao(_observacaoSelecionada.descricao));
+       lista.add(DataRow(cells: [
+        DataCell(fontePadrao("Data da Observação")),
+        DataCell(fontePadrao(exibicaoDataPadrao(_observacaoSelecionada.data)))
+      ]));
+       lista.add(DataRow(cells: [
+        DataCell(fontePadrao("Observação")),
+        DataCell(fontePadrao(_observacaoSelecionada.descricao))
+      ]));
     }
     return lista;
   }
-  Text fontePadrao(String texto){
-    return Text(texto, style: TextStyle(fontSize: 20), textAlign: TextAlign.center,);
 
+  Text fontePadrao(String texto) {
+    return Text(
+      texto,
+      style: TextStyle(fontSize: 13),
+      textAlign: TextAlign.center,
+    );
   }
-
-
 }
