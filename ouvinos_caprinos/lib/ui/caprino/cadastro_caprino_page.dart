@@ -106,8 +106,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
       lastDate: new DateTime(2100),
     );
     if (picked.compareTo(_dataAquisicao) > 0) {
-      _showAlert("Você não pode cadastrar uma Data de Aquisição futura", 2);
-      _selectDateAquisicao(context);
+      _showAlert("Você não pode cadastrar uma Data de Aquisição futura", 2);    
     } else if (picked != null && picked != _dataAquisicao) {
       setState(() {
         _dataAquisicao = picked;
@@ -391,14 +390,14 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     );
     formWidget.add(espacamentoPadrao());
     formWidget.add(Container(
-      child: Text("Genêro"),
+      child: Text("Gênero"),
       padding: EdgeInsets.only(top: 10.0),
     ));
 
     formWidget.add(
       DropdownButtonFormField(
         value: _selectedGender,
-        hint: const Text('Selecione o Genêro'),
+        hint: const Text('Selecione o Gênero'),
         decoration: InputDecoration(
           border: OutlineInputBorder(),
           contentPadding: EdgeInsets.all(10.0),
@@ -406,7 +405,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
         items: genderList,
         validator: (value) {
           if (value == 0) {
-            return 'Por favor, selecione o Genêro';
+            return 'Por favor, selecione o Gênero';
           }
           return null;
         },
@@ -454,7 +453,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
     formWidget.add(
       DropdownButtonFormField(
         value: _selectedRaca,
-        hint: const Text('Selecione o Genêro'),
+        hint: const Text('Selecione o Gênero'),
         decoration: InputDecoration(
           border: OutlineInputBorder(),
           contentPadding: EdgeInsets.all(10.0),
@@ -595,23 +594,22 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
         ),
       );
       // widget para o patrimonio
-      formWidget.add(espacamentoPadrao());
-      formWidget.add(
-        new TextField(
-          keyboardType: TextInputType.number,
-          decoration:
-              estiloPadrao("Número do Patrimonio/Valor do Patrimonio", 1),
-          controller: _selectedPatrimonio,
-          onChanged: (text) {
-            _userEdited = true;
-            setState(() {
-              _editedAnimal.patrimonio = text;
-            });
-          },
-        ),
-      );
-    }
 
+    }
+    formWidget.add(espacamentoPadrao());
+    formWidget.add(
+      new TextField(
+        keyboardType: TextInputType.number,
+        decoration: estiloPadrao("Número do Patrimonio/Valor do Patrimonio", 1),
+        controller: _selectedPatrimonio,
+        onChanged: (text) {
+          _userEdited = true;
+          setState(() {
+            _editedAnimal.patrimonio = text;
+          });
+        },
+      ),
+    );
     return formWidget;
   }
 
