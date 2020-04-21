@@ -1,7 +1,6 @@
-// @author: Matheus Patriota
+/// @author: Matheus Patriota
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:groovin_widgets/groovin_widgets.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,7 +16,7 @@ import 'package:ouvinos_caprinos/util/funcoes.dart';
 
 class CadastroCaprinoPage extends StatefulWidget {
   final Animal animalCaprino;
-
+ 
   CadastroCaprinoPage({this.animalCaprino});
 
   @override

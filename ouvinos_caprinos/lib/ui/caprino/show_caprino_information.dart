@@ -8,6 +8,8 @@ import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/categoria/db/categoria_database.dart';
 import 'package:ouvinos_caprinos/observacao/class/observacao.dart';
 import 'package:ouvinos_caprinos/observacao/db/observacao_database.dart';
+import 'package:ouvinos_caprinos/ordenha/class/ordenha.dart';
+import 'package:ouvinos_caprinos/ordenha/db/ordenha_database.dart';
 import 'package:ouvinos_caprinos/pesagem/class/pesagem.dart';
 import 'package:ouvinos_caprinos/pesagem/db/pesagem_database.dart';
 import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
@@ -15,6 +17,7 @@ import 'package:ouvinos_caprinos/tratamento/class/tratamento.dart';
 import 'package:ouvinos_caprinos/tratamento/db/tratamento_database.dart';
 import 'package:ouvinos_caprinos/ui/comum/morte_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/observacao_page.dart';
+import 'package:ouvinos_caprinos/ui/comum/ordenha_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/pesagem_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/tratamento_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/venda_page.dart';
@@ -41,14 +44,17 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
   TratamentoHelper tratamentoHelper = TratamentoHelper();
   ObservacaoHelper observacaoHelper = ObservacaoHelper();
   PesagemHelper pesagemHelper = PesagemHelper();
+  OrdenhaHelper ordenhaHelper = OrdenhaHelper();
 
   String categoriaSelecionada = "";
   String racaSelecionada = "";
+  int qtdEventos = 4;
 
   //listas de eventos
   List<Tratamento> tratamentos = List();
   List<Observacao> observacoes = List();
   List<Pesagem> pesos = List();
+  List<Ordenha> ordenhas = List();
 
   List<String> _dataComSplit;
 
@@ -149,6 +155,32 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     });
   }
 
+  Future<void> _getAllOrdenhas() async {
+    List<Ordenha> ordenhasFinal = List();
+    await ordenhaHelper.getAllOrdenhas().then((listaOrdenhas) {
+      print(listaOrdenhas);
+      if (listaOrdenhas.isNotEmpty) {
+        for (var ordenha in listaOrdenhas) {
+          if (ordenha.animalId == _caprinoSelecionado.idAnimal) {
+            ordenhasFinal.add(ordenha);
+          }
+        }
+        setState(() {
+          Comparator<Ordenha> ordenhaComparator = (a, b) {
+            DateTime dateTimeA = DateTime.parse("${a.data}" + " 00:00:00");
+            DateTime dateTimeB = DateTime.parse("${b.data}" + " 00:00:00");
+            return dateTimeB.compareTo(dateTimeA);
+          };
+          ordenhasFinal.sort(ordenhaComparator);
+          ordenhasFinal.forEach((Ordenha item) {
+            print('${item.idOrdenha} - ${item.data} - ${item.peso}');
+          });
+          ordenhas = ordenhasFinal;
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -161,6 +193,9 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     _getAllTratamentos();
     _getAllObservacoes();
     _getAllPesagens();
+    if (_caprinoSelecionado.sexo == "Fêmea") {
+      _getAllOrdenhas();
+    }
   }
 
   @override
@@ -168,7 +203,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: DefaultTabController(
-        length: 4,
+        length: qtdEventos,
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.green,
@@ -176,12 +211,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
             centerTitle: true,
             bottom: TabBar(
               isScrollable: true,
-              tabs: [
-                Tab(text: "Informações"),
-                Tab(text: "Tratamentos"),
-                Tab(text: "Pesagens"),
-                Tab(text: "Observações"),
-              ],
+              tabs: listaTabs(),
             ),
           ),
           floatingActionButton: SpeedDial(
@@ -202,182 +232,17 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
             foregroundColor: Colors.white,
             elevation: 8.0,
             shape: CircleBorder(),
-            children: [
-              SpeedDialChild(
-                child: Icon(MdiIcons.needle),
-                backgroundColor: Colors.green,
-                label: 'Tratamento',
-                labelStyle: TextStyle(fontSize: 18.0),
-                onTap: () async {
-                  TratamentoPage novoTratamento = TratamentoPage(
-                    tratamento: null,
-                    animalId: _caprinoSelecionado.idAnimal,
-                  );
-                  final recTratamento = await Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => novoTratamento));
-                  if (recTratamento != null) {
-                    if (_caprinoSelecionado != null) {
-                      tratamentoHelper.saveTratamento(recTratamento);
-                      _getAllTratamentos();
-                    }
-                  }
-                },
-              ),
-              SpeedDialChild(
-                child: Icon(MdiIcons.weightKilogram),
-                backgroundColor: Colors.green,
-                label: 'Pesagem',
-                labelStyle: TextStyle(fontSize: 18.0),
-                onTap: () async {
-                  PesagemPage novaPesagem = PesagemPage(
-                    peso: null,
-                    animalId: _caprinoSelecionado.idAnimal,
-                  );
-                  final recPesagem = await Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => novaPesagem));
-                  if (recPesagem != null) {
-                    if (_caprinoSelecionado != null) {
-                      pesagemHelper.savePesagem(recPesagem);
-                      _getAllPesagens();
-                    }
-                  }
-                },
-              ),
-              SpeedDialChild(
-                child: Icon(MdiIcons.cashUsd),
-                backgroundColor: Colors.green,
-                label: 'Venda',
-                labelStyle: TextStyle(fontSize: 18.0),
-                onTap: () async {
-                  final recEvento = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => VendaPage(
-                                animalVenda: _caprinoSelecionado,
-                              )));
-                  if (recEvento != null) {
-                    print(recEvento);
-                    if (_caprinoSelecionado != null) {
-                      await animalHelper.updateAnimal(recEvento);
-                    }
-                  }
-                },
-              ),
-              SpeedDialChild(
-                child: Icon(MdiIcons.skullCrossbones),
-                backgroundColor: Colors.green,
-                label: 'Morte',
-                labelStyle: TextStyle(fontSize: 18.0),
-                onTap: () async {
-                  final recEvento = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => MortePage(
-                                animalMorte: _caprinoSelecionado,
-                              )));
-                  if (recEvento != null) {
-                    if (_caprinoSelecionado != null) {
-                      animalHelper.updateAnimal(recEvento);
-                    }
-                  }
-                },
-              ),
-              SpeedDialChild(
-                child: Icon(MdiIcons.alert),
-                backgroundColor: Colors.green,
-                label: 'Observações',
-                labelStyle: TextStyle(fontSize: 18.0),
-                onTap: () async {
-                  ObservacaoPage obs = ObservacaoPage(
-                    observacao: null,
-                    animalId: _caprinoSelecionado.idAnimal,
-                  );
-                  final recObservacao = await Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => obs));
-                  if (recObservacao != null) {
-                    if (_caprinoSelecionado != null) {
-                      observacaoHelper.saveObservacao(recObservacao);
-                      _getAllObservacoes();
-                    }
-                  }
-                },
-              ),
-            ],
+            children: listaDeEventos(),
           ),
           body: TabBarView(
-            children: [
-              Container(
-                padding: EdgeInsets.all(13.0),
-                child: ListView(
-                  children: [
-                    Column(
-                      children: <Widget>[
-                        GestureDetector(
-                          child: Container(
-                            width: 140.0,
-                            height: 140.0,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                  image: _caprinoSelecionado.img != null
-                                      ? FileImage(File(_caprinoSelecionado.img))
-                                      : AssetImage("images/caprino.png"),
-                                  fit: BoxFit.cover),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    _informacoesAnimal(_caprinoSelecionado),
-                  ],
-                ),
-              ),
-              ListView.builder(
-                padding: EdgeInsets.all(10.0),
-                itemCount: tratamentos.length,
-                itemBuilder: (context, index) {
-                  return exibicaoPadraoDeEvento(
-                      context, index, tratamentos, 1, 3);
-                },
-              ),
-              ListView.builder(
-                padding: EdgeInsets.all(10.0),
-                itemCount: pesos.length,
-                itemBuilder: (context, index) {
-                  if (index < pesos.length - 1) {
-                    if (int.parse(pesos[index].peso) <
-                        int.parse(pesos[index + 1].peso)) {
-                      return exibicaoPadraoDeEvento(
-                          context, index, pesos, 2, 1);
-                    } else if (int.parse(pesos[index].peso) >
-                        int.parse(pesos[index + 1].peso)) {
-                      return exibicaoPadraoDeEvento(
-                          context, index, pesos, 2, 0);
-                    } else {
-                      return exibicaoPadraoDeEvento(
-                          context, index, pesos, 2, 2);
-                    }
-                  } else {
-                    return exibicaoPadraoDeEvento(context, index, pesos, 2, 2);
-                  }
-                },
-              ),
-              ListView.builder(
-                padding: EdgeInsets.all(10.0),
-                itemCount: observacoes.length,
-                itemBuilder: (context, index) {
-                  return exibicaoPadraoDeEvento(
-                      context, index, observacoes, 3, 3);
-                },
-              ),
-            ],
+            children: exibirTabs(),
           ),
         ),
       ),
     );
   }
 
-  // tipos podem ser 1 - tratamento 3- pesagem  2 Observacao
+  // tipos podem ser 1 - tratamento 3- pesagem  2 Observacao 4- ordenha
   //aumentou  1 -  0 -  abaixou  2-   manteve 3- ignora
   Padding exibicaoPadraoDeEvento(
       BuildContext context, int index, List lista, int tipo, int aumentou) {
@@ -429,12 +294,18 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
           default:
         }
         break;
-      case 4:
-        iconeSelecionado = MdiIcons.cashUsd;
+      case 4: // ordenha
+        iconeSelecionado = MdiIcons.bottleSoda;
+        selected = Text(lista[index].peso + " Kg");
+        data = exibicaoDataPadrao(lista[index].data);
         break;
       case 5:
+        iconeSelecionado = MdiIcons.cashUsd;
+        break;
+      case 6:
         iconeSelecionado = MdiIcons.skullCrossbones;
         break;
+
       default:
     }
     return Padding(
@@ -526,8 +397,10 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       op = new TratamentoHelper();
     } else if (tipo == 2) {
       op = new PesagemHelper();
-    } else {
+    } else if(tipo == 3){
       op = new ObservacaoHelper();
+    } else if(tipo == 4){
+      op = new OrdenhaHelper();
     }
     showDialog(
         context: context,
@@ -569,12 +442,17 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         lista.removeAt(index);
       });
       _getAllPesagens();
-    } else {
+    } else if(tipo == 3){
       helper.deleteObservacao(evento.idObservacao);
       setState(() {
         lista.removeAt(index);
       });
       _getAllObservacoes();
+    }else if(tipo == 4){
+      helper.deleteOrdenha(evento.idOrdenha);
+      setState(() {
+         lista.removeAt(index);
+      });
     }
   }
 
@@ -592,8 +470,10 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       op = new TratamentoPage(tratamento: evento, animalId: idAnimal);
     } else if (tipo == 2) {
       op = new PesagemPage(peso: evento, animalId: idAnimal);
-    } else {
+    } else if(tipo == 3){
       op = new ObservacaoPage(observacao: evento, animalId: idAnimal);
+    }else if(tipo == 4){
+      op = new OrdenhaPage(ordenha: evento, animalId: idAnimal);
     }
     final recEvento = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => op));
@@ -604,11 +484,14 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         await pesagemHelper.updatePesagem(recEvento);
       } else if (evento != null && tipo == 3) {
         await observacaoHelper.updateObservacao(recEvento);
+      }else if(evento != null && tipo == 4){
+        await ordenhaHelper.updateOrdenha(recEvento);
       }
 
       _getAllTratamentos();
       _getAllObservacoes();
       _getAllPesagens();
+      _getAllOrdenhas();
     }
   }
 
@@ -664,5 +547,218 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         ]),
       ],
     );
+  }
+
+  List<SpeedDialChild> listaDeEventos() {
+    List<SpeedDialChild> lista = List();
+    lista.add(SpeedDialChild(
+      child: Icon(MdiIcons.needle),
+      backgroundColor: Colors.green,
+      label: 'Tratamento',
+      labelStyle: TextStyle(fontSize: 18.0),
+      onTap: () async {
+        TratamentoPage novoTratamento = TratamentoPage(
+          tratamento: null,
+          animalId: _caprinoSelecionado.idAnimal,
+        );
+        final recTratamento = await Navigator.push(
+            context, MaterialPageRoute(builder: (context) => novoTratamento));
+        if (recTratamento != null) {
+          if (_caprinoSelecionado != null) {
+            tratamentoHelper.saveTratamento(recTratamento);
+            _getAllTratamentos();
+          }
+        }
+      },
+    ));
+    if (_caprinoSelecionado.sexo == "Fêmea") {
+      lista.add(SpeedDialChild(
+        child: Icon(MdiIcons.bottleSoda),
+        backgroundColor: Colors.green,
+        label: 'Ordenha',
+        labelStyle: TextStyle(fontSize: 18.0),
+        onTap: () async {
+          OrdenhaPage novaPesagem = OrdenhaPage(
+            ordenha: null,
+            animalId: _caprinoSelecionado.idAnimal,
+          );
+          final recOrdenha = await Navigator.push(
+              context, MaterialPageRoute(builder: (context) => novaPesagem));
+          if (recOrdenha != null) {
+            if (_caprinoSelecionado != null) {
+              ordenhaHelper.saveOrdenha(recOrdenha);
+              _getAllOrdenhas();
+            }
+          }
+        },
+      ));
+    }
+    lista.add(SpeedDialChild(
+      child: Icon(MdiIcons.weightKilogram),
+      backgroundColor: Colors.green,
+      label: 'Pesagem',
+      labelStyle: TextStyle(fontSize: 18.0),
+      onTap: () async {
+        PesagemPage novaPesagem = PesagemPage(
+          peso: null,
+          animalId: _caprinoSelecionado.idAnimal,
+        );
+        final recPesagem = await Navigator.push(
+            context, MaterialPageRoute(builder: (context) => novaPesagem));
+        if (recPesagem != null) {
+          if (_caprinoSelecionado != null) {
+            pesagemHelper.savePesagem(recPesagem);
+            _getAllPesagens();
+          }
+        }
+      },
+    ));
+    lista.add(SpeedDialChild(
+      child: Icon(MdiIcons.cashUsd),
+      backgroundColor: Colors.green,
+      label: 'Venda',
+      labelStyle: TextStyle(fontSize: 18.0),
+      onTap: () async {
+        final recEvento = await Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => VendaPage(
+                      animalVenda: _caprinoSelecionado,
+                    )));
+        if (recEvento != null) {
+          print(recEvento);
+          if (_caprinoSelecionado != null) {
+            await animalHelper.updateAnimal(recEvento);
+          }
+        }
+      },
+    ));
+    lista.add(SpeedDialChild(
+      child: Icon(MdiIcons.skullCrossbones),
+      backgroundColor: Colors.green,
+      label: 'Morte',
+      labelStyle: TextStyle(fontSize: 18.0),
+      onTap: () async {
+        final recEvento = await Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MortePage(
+                      animalMorte: _caprinoSelecionado,
+                    )));
+        if (recEvento != null) {
+          if (_caprinoSelecionado != null) {
+            animalHelper.updateAnimal(recEvento);
+          }
+        }
+      },
+    ));
+    lista.add(SpeedDialChild(
+      child: Icon(MdiIcons.alert),
+      backgroundColor: Colors.green,
+      label: 'Observações',
+      labelStyle: TextStyle(fontSize: 18.0),
+      onTap: () async {
+        ObservacaoPage obs = ObservacaoPage(
+          observacao: null,
+          animalId: _caprinoSelecionado.idAnimal,
+        );
+        final recObservacao = await Navigator.push(
+            context, MaterialPageRoute(builder: (context) => obs));
+        if (recObservacao != null) {
+          if (_caprinoSelecionado != null) {
+            observacaoHelper.saveObservacao(recObservacao);
+            _getAllObservacoes();
+          }
+        }
+      },
+    ));
+
+    return lista;
+  }
+
+  List<Widget> listaTabs() {
+    List<Widget> lista = List();
+    lista.add(Tab(text: "Informações"));
+    lista.add(Tab(text: "Tratamentos"));
+    lista.add(Tab(text: "Pesagens"));
+    lista.add(Tab(text: "Observações"));
+    if (_caprinoSelecionado.sexo == "Fêmea") {
+      lista.add(Tab(text: "Ordenhas"));
+      qtdEventos = 5;
+    }
+    return lista;
+  }
+
+  List<Widget> exibirTabs() {
+    List<Widget> lista = List();
+    lista.add(Container(
+      padding: EdgeInsets.all(13.0),
+      child: ListView(
+        children: [
+          Column(
+            children: <Widget>[
+              GestureDetector(
+                child: Container(
+                  width: 140.0,
+                  height: 140.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                        image: _caprinoSelecionado.img != null
+                            ? FileImage(File(_caprinoSelecionado.img))
+                            : AssetImage("images/caprino.png"),
+                        fit: BoxFit.cover),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          _informacoesAnimal(_caprinoSelecionado),
+        ],
+      ),
+    ));
+    lista.add(ListView.builder(
+      padding: EdgeInsets.all(10.0),
+      itemCount: tratamentos.length,
+      itemBuilder: (context, index) {
+        return exibicaoPadraoDeEvento(context, index, tratamentos, 1, 3);
+      },
+    ));
+    lista.add(ListView.builder(
+      padding: EdgeInsets.all(10.0),
+      itemCount: pesos.length,
+      itemBuilder: (context, index) {
+        if (index < pesos.length - 1) {
+          if (int.parse(pesos[index].peso) < int.parse(pesos[index + 1].peso)) {
+            return exibicaoPadraoDeEvento(context, index, pesos, 2, 1);
+          } else if (int.parse(pesos[index].peso) >
+              int.parse(pesos[index + 1].peso)) {
+            return exibicaoPadraoDeEvento(context, index, pesos, 2, 0);
+          } else {
+            return exibicaoPadraoDeEvento(context, index, pesos, 2, 2);
+          }
+        } else {
+          return exibicaoPadraoDeEvento(context, index, pesos, 2, 2);
+        }
+      },
+    ));
+    lista.add(ListView.builder(
+      padding: EdgeInsets.all(10.0),
+      itemCount: observacoes.length,
+      itemBuilder: (context, index) {
+        return exibicaoPadraoDeEvento(context, index, observacoes, 3, 3);
+      },
+    ));
+    if (_caprinoSelecionado.sexo == "Fêmea") {
+      lista.add(ListView.builder(
+        padding: EdgeInsets.all(10.0),
+        itemCount: ordenhas.length,
+        itemBuilder: (context, index) {
+          return exibicaoPadraoDeEvento(context, index, ordenhas, 4, 3);
+        },
+      ));
+    }
+
+    return lista;
   }
 }
