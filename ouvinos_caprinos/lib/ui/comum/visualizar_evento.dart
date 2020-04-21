@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ouvinos_caprinos/observacao/class/observacao.dart';
+import 'package:ouvinos_caprinos/ordenha/class/ordenha.dart';
 import 'package:ouvinos_caprinos/pesagem/class/pesagem.dart';
 import 'package:ouvinos_caprinos/tratamento/class/tratamento.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
@@ -19,6 +20,8 @@ class _VisualizarEventoState extends State<VisualizarEvento> {
   Tratamento _tratamentoSelecionado;
   Observacao _observacaoSelecionada;
   Pesagem _pesoSelecionado;
+  Ordenha _ordenhaSelecionada;
+
 
   @override
   void initState() {
@@ -30,6 +33,8 @@ class _VisualizarEventoState extends State<VisualizarEvento> {
       _pesoSelecionado = Pesagem.fromMap(widget.evento.toMap());
     } else if (widget.tipoEvento == 3) {
       _observacaoSelecionada = Observacao.fromMap(widget.evento.toMap());
+    }else if(widget.tipoEvento == 4){
+      _ordenhaSelecionada = Ordenha.fromMap(widget.evento.toMap());
     }
   }
 
@@ -112,7 +117,7 @@ class _VisualizarEventoState extends State<VisualizarEvento> {
         DataCell(fontePadrao("Peso Registrado")),
         DataCell(fontePadrao(_pesoSelecionado.peso + " KG"))
       ]));
-    } else {
+    } else if(_observacaoSelecionada != null){
        lista.add(DataRow(cells: [
         DataCell(fontePadrao("Data da Observação")),
         DataCell(fontePadrao(exibicaoDataPadrao(_observacaoSelecionada.data)))
@@ -121,7 +126,17 @@ class _VisualizarEventoState extends State<VisualizarEvento> {
         DataCell(fontePadrao("Observação")),
         DataCell(fontePadrao(_observacaoSelecionada.descricao))
       ]));
+    }else if(_ordenhaSelecionada != null){
+       lista.add(DataRow(cells: [
+        DataCell(fontePadrao("Data da Pesagem")),
+        DataCell(fontePadrao(exibicaoDataPadrao(_ordenhaSelecionada.data)))
+      ]));
+       lista.add(DataRow(cells: [
+        DataCell(fontePadrao("Peso Registrado")),
+        DataCell(fontePadrao(_ordenhaSelecionada.peso + " KG"))
+      ]));
     }
+
     return lista;
   }
 
