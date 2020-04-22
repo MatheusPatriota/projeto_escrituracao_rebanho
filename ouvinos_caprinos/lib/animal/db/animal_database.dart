@@ -20,6 +20,7 @@ final String valorAquisicaoColumn = "valor_aquisicao";
 final String patriomionioColumn = "patrimonio";
 final String nomeVendedorColumn = "nome_vendedor";
 final String imgColumn = "img";
+final String imgMorteColumn = "img_morte";
 final String dataMorteColumn = "data_morte";
 final String descricaoMorteColumn = "descricao_morte";
 final String dataRemocaoColumn = "data_remocao";
@@ -70,6 +71,7 @@ class AnimalHelper {
           "$patriomionioColumn TEXT,"
           "$nomeVendedorColumn TEXT,"
           "$imgColumn TEXT,"
+          "$imgMorteColumn TEXT,"
           "$dataMorteColumn TEXT,"
           "$descricaoMorteColumn TEXT,"
           "$dataRemocaoColumn TEXT,"
@@ -108,6 +110,7 @@ class AnimalHelper {
           patriomionioColumn,
           nomeVendedorColumn,
           imgColumn,
+          imgMorteColumn,
           dataMorteColumn,
           descricaoMorteColumn,
           dataRemocaoColumn,

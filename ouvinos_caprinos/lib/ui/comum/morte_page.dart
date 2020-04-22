@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
@@ -75,8 +76,7 @@ class _MortePageState extends State<MortePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (_formKey.currentState.validate()) {
-            _animalSelecionado.status = "2";
-            Navigator.pop(context, _animalSelecionado);
+            _showAlert();
           }
         },
         child: Icon(Icons.check),
@@ -95,10 +95,6 @@ class _MortePageState extends State<MortePage> {
               child: Text(exibicaoDataPadrao(_dataFormatada())),
               onPressed: () {
                 _selectDataPesagem(context);
-                setState(() {
-                  // _userEdited = true;
-                  // _editedAnimal.dataNascimento = _dataNascimentoFormatada;
-                });
               },
             ),
             espacamentoPadrao(),
@@ -121,5 +117,36 @@ class _MortePageState extends State<MortePage> {
         ),
       ),
     );
+  }
+
+  void _showAlert() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Vamos tirar uma foto do animal Morto, prepare-se!"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("OK"),
+                onPressed: () {
+                  Navigator.pop(context);
+                  _selecionaImagemMorte();               
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  _selecionaImagemMorte() {
+    ImagePicker.pickImage(source: ImageSource.camera).then((file) {
+      if (file == null) return;
+      setState(() {
+        _animalSelecionado.status = "2";
+        _animalSelecionado.imgMorte = file.path;
+      });
+      Navigator.pop(context, _animalSelecionado);
+      Navigator.pop(context);
+    });
   }
 }

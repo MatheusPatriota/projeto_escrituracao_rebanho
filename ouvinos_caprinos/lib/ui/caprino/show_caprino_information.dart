@@ -22,6 +22,7 @@ import 'package:ouvinos_caprinos/ui/comum/pesagem_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/tratamento_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/venda_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/visualizar_evento.dart';
+import 'package:ouvinos_caprinos/ui/comum/visualizar_imagem_padrao.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
 
 class CaprinoInformation extends StatefulWidget {
@@ -59,127 +60,6 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
   List<String> _dataComSplit;
 
   bool isExpanded = false;
-
-  Future<void> _getAllCategorias() async {
-    await categoriaHelper.getAllCategorias().then((listaC) {
-      print(listaC);
-      print(_caprinoSelecionado);
-      setState(() {
-        categoriaSelecionada =
-            listaC[_caprinoSelecionado.idCategoria].descricao;
-      });
-    });
-  }
-
-  Future<void> _getAllRacas() async {
-    await racaHelper.getAllRacas().then((listaR) {
-      print(listaR);
-
-      setState(() {
-        racaSelecionada = listaR[_caprinoSelecionado.idRaca].descricao;
-      });
-    });
-  }
-
-  Future<void> _getAllTratamentos() async {
-    List<Tratamento> tratamentosFinal = List();
-    await tratamentoHelper.getAllTratamentos().then((listaT) {
-      print(listaT);
-      if (listaT.isNotEmpty) {
-        for (var tratamento in listaT) {
-          if (tratamento.animalId == _caprinoSelecionado.idAnimal) {
-            tratamentosFinal.add(tratamento);
-          }
-        }
-        setState(() {
-          Comparator<Tratamento> tratamentoComparator = (a, b) {
-            DateTime dateTimeA =
-                DateTime.parse("${a.dataTratamento}" + " 00:00:00");
-            DateTime dateTimeB =
-                DateTime.parse("${b.dataTratamento}" + " 00:00:00");
-            return dateTimeB.compareTo(dateTimeA);
-          };
-          tratamentosFinal.sort(tratamentoComparator);
-          tratamentos = tratamentosFinal;
-        });
-      }
-    });
-  }
-
-  Future<void> _getAllObservacoes() async {
-    List<Observacao> observacoesFinal = List();
-    await observacaoHelper.getAllObservacaos().then((listaO) {
-      print(listaO);
-      if (listaO.isNotEmpty) {
-        for (var observacao in listaO) {
-          if (observacao.animalId == _caprinoSelecionado.idAnimal) {
-            observacoesFinal.add(observacao);
-          }
-        }
-        setState(() {
-          Comparator<Observacao> observacaoComparator = (a, b) {
-            DateTime dateTimeA = DateTime.parse("${a.data}" + " 00:00:00");
-            DateTime dateTimeB = DateTime.parse("${b.data}" + " 00:00:00");
-            return dateTimeB.compareTo(dateTimeA);
-          };
-          observacoesFinal.sort(observacaoComparator);
-          observacoes = observacoesFinal;
-        });
-      }
-    });
-  }
-
-  Future<void> _getAllPesagens() async {
-    List<Pesagem> pesagemFinal = List();
-    await pesagemHelper.getAllPesagems().then((listaP) {
-      print(listaP);
-      if (listaP.isNotEmpty) {
-        for (var peso in listaP) {
-          if (peso.animalId == _caprinoSelecionado.idAnimal) {
-            pesagemFinal.add(peso);
-          }
-        }
-        setState(() {
-          Comparator<Pesagem> pesagemComparator = (a, b) {
-            DateTime dateTimeA = DateTime.parse("${a.data}" + " 00:00:00");
-            DateTime dateTimeB = DateTime.parse("${b.data}" + " 00:00:00");
-            return dateTimeB.compareTo(dateTimeA);
-          };
-          pesagemFinal.sort(pesagemComparator);
-          pesagemFinal.forEach((Pesagem item) {
-            print('${item.idPesagem} - ${item.data} - ${item.peso}');
-          });
-          pesos = pesagemFinal;
-        });
-      }
-    });
-  }
-
-  Future<void> _getAllOrdenhas() async {
-    List<Ordenha> ordenhasFinal = List();
-    await ordenhaHelper.getAllOrdenhas().then((listaOrdenhas) {
-      print(listaOrdenhas);
-      if (listaOrdenhas.isNotEmpty) {
-        for (var ordenha in listaOrdenhas) {
-          if (ordenha.animalId == _caprinoSelecionado.idAnimal) {
-            ordenhasFinal.add(ordenha);
-          }
-        }
-        setState(() {
-          Comparator<Ordenha> ordenhaComparator = (a, b) {
-            DateTime dateTimeA = DateTime.parse("${a.data}" + " 00:00:00");
-            DateTime dateTimeB = DateTime.parse("${b.data}" + " 00:00:00");
-            return dateTimeB.compareTo(dateTimeA);
-          };
-          ordenhasFinal.sort(ordenhaComparator);
-          ordenhasFinal.forEach((Ordenha item) {
-            print('${item.idOrdenha} - ${item.data} - ${item.peso}');
-          });
-          ordenhas = ordenhasFinal;
-        });
-      }
-    });
-  }
 
   @override
   void initState() {
@@ -397,9 +277,9 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       op = new TratamentoHelper();
     } else if (tipo == 2) {
       op = new PesagemHelper();
-    } else if(tipo == 3){
+    } else if (tipo == 3) {
       op = new ObservacaoHelper();
-    } else if(tipo == 4){
+    } else if (tipo == 4) {
       op = new OrdenhaHelper();
     }
     showDialog(
@@ -442,16 +322,16 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         lista.removeAt(index);
       });
       _getAllPesagens();
-    } else if(tipo == 3){
+    } else if (tipo == 3) {
       helper.deleteObservacao(evento.idObservacao);
       setState(() {
         lista.removeAt(index);
       });
       _getAllObservacoes();
-    }else if(tipo == 4){
+    } else if (tipo == 4) {
       helper.deleteOrdenha(evento.idOrdenha);
       setState(() {
-         lista.removeAt(index);
+        lista.removeAt(index);
       });
     }
   }
@@ -470,9 +350,9 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       op = new TratamentoPage(tratamento: evento, animalId: idAnimal);
     } else if (tipo == 2) {
       op = new PesagemPage(peso: evento, animalId: idAnimal);
-    } else if(tipo == 3){
+    } else if (tipo == 3) {
       op = new ObservacaoPage(observacao: evento, animalId: idAnimal);
-    }else if(tipo == 4){
+    } else if (tipo == 4) {
       op = new OrdenhaPage(ordenha: evento, animalId: idAnimal);
     }
     final recEvento = await Navigator.push(
@@ -484,7 +364,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         await pesagemHelper.updatePesagem(recEvento);
       } else if (evento != null && tipo == 3) {
         await observacaoHelper.updateObservacao(recEvento);
-      }else if(evento != null && tipo == 4){
+      } else if (evento != null && tipo == 4) {
         await ordenhaHelper.updateOrdenha(recEvento);
       }
 
@@ -677,14 +557,26 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
   }
 
   List<Widget> listaTabs() {
+    bool cond = false;
     List<Widget> lista = List();
     lista.add(Tab(text: "Informações"));
+    if (_caprinoSelecionado.status == "2") {
+      qtdEventos = 5;
+      lista.add(Tab(
+        text: "Morte",
+      ));
+      cond = true;
+    }
     lista.add(Tab(text: "Tratamentos"));
     lista.add(Tab(text: "Pesagens"));
     lista.add(Tab(text: "Observações"));
     if (_caprinoSelecionado.sexo == "Fêmea") {
       lista.add(Tab(text: "Ordenhas"));
-      qtdEventos = 5;
+      if (cond == true) {
+        qtdEventos = 6;
+      } else {
+        qtdEventos = 5;
+      }
     }
     return lista;
   }
@@ -717,6 +609,70 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         ],
       ),
     ));
+    if (_caprinoSelecionado.status == "2") {
+      //imagem do animal morto
+      lista.add(
+        Container(
+          padding: EdgeInsets.all(13.0),
+          child: ListView(
+            children: [
+              Column(
+                children: <Widget>[
+                  GestureDetector(
+                    child: Container(
+                      width: 140.0,
+                      height: 140.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            image: _caprinoSelecionado.imgMorte != null
+                                ? FileImage(File(_caprinoSelecionado.imgMorte))
+                                : AssetImage("images/caprino.png"),
+                            fit: BoxFit.cover),
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ImagemPage(_caprinoSelecionado.imgMorte),
+                        ),
+                      );
+                    },
+                  ),
+                  DataTable(
+                    columns: <DataColumn>[
+                      DataColumn(
+                        label: Text(''),
+                      ),
+                      DataColumn(
+                        label: Text(''),
+                      ),
+                    ],
+                    rows: [
+                      DataRow(cells: [
+                        DataCell(Text("Data da Morte")),
+                        DataCell(
+                          Text(exibicaoDataPadrao(
+                              _caprinoSelecionado.dataMorte)),
+                        )
+                      ]),
+                      DataRow(cells: [
+                        DataCell(Text("Motivo da Morte")),
+                        DataCell(Text(_caprinoSelecionado.descricaoMorte)),
+                      ]),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+      // data da morte
+      // descricao da morte
+    }
     lista.add(ListView.builder(
       padding: EdgeInsets.all(10.0),
       itemCount: tratamentos.length,
@@ -760,5 +716,126 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     }
 
     return lista;
+  }
+
+  Future<void> _getAllCategorias() async {
+    await categoriaHelper.getAllCategorias().then((listaC) {
+      print(listaC);
+      print(_caprinoSelecionado);
+      setState(() {
+        categoriaSelecionada =
+            listaC[_caprinoSelecionado.idCategoria].descricao;
+      });
+    });
+  }
+
+  Future<void> _getAllRacas() async {
+    await racaHelper.getAllRacas().then((listaR) {
+      print(listaR);
+
+      setState(() {
+        racaSelecionada = listaR[_caprinoSelecionado.idRaca].descricao;
+      });
+    });
+  }
+
+  Future<void> _getAllTratamentos() async {
+    List<Tratamento> tratamentosFinal = List();
+    await tratamentoHelper.getAllTratamentos().then((listaT) {
+      print(listaT);
+      if (listaT.isNotEmpty) {
+        for (var tratamento in listaT) {
+          if (tratamento.animalId == _caprinoSelecionado.idAnimal) {
+            tratamentosFinal.add(tratamento);
+          }
+        }
+        setState(() {
+          Comparator<Tratamento> tratamentoComparator = (a, b) {
+            DateTime dateTimeA =
+                DateTime.parse("${a.dataTratamento}" + " 00:00:00");
+            DateTime dateTimeB =
+                DateTime.parse("${b.dataTratamento}" + " 00:00:00");
+            return dateTimeB.compareTo(dateTimeA);
+          };
+          tratamentosFinal.sort(tratamentoComparator);
+          tratamentos = tratamentosFinal;
+        });
+      }
+    });
+  }
+
+  Future<void> _getAllObservacoes() async {
+    List<Observacao> observacoesFinal = List();
+    await observacaoHelper.getAllObservacaos().then((listaO) {
+      print(listaO);
+      if (listaO.isNotEmpty) {
+        for (var observacao in listaO) {
+          if (observacao.animalId == _caprinoSelecionado.idAnimal) {
+            observacoesFinal.add(observacao);
+          }
+        }
+        setState(() {
+          Comparator<Observacao> observacaoComparator = (a, b) {
+            DateTime dateTimeA = DateTime.parse("${a.data}" + " 00:00:00");
+            DateTime dateTimeB = DateTime.parse("${b.data}" + " 00:00:00");
+            return dateTimeB.compareTo(dateTimeA);
+          };
+          observacoesFinal.sort(observacaoComparator);
+          observacoes = observacoesFinal;
+        });
+      }
+    });
+  }
+
+  Future<void> _getAllPesagens() async {
+    List<Pesagem> pesagemFinal = List();
+    await pesagemHelper.getAllPesagems().then((listaP) {
+      print(listaP);
+      if (listaP.isNotEmpty) {
+        for (var peso in listaP) {
+          if (peso.animalId == _caprinoSelecionado.idAnimal) {
+            pesagemFinal.add(peso);
+          }
+        }
+        setState(() {
+          Comparator<Pesagem> pesagemComparator = (a, b) {
+            DateTime dateTimeA = DateTime.parse("${a.data}" + " 00:00:00");
+            DateTime dateTimeB = DateTime.parse("${b.data}" + " 00:00:00");
+            return dateTimeB.compareTo(dateTimeA);
+          };
+          pesagemFinal.sort(pesagemComparator);
+          pesagemFinal.forEach((Pesagem item) {
+            print('${item.idPesagem} - ${item.data} - ${item.peso}');
+          });
+          pesos = pesagemFinal;
+        });
+      }
+    });
+  }
+
+  Future<void> _getAllOrdenhas() async {
+    List<Ordenha> ordenhasFinal = List();
+    await ordenhaHelper.getAllOrdenhas().then((listaOrdenhas) {
+      print(listaOrdenhas);
+      if (listaOrdenhas.isNotEmpty) {
+        for (var ordenha in listaOrdenhas) {
+          if (ordenha.animalId == _caprinoSelecionado.idAnimal) {
+            ordenhasFinal.add(ordenha);
+          }
+        }
+        setState(() {
+          Comparator<Ordenha> ordenhaComparator = (a, b) {
+            DateTime dateTimeA = DateTime.parse("${a.data}" + " 00:00:00");
+            DateTime dateTimeB = DateTime.parse("${b.data}" + " 00:00:00");
+            return dateTimeB.compareTo(dateTimeA);
+          };
+          ordenhasFinal.sort(ordenhaComparator);
+          ordenhasFinal.forEach((Ordenha item) {
+            print('${item.idOrdenha} - ${item.data} - ${item.peso}');
+          });
+          ordenhas = ordenhasFinal;
+        });
+      }
+    });
   }
 }
