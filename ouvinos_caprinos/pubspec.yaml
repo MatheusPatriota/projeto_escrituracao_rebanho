@@ -35,7 +35,7 @@ dependencies:
   flutter_launcher_icons: "^0.7.3"  
   flutter_masked_text: ^0.8.0
   flutter_form_builder: ^3.8.2
-
+  scheduled_notifications: ^1.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

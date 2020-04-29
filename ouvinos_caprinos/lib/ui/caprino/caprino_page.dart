@@ -45,6 +45,15 @@ class _CaprinoPageState extends State<CaprinoPage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      //tema escuro em desenvolvimento
+      // theme: ThemeData(
+      //   brightness: Brightness.light,
+      //   primaryColor: Colors.red,
+      // ),
+      // darkTheme: ThemeData(
+      //   brightness: Brightness.dark,
+      // ),
+
       home: DefaultTabController(
         length: 4,
         child: Scaffold(
@@ -55,7 +64,8 @@ class _CaprinoPageState extends State<CaprinoPage> {
               IconButton(
                 icon: Icon(Icons.search),
                 onPressed: () {
-                  showSearch(context: context, delegate: DataSearch(allAnimals));
+                  showSearch(
+                      context: context, delegate: DataSearch(allAnimals));
                 },
               ),
               PopupMenuButton<OrderOptions>(
@@ -268,20 +278,19 @@ class _CaprinoPageState extends State<CaprinoPage> {
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
                         ),
                         onPressed: () {
-                           if (lista[index].status != "3") {
-                             lista[index].status = "3";
-                             animalHelper.updateAnimal(lista[index]);
-                             setState(() {
-                               _getAllAnimals();
-                               lista.removeAt(index);
-                               Navigator.pop(context);
-                             });
-                           } else {
-                             setState(() {
-                               Navigator.pop(context);
-                           }
-                           );
-                           }
+                          if (lista[index].status != "3") {
+                            lista[index].status = "3";
+                            animalHelper.updateAnimal(lista[index]);
+                            setState(() {
+                              _getAllAnimals();
+                              lista.removeAt(index);
+                              Navigator.pop(context);
+                            });
+                          } else {
+                            setState(() {
+                              Navigator.pop(context);
+                            });
+                          }
                         },
                       ),
                     ),

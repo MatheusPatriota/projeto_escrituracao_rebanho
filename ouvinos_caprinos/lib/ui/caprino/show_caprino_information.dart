@@ -82,6 +82,15 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      //tema escuro em desenvolvimento
+      // theme: ThemeData(
+      //   brightness: Brightness.light,
+      //   primaryColor: Colors.red,
+      // ),
+      // darkTheme: ThemeData(
+      //   brightness: Brightness.dark,
+      // ),
+
       home: DefaultTabController(
         length: qtdEventos,
         child: Scaffold(
