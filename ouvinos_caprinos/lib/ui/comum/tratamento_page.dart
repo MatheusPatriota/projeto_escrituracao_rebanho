@@ -150,6 +150,7 @@ class _TratamentoPageState extends State<TratamentoPage> {
       _tratamentoCadastrado.animalId = widget.animalId;
       _tratamentoCadastrado.dataTratamento =
           _dataFormatada(_dataTratamentoSelecionada);
+      _tratamentoCadastrado.dataAgendamento = _dataFormatada(_dataAgendamentoSelecionada);
     } else {
       _tratamentoCadastrado = Tratamento.fromMap(widget.tratamento.toMap());
       _selectedMotivo.text = _tratamentoCadastrado.motivo;
@@ -318,13 +319,14 @@ class _TratamentoPageState extends State<TratamentoPage> {
             child: Icon(Icons.check),
             backgroundColor: Colors.green,
             onPressed: () async {
+              // altere aqui o temporizador para aparecer a notificacao
               DateTime now = DateTime.now().toUtc().add(
                     Duration(seconds: 10),
                   );
               await singleNotification(
                 now,
-                "Oi lindo",
-                "Tú eh lindo demais mano",
+                "Tratamento/Medicação pendente",
+                "O medicamento " + _tratamentoCadastrado.medicacao + " Deve ser aplicado Hoje!",
                 98123871,
               );
               if (_formKey.currentState.validate()) {

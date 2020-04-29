@@ -16,7 +16,7 @@ import 'package:ouvinos_caprinos/util/funcoes.dart';
 
 class CadastroCaprinoPage extends StatefulWidget {
   final Animal animalCaprino;
- 
+
   CadastroCaprinoPage({this.animalCaprino});
 
   @override
@@ -82,15 +82,26 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
       initialDate: _dataNascimento,
       firstDate: new DateTime(1900),
       lastDate: new DateTime(2100),
+      // builder: (BuildContext context, Widget child) {
+      //   return Theme(
+      //     data: ThemeData.dark(),
+      //     child: child,
+      //   );
+      // },
     );
     if (picked != null) {
-      if (picked.compareTo(_dataNascimento) > 0) {
+      if (picked.compareTo(DateTime.now()) > 0) {
         _showAlert("Você não pode cadastrar uma Data de Nascimento futura", 1);
       } else if (picked != _dataNascimento) {
         setState(() {
           _dataNascimento = picked;
           textNascimento = exibicaoDataPadrao(dataFormatada(picked));
           _editedAnimal.dataNascimento = dataFormatada(picked);
+        });
+      } else {
+        setState(() {
+          textNascimento = exibicaoDataPadrao(dataFormatada(_dataNascimento));
+          _editedAnimal.dataNascimento = dataFormatada(_dataNascimento);
         });
       }
     }
@@ -104,15 +115,23 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
       firstDate: new DateTime(1900),
       lastDate: new DateTime(2100),
     );
-    if (picked.compareTo(_dataAquisicao) > 0) {
-      _showAlert("Você não pode cadastrar uma Data de Aquisição futura", 2);    
-    } else if (picked != null && picked != _dataAquisicao) {
-      setState(() {
-        _dataAquisicao = picked;
-        textoAquisicao = exibicaoDataPadrao(dataFormatada(picked));
-        dataAquisicaoInformada = true;
-        _editedAnimal.dataAquisicao = dataFormatada(picked);
-      });
+    if (picked != null) {
+      if (picked.compareTo(_dataAquisicao) > 0) {
+        _showAlert("Você não pode cadastrar uma Data de Aquisição futura", 2);
+      } else if (picked != _dataAquisicao) {
+        setState(() {
+          _dataAquisicao = picked;
+          textoAquisicao = exibicaoDataPadrao(dataFormatada(picked));
+          dataAquisicaoInformada = true;
+          _editedAnimal.dataAquisicao = dataFormatada(picked);
+        });
+      } else {
+        setState(() {
+          textoAquisicao = exibicaoDataPadrao(dataFormatada(_dataAquisicao));
+          dataAquisicaoInformada = true;
+          _editedAnimal.dataAquisicao = dataFormatada(_dataAquisicao);
+        });
+      }
     }
   }
 
@@ -140,6 +159,10 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
       _selectedNomeVendedor.text = _editedAnimal.nomeVendedor;
       _selectedValorAquisicao.text = _editedAnimal.valorAquisicao;
       _selectedPatrimonio.text = _editedAnimal.patrimonio;
+      textNascimento = exibicaoDataPadrao(_editedAnimal.dataNascimento);
+      if (_editedAnimal.dataAquisicao != null) {
+        textoAquisicao = exibicaoDataPadrao(_editedAnimal.dataAquisicao);
+      }
     }
 
     _getAllCategorias();
@@ -149,9 +172,9 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
   }
 
   int _retornaNumeracaoSexo(String a) {
-    int result = 0;
+    int result = 1;
     if (a == "Fêmea") {
-      result = 1;
+      result = 2;
     }
     return result;
   }
