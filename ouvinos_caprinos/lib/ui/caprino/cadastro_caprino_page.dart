@@ -531,7 +531,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
             _userEdited = true;
             _selectedPai = value;
             if (value != 0) {
-              _editedAnimal.idPai = pais[value-1].idAnimal;
+              _editedAnimal.idPai = pais[value - 1].idAnimal;
             }
           });
         },
@@ -556,7 +556,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
           _userEdited = true;
           _selectedMae = value;
           if (value != 0) {
-            _editedAnimal.idMae = maes[value-1].idAnimal;
+            _editedAnimal.idMae = maes[value - 1].idAnimal;
           }
         });
       },
@@ -577,18 +577,21 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
         },
       ),
     );
+    if (_selectedMae == 0 && _selectedPai == 0) {
+      formWidget.add(Container(
+        child: Text("Data de Aquisição"),
+        padding: EdgeInsets.only(top: 10.0),
+      ));
+      formWidget.add(
+        RaisedButton(
+            child: Text(textoAquisicao),
+            onPressed: () {
+              _selectDateAquisicao(context);
+            }),
+      );
+    }
     // widget para data de aquisicao
-    formWidget.add(Container(
-      child: Text("Data de Aquisição"),
-      padding: EdgeInsets.only(top: 10.0),
-    ));
-    formWidget.add(
-      RaisedButton(
-          child: Text(textoAquisicao),
-          onPressed: () {
-            _selectDateAquisicao(context);
-          }),
-    );
+
     // widget para o valor da aquisicao do animal
     if (dataAquisicaoInformada) {
       formWidget.add(espacamentoPadrao());

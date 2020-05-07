@@ -150,7 +150,8 @@ class _TratamentoPageState extends State<TratamentoPage> {
       _tratamentoCadastrado.animalId = widget.animalId;
       _tratamentoCadastrado.dataTratamento =
           _dataFormatada(_dataTratamentoSelecionada);
-      _tratamentoCadastrado.dataAgendamento = _dataFormatada(_dataAgendamentoSelecionada);
+      _tratamentoCadastrado.dataAgendamento =
+          _dataFormatada(_dataAgendamentoSelecionada);
     } else {
       _tratamentoCadastrado = Tratamento.fromMap(widget.tratamento.toMap());
       _selectedMotivo.text = _tratamentoCadastrado.motivo;
@@ -320,15 +321,10 @@ class _TratamentoPageState extends State<TratamentoPage> {
             backgroundColor: Colors.green,
             onPressed: () async {
               // altere aqui o temporizador para aparecer a notificacao
-              DateTime now = DateTime.now().toUtc().add(
-                    Duration(seconds: 10),
-                  );
-              await singleNotification(
-                now,
-                "Tratamento/Medicação pendente",
-                "O medicamento " + _tratamentoCadastrado.medicacao + " Deve ser aplicado Hoje!",
-                98123871,
-              );
+              notificacao( "Tratamento/Medicação","O medicamento " +
+          _tratamentoCadastrado.medicacao +
+          " Deve ser aplicado Hoje!", 10,0);
+              notificacao("Periodo de Carencia", "O periodo de carencia do animal de id: " + widget.animalId.toString() + " venceu hoje!", 10,1);
               if (_formKey.currentState.validate()) {
                 Navigator.pop(context, _tratamentoCadastrado);
               }
@@ -336,5 +332,17 @@ class _TratamentoPageState extends State<TratamentoPage> {
           ),
         ),
         onWillPop: _requestPop);
+  }
+
+  notificacao(titulo, texto, duracao,hash) async {
+    DateTime now = DateTime.now().toUtc().add(
+          Duration(seconds: duracao),
+        );
+    await singleNotification(
+      now,
+      titulo,
+      texto,
+      hash,
+    );
   }
 }
