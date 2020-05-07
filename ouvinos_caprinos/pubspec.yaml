@@ -36,6 +36,13 @@ dependencies:
   flutter_masked_text: ^0.8.0
   flutter_form_builder: ^3.8.2
   scheduled_notifications: ^1.0.0
+  sqflite_porter:
+    git:
+      url: git://github.com/tekartik/sqflite_more
+      ref: dart2
+      path: sqflite_porter
+    version: '>=0.2.0'
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

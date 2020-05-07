@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/categoria/db/categoria_database.dart';
 import 'package:ouvinos_caprinos/especie/db/especie_database.dart';
+import 'package:ouvinos_caprinos/icones_personalizados/my_flutter_app_icons.dart';
 import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
 import 'package:ouvinos_caprinos/ui/caprino/show_caprino_information.dart';
 import 'package:ouvinos_caprinos/ui/comum/search_bar.dart';
@@ -119,11 +119,11 @@ class _CaprinoPageState extends State<CaprinoPage> {
                   ),
                 ),
                 ListTile(
-                  leading: Icon(MdiIcons.sheep),
+                  leading: Icon(MyFlutterApp.bode_icon),
                   title: Text('Caprinos'),
                 ),
                 ListTile(
-                  leading: Icon((MdiIcons.sheep)),
+                  leading: Icon((MyFlutterApp.ovelha_icon)),
                   title: Text('Ovinos'),
                   onTap: () {
                     Navigator.push(

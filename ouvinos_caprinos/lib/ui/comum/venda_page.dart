@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
@@ -22,11 +23,23 @@ class _VendaPageState extends State<VendaPage> {
 
   final _formKey = GlobalKey<FormState>();
 
+  var _selectedValorVenda = MoneyMaskedTextController();
+  final _selectedVendendor = TextEditingController();
+  final _selectedAnotacoes = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     _animalSelecionado = Animal.fromMap(widget.animalVenda.toMap());
-    _animalSelecionado.dataVendaAnimal = _dataFormatada();
+    if (widget.animalVenda.status == "1") {
+      _selectedValorVenda.text = _animalSelecionado.valorVenda;
+      _selectedVendendor.text =
+          _animalSelecionado.nomeVendedor ?? "Nome do Vendendor não Informado";
+      _selectedAnotacoes.text =
+          _animalSelecionado.anotacoesVenda ?? "Não possui anotações";
+    } else {
+      _animalSelecionado.dataVendaAnimal = _dataFormatada();
+    }
   }
 
   String _dataFormatada() {
@@ -95,15 +108,13 @@ class _VendaPageState extends State<VendaPage> {
                 _selectDataPesagem(context);
                 setState(() {
                   _animalSelecionado.dataVendaAnimal = _dataFormatada();
-                  // _userEdited = true;
-                  // _editedAnimal.dataNascimento = _dataNascimentoFormatada;
                 });
               },
             ),
             espacamentoPadrao(),
             TextFormField(
+              controller: _selectedValorVenda,
               decoration: estiloPadrao("Valor da Venda*", 2),
-              // controller: _selectedNome,             
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Por favor, insira o valor da venda';
@@ -113,8 +124,6 @@ class _VendaPageState extends State<VendaPage> {
               onChanged: (text) {
                 setState(() {
                   _animalSelecionado.valorVenda = text;
-                  // _userEdited = true;
-                  // _editedAnimal.nome = text;
                 });
               },
             ),
@@ -128,24 +137,20 @@ class _VendaPageState extends State<VendaPage> {
                 return null;
               },
               keyboardType: TextInputType.numberWithOptions(decimal: true),
-              // controller: _selectedNome,]
+              controller: _selectedVendendor,
               onChanged: (text) {
                 setState(() {
                   _animalSelecionado.nomeComprador = text;
-                  // _userEdited = true;
-                  // _editedAnimal.nome = text;
                 });
               },
             ),
             espacamentoPadrao(),
             TextField(
               decoration: estiloPadrao("Anotações", 1),
-              // controller: _selectedNome,
+              controller: _selectedAnotacoes,
               onChanged: (text) {
                 setState(() {
                   _animalSelecionado.anotacoesVenda = text;
-                  // _userEdited = true;
-                  // _editedAnimal.nome = text;
                 });
               },
             ),
