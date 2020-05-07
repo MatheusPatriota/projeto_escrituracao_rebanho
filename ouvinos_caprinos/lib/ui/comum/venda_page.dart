@@ -103,8 +103,7 @@ class _VendaPageState extends State<VendaPage> {
             espacamentoPadrao(),
             TextFormField(
               decoration: estiloPadrao("Valor da Venda*", 2),
-              // controller: _selectedNome,
-              keyboardType: TextInputType.number,
+              // controller: _selectedNome,             
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Por favor, insira o valor da venda';

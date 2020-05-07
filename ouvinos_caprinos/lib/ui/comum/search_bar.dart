@@ -1,13 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
+import 'package:ouvinos_caprinos/icones_personalizados/my_flutter_app_icons.dart';
 import 'package:ouvinos_caprinos/ui/caprino/show_caprino_information.dart';
+
+enum OrderOptions { maleOption, femaleOption }
 
 class DataSearch extends SearchDelegate<Animal> {
   AnimalHelper animalHelper = AnimalHelper();
   List<Animal> animais;
+  bool maleOptionSelected = false;
+  bool femaleOptionSelected = false;
   DataSearch(ani) {
     this.animais = ani;
+  }
+
+  void _orderList(OrderOptions result) {
+    switch (result) {
+      case OrderOptions.maleOption:
+        femaleOptionSelected = false;
+        maleOptionSelected = true;
+        break;
+
+      case OrderOptions.femaleOption:
+        maleOptionSelected = false;
+        femaleOptionSelected = true;
+        break;
+      default:
+    }
   }
 
   @override
@@ -18,7 +38,21 @@ class DataSearch extends SearchDelegate<Animal> {
         onPressed: () {
           query = "";
         },
-      )
+      ),
+      PopupMenuButton<OrderOptions>(
+        icon: Icon(Icons.list),
+        itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
+          const PopupMenuItem<OrderOptions>(
+            child: Text("Ordenar por Machos"),
+            value: OrderOptions.maleOption,
+          ),
+          const PopupMenuItem<OrderOptions>(
+            child: Text("Ordenar por Fêmeas"),
+            value: OrderOptions.femaleOption,
+          ),
+        ],
+        onSelected: _orderList,
+      ),
     ];
   }
 
@@ -47,12 +81,28 @@ class DataSearch extends SearchDelegate<Animal> {
 
     if (query.isEmpty) {
       // codigo inutil, possivel remocao
-      sugestionList = List();
+      sugestionList = animais;
     } else {
       for (var ani in animais) {
-        String aniFormatado = nomeAnimalExibido(ani).toLowerCase();
-        if (aniFormatado.contains(query.toLowerCase())) {
-          sugestionList.add(ani);
+        if (maleOptionSelected == true) {
+          if (ani.sexo == "Macho") {
+            String aniFormatado = nomeAnimalExibido(ani).toLowerCase();
+            if (aniFormatado.contains(query.toLowerCase())) {
+              sugestionList.add(ani);
+            }
+          }
+        } else if (femaleOptionSelected == true) {
+          if (ani.sexo == "Fêmea") {
+            String aniFormatado = nomeAnimalExibido(ani).toLowerCase();
+            if (aniFormatado.contains(query.toLowerCase())) {
+              sugestionList.add(ani);
+            }
+          }
+        } else {
+          String aniFormatado = nomeAnimalExibido(ani).toLowerCase();
+          if (aniFormatado.contains(query.toLowerCase())) {
+            sugestionList.add(ani);
+          }
         }
       }
     }
@@ -67,7 +117,7 @@ class DataSearch extends SearchDelegate<Animal> {
     for (var ani in sugest) {
       lista.add(
         ListTile(
-          leading: Icon(Icons.location_city),
+          leading: Icon(MyFlutterApp.bode_icon),
           title: Text(
             nomeAnimalExibido(ani),
           ),

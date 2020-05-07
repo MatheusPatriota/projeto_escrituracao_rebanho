@@ -69,7 +69,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
                 },
               ),
               PopupMenuButton<OrderOptions>(
-                icon: Icon(Icons.sort),
+                icon: Icon(Icons.list),
                 itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
                   const PopupMenuItem<OrderOptions>(
                     child: Text("Ordenar de A-Z"),
