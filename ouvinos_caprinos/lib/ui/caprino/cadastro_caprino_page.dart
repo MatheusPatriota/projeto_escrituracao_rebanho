@@ -530,7 +530,9 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
           setState(() {
             _userEdited = true;
             _selectedPai = value;
-            _editedAnimal.idPai = paiList[value].value;
+            if (value != 0) {
+              _editedAnimal.idPai = pais[value-1].idAnimal;
+            }
           });
         },
         isExpanded: true,
@@ -553,7 +555,9 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
         setState(() {
           _userEdited = true;
           _selectedMae = value;
-          _editedAnimal.idMae = maeList[value].value;
+          if (value != 0) {
+            _editedAnimal.idMae = maes[value-1].idAnimal;
+          }
         });
       },
       isExpanded: true,

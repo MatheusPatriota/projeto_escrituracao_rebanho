@@ -51,6 +51,10 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  fonts:
+    - family:  MyFlutterApp
+      fonts:
+       - asset: lib/fontes/MyFlutterApp.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -92,3 +96,5 @@ flutter_icons:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+    

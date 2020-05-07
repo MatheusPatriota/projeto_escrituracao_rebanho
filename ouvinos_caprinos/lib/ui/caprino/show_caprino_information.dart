@@ -59,6 +59,9 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
 
   List<String> _dataComSplit;
 
+  Animal paiDoAnimal;
+  Animal maeDoAnimal;
+
   bool isExpanded = false;
 
   @override
@@ -69,6 +72,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     if (_caprinoSelecionado.idCategoria != null) {
       _getAllCategorias();
     }
+    _getAllAnimais();
     _getAllRacas();
     _getAllTratamentos();
     _getAllObservacoes();
@@ -430,12 +434,35 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         DataRow(
             cells: [DataCell(Text("Raça")), DataCell(Text(racaSelecionada))]),
         DataRow(cells: [
+          DataCell(Text("Pai")),
+          DataCell(Text(exibicaoParentalPadrao(paiDoAnimal))),
+        ]),
+        DataRow(cells: [
+          DataCell(Text("Mãe")),
+          DataCell(Text(exibicaoParentalPadrao(maeDoAnimal))),
+        ]),
+        DataRow(cells: [
+          DataCell(Text("Nascimento")),
           DataCell(
               Text(exibicaoDataPadrao(_caprinoSelecionado.dataNascimento))),
-          DataCell(Text("Nascimento")),
         ]),
       ],
     );
+  }
+
+  String exibicaoParentalPadrao(Animal info) {
+    if (info != null) {
+      String nomeExibicao = info.idAnimal.toString();
+      if (info.brincoControle != null) {
+        nomeExibicao += " - " + info.brincoControle;
+      }
+      if (info.nome != null) {
+        nomeExibicao += " - " + info.nome;
+      }
+      return nomeExibicao;
+    } else {
+      return "Não Há cadastro Parental";
+    }
   }
 
   List<SpeedDialChild> listaDeEventos() {
@@ -792,6 +819,21 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
           observacoesFinal.sort(observacaoComparator);
           observacoes = observacoesFinal;
         });
+      }
+    });
+  }
+
+  Future<void> _getAllAnimais() async {
+    await animalHelper.getAllAnimals().then((listaAni) {
+      print(listaAni);
+      if (listaAni.isNotEmpty) {
+        for (var ani in listaAni) {
+          if (ani.idAnimal == _caprinoSelecionado.idPai) {
+            paiDoAnimal = ani;
+          } else if (ani.idAnimal == _caprinoSelecionado.idMae) {
+            maeDoAnimal = ani;
+          }
+        }
       }
     });
   }
