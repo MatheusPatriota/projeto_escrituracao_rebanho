@@ -5,6 +5,7 @@ import 'package:sqflite/sqflite.dart';
 
 final String tableName = "Categoria";
 final String idCategoriaColumn = "id_categoria";
+final String especieIdColumn = "id_especie";
 final String descricaoColumn = "descricao";
 
 class CategoriaHelper {
@@ -17,7 +18,7 @@ class CategoriaHelper {
   Database _categoriaDataBase;
 
   Future<Database> get db async {
-    if (_categoriaDataBase != null) {      
+    if (_categoriaDataBase != null) {
       return _categoriaDataBase;
     } else {
       _categoriaDataBase = await initDb();
@@ -34,8 +35,9 @@ class CategoriaHelper {
         onCreate: (Database db, int newerVersion) async {
       await db.execute(
           "CREATE TABLE IF NOT EXISTS $tableName (  $idCategoriaColumn INTEGER PRIMARY KEY  ,"
-          "$descricaoColumn TEXTL)");
-          print("Categoria dataBase was created");
+          "$especieIdColumn INTEGER,"
+          "$descricaoColumn TEXT)");
+      print("Categoria dataBase was created");
     });
   }
 
@@ -48,7 +50,7 @@ class CategoriaHelper {
   Future<Categoria> getCategoria(int id) async {
     Database dbCategoria = await db;
     List<Map> maps = await dbCategoria.query(tableName,
-        columns: [idCategoriaColumn, descricaoColumn],
+        columns: [idCategoriaColumn, especieIdColumn, descricaoColumn],
         where: "$idCategoriaColumn = ?",
         whereArgs: [id]);
     if (maps.length > 0) {
@@ -93,15 +95,13 @@ class CategoriaHelper {
 
   Future categoriasPadrao() async {
     int a = await getNumber();
-    if(a == 0){
-      saveCategoria(new Categoria(id: null,descricao: "Não Selecionado"));
-      saveCategoria(new Categoria(id: null,descricao: "Cria"));
-      saveCategoria(new Categoria(id: null,descricao: "Recria"));
-      saveCategoria(new Categoria(id: null,descricao: "Terminação"));
-      saveCategoria(new Categoria(id: null,descricao: "Matriz"));
-      saveCategoria(new Categoria(id: null,descricao: "Reprodutor"));
+    if (a == 0) {
+      saveCategoria(new Categoria(id: null, especieId: 1, descricao: "Não Selecionado"));
+      saveCategoria(new Categoria(id: null, especieId: 1, descricao: "Cria"));
+      saveCategoria(new Categoria(id: null, especieId: 1, descricao: "Recria"));
+      saveCategoria(new Categoria(id: null, especieId: 1, descricao: "Terminação"));
+      saveCategoria(new Categoria(id: null, especieId: 1, descricao: "Matriz"));
+      saveCategoria(new Categoria(id: null, especieId: 1, descricao: "Reprodutor"));
     }
-    
-    
   }
 }
