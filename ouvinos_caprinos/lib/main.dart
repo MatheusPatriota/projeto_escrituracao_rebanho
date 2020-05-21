@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ouvinos_caprinos/ui/home_page.dart';
+import 'package:ouvinos_caprinos/ui/comum/bem_vindo.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -11,7 +11,7 @@ void main() {
     // darkTheme: ThemeData(
     //   brightness: Brightness.dark,
     // ),
-    home: HomePage(),
+    home: BemVindo(),
     debugShowCheckedModeBanner: false,
   ));
 }

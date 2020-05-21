@@ -5,7 +5,9 @@ import 'package:sqflite/sqflite.dart';
 
 final String tableName = "Raca";
 final String idRacaColumn = "id_raca";
+final String especieIdColumn = "id_especie";
 final String descricaoColumn = "descricao";
+final String descricaoMesticoColumn = "descricao_mestico";
 
 class RacaHelper {
   static final RacaHelper _instance = RacaHelper.internal();
@@ -33,9 +35,11 @@ class RacaHelper {
     return await openDatabase(path, version: 1,
         onCreate: (Database db, int newerVersion) async {
       await db.execute(
-           "CREATE TABLE IF NOT EXISTS $tableName (  $idRacaColumn INTEGER PRIMARY KEY  ,"
-          "$descricaoColumn TEXTL)");
-          print("Raca dataBase was created");
+          "CREATE TABLE IF NOT EXISTS $tableName (  $idRacaColumn INTEGER PRIMARY KEY  ,"
+          "$especieIdColumn INTEGER, "
+          "$descricaoColumn TEXT, "
+          "$descricaoMesticoColumn TEXT)");
+      print("Raca dataBase was created");
     });
   }
 
@@ -48,7 +52,9 @@ class RacaHelper {
   Future<Raca> getRaca(int id) async {
     Database dbRaca = await db;
     List<Map> maps = await dbRaca.query(tableName,
-        columns: [idRacaColumn, descricaoColumn], where: "$idRacaColumn = ?", whereArgs: [id]);
+        columns: [idRacaColumn, especieIdColumn, descricaoColumn, descricaoMesticoColumn],
+        where: "$idRacaColumn = ?",
+        whereArgs: [id]);
     if (maps.length > 0) {
       return Raca.fromMap(maps.first);
     } else {
@@ -91,13 +97,12 @@ class RacaHelper {
   Future racasPadrao() async {
     int a = await getNumber();
     if (a == 0) {
-      saveRaca(new Raca(id: null, descricao: "NS"));
-      saveRaca(new Raca(id: null, descricao: "Alpino"));
-      saveRaca(new Raca(id: null, descricao: "Anglo Nubiano"));
-      saveRaca(new Raca(id: null, descricao: "Boer"));
-      saveRaca(new Raca(id: null, descricao: "Mestiço"));
-      saveRaca(new Raca(id: null, descricao: "Saanen"));
-      saveRaca(new Raca(id: null, descricao: "Toggenburg"));
+      saveRaca(new Raca(id: null, especieId: 1, descricao: "Alpino", descricaoMestico: null));
+      saveRaca(new Raca(id: null, especieId: 1, descricao: "Anglo Nubiano",  descricaoMestico: null));
+      saveRaca(new Raca(id: null, especieId: 1, descricao: "Boer",  descricaoMestico: null));
+      saveRaca(new Raca(id: null, especieId: 1, descricao: "Mestiço",  descricaoMestico: null));
+      saveRaca(new Raca(id: null, especieId: 1, descricao: "Saanen",  descricaoMestico: null));
+      saveRaca(new Raca(id: null, especieId: 1, descricao: "Toggenburg",  descricaoMestico: null));
     }
   }
 }

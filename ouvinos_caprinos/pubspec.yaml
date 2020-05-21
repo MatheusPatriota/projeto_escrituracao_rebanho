@@ -71,6 +71,7 @@ flutter:
     - images/ovino.png
     - images/caprino.png
     - images/icon.png
+    - images/home_logo.png
 
 flutter_icons:
   ios: true
