@@ -103,6 +103,18 @@ class RacaHelper {
       saveRaca(new Raca(id: null, especieId: 1, descricao: "Mestiço",  descricaoMestico: null));
       saveRaca(new Raca(id: null, especieId: 1, descricao: "Saanen",  descricaoMestico: null));
       saveRaca(new Raca(id: null, especieId: 1, descricao: "Toggenburg",  descricaoMestico: null));
+      saveRaca(new Raca(id: null, especieId: 2, descricao: "Bergamácia Brasileira",  descricaoMestico: null));
+      saveRaca(new Raca(id: null, especieId: 2, descricao: "Dorper",  descricaoMestico: null));
+      saveRaca(new Raca(id: null, especieId: 2, descricao: "Dâmara",  descricaoMestico: null));
+      saveRaca(new Raca(id: null, especieId: 2, descricao: "Hampshire Down",  descricaoMestico: null));
+      saveRaca(new Raca(id: null, especieId: 2, descricao: "Ile de France",  descricaoMestico: null));
+      saveRaca(new Raca(id: null, especieId: 2, descricao: "Lacaune",  descricaoMestico: null));
+      saveRaca(new Raca(id: null, especieId: 2, descricao: "Mestiço",  descricaoMestico: null));
+      saveRaca(new Raca(id: null, especieId: 2, descricao: "Morada Nova",  descricaoMestico: null));
+      saveRaca(new Raca(id: null, especieId: 2, descricao: "Santa Inês",  descricaoMestico: null));
+      saveRaca(new Raca(id: null, especieId: 2, descricao: "Somalis Brasileira",  descricaoMestico: null));
+      saveRaca(new Raca(id: null, especieId: 2, descricao: "Suffolk",  descricaoMestico: null));
+      saveRaca(new Raca(id: null, especieId: 2, descricao: "Texel",  descricaoMestico: null));
     }
   }
 }

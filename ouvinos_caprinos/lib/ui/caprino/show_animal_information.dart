@@ -6,6 +6,8 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/categoria/db/categoria_database.dart';
+import 'package:ouvinos_caprinos/especie/class/especie.dart';
+import 'package:ouvinos_caprinos/especie/db/especie_database.dart';
 import 'package:ouvinos_caprinos/observacao/class/observacao.dart';
 import 'package:ouvinos_caprinos/observacao/db/observacao_database.dart';
 import 'package:ouvinos_caprinos/ordenha/class/ordenha.dart';
@@ -25,17 +27,17 @@ import 'package:ouvinos_caprinos/ui/comum/visualizar_evento.dart';
 import 'package:ouvinos_caprinos/ui/comum/visualizar_imagem_padrao.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
 
-class CaprinoInformation extends StatefulWidget {
-  final Animal caprino;
+class AnimalInformation extends StatefulWidget {
+  final Animal animal;
 
-  CaprinoInformation({this.caprino});
+  AnimalInformation({this.animal});
 
   @override
   _CaprinoInformationState createState() => _CaprinoInformationState();
 }
 
-class _CaprinoInformationState extends State<CaprinoInformation> {
-  Animal _caprinoSelecionado;
+class _CaprinoInformationState extends State<AnimalInformation> {
+  Animal _animalSelecionado;
 
   AnimalHelper animalHelper = AnimalHelper();
   CategoriaHelper categoriaHelper = CategoriaHelper();
@@ -46,6 +48,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
   ObservacaoHelper observacaoHelper = ObservacaoHelper();
   PesagemHelper pesagemHelper = PesagemHelper();
   OrdenhaHelper ordenhaHelper = OrdenhaHelper();
+  EspecieHelper especieHelper = EspecieHelper();
 
   String categoriaSelecionada = "";
   String racaSelecionada = "";
@@ -62,22 +65,25 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
   Animal paiDoAnimal;
   Animal maeDoAnimal;
 
+  Especie especie;
+
   bool isExpanded = false;
 
   @override
   void initState() {
     super.initState();
-    _caprinoSelecionado = Animal.fromMap(widget.caprino.toMap());
-    _dataComSplit = _caprinoSelecionado.dataNascimento.split("-");
-    if (_caprinoSelecionado.idCategoria != null) {
+    _animalSelecionado = Animal.fromMap(widget.animal.toMap());
+    _dataComSplit = _animalSelecionado.dataNascimento.split("-");
+    if (_animalSelecionado.idCategoria != null) {
       _getAllCategorias();
     }
+    _getEspecie();
     _getAllAnimais();
     _getAllRacas();
     _getAllTratamentos();
     _getAllObservacoes();
     _getAllPesagens();
-    if (_caprinoSelecionado.sexo == "Fêmea") {
+    if (_animalSelecionado.sexo == "Fêmea") {
       _getAllOrdenhas();
     }
   }
@@ -100,7 +106,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.green,
-            title: Text("Informações Sobre Caprino"),
+            title: Text("Informações Sobre animal"),
             centerTitle: true,
             bottom: TabBar(
               isScrollable: true,
@@ -401,15 +407,15 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       rows: [
         DataRow(cells: [
           DataCell(Text("Patrimônio")),
-          DataCell(Text(ehvazio(_caprinoSelecionado.patrimonio)))
+          DataCell(Text(ehvazio(_animalSelecionado.patrimonio)))
         ]),
         DataRow(cells: [
           DataCell(Text("Brinco")),
-          DataCell(Text(ehvazio(_caprinoSelecionado.brincoControle)))
+          DataCell(Text(ehvazio(_animalSelecionado.brincoControle)))
         ]),
         DataRow(cells: [
           DataCell(Text("ID")),
-          DataCell(Text(_caprinoSelecionado.idAnimal.toString()))
+          DataCell(Text(_animalSelecionado.idAnimal.toString()))
         ]),
         DataRow(cells: [
           DataCell(Text("Idade")),
@@ -421,11 +427,11 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         ]),
         DataRow(cells: [
           DataCell(Text("Nome")),
-          DataCell(Text(ehvazio(_caprinoSelecionado.nome)))
+          DataCell(Text(ehvazio(_animalSelecionado.nome)))
         ]),
         DataRow(cells: [
           DataCell(Text("Sexo")),
-          DataCell(Text(_caprinoSelecionado.sexo))
+          DataCell(Text(_animalSelecionado.sexo))
         ]),
         DataRow(cells: [
           DataCell(Text("Categoria")),
@@ -443,8 +449,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         ]),
         DataRow(cells: [
           DataCell(Text("Nascimento")),
-          DataCell(
-              Text(exibicaoDataPadrao(_caprinoSelecionado.dataNascimento))),
+          DataCell(Text(exibicaoDataPadrao(_animalSelecionado.dataNascimento))),
         ]),
       ],
     );
@@ -475,19 +480,19 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       onTap: () async {
         TratamentoPage novoTratamento = TratamentoPage(
           tratamento: null,
-          animalId: _caprinoSelecionado.idAnimal,
+          animalId: _animalSelecionado.idAnimal,
         );
         final recTratamento = await Navigator.push(
             context, MaterialPageRoute(builder: (context) => novoTratamento));
         if (recTratamento != null) {
-          if (_caprinoSelecionado != null) {
+          if (_animalSelecionado != null) {
             tratamentoHelper.saveTratamento(recTratamento);
             _getAllTratamentos();
           }
         }
       },
     ));
-    if (_caprinoSelecionado.sexo == "Fêmea") {
+    if (_animalSelecionado.sexo == "Fêmea") {
       lista.add(SpeedDialChild(
         child: Icon(MdiIcons.bottleSoda),
         backgroundColor: Colors.green,
@@ -496,12 +501,12 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         onTap: () async {
           OrdenhaPage novaPesagem = OrdenhaPage(
             ordenha: null,
-            animalId: _caprinoSelecionado.idAnimal,
+            animalId: _animalSelecionado.idAnimal,
           );
           final recOrdenha = await Navigator.push(
               context, MaterialPageRoute(builder: (context) => novaPesagem));
           if (recOrdenha != null) {
-            if (_caprinoSelecionado != null) {
+            if (_animalSelecionado != null) {
               ordenhaHelper.saveOrdenha(recOrdenha);
               _getAllOrdenhas();
             }
@@ -517,12 +522,12 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       onTap: () async {
         PesagemPage novaPesagem = PesagemPage(
           peso: null,
-          animalId: _caprinoSelecionado.idAnimal,
+          animalId: _animalSelecionado.idAnimal,
         );
         final recPesagem = await Navigator.push(
             context, MaterialPageRoute(builder: (context) => novaPesagem));
         if (recPesagem != null) {
-          if (_caprinoSelecionado != null) {
+          if (_animalSelecionado != null) {
             pesagemHelper.savePesagem(recPesagem);
             _getAllPesagens();
           }
@@ -539,11 +544,11 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
             context,
             MaterialPageRoute(
                 builder: (context) => VendaPage(
-                      animalVenda: _caprinoSelecionado,
+                      animalVenda: _animalSelecionado,
                     )));
         if (recEvento != null) {
           print(recEvento);
-          if (_caprinoSelecionado != null) {
+          if (_animalSelecionado != null) {
             await animalHelper.updateAnimal(recEvento);
           }
         }
@@ -559,10 +564,10 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
             context,
             MaterialPageRoute(
                 builder: (context) => MortePage(
-                      animalMorte: _caprinoSelecionado,
+                      animalMorte: _animalSelecionado,
                     )));
         if (recEvento != null) {
-          if (_caprinoSelecionado != null) {
+          if (_animalSelecionado != null) {
             animalHelper.updateAnimal(recEvento);
           }
         }
@@ -576,12 +581,12 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       onTap: () async {
         ObservacaoPage obs = ObservacaoPage(
           observacao: null,
-          animalId: _caprinoSelecionado.idAnimal,
+          animalId: _animalSelecionado.idAnimal,
         );
         final recObservacao = await Navigator.push(
             context, MaterialPageRoute(builder: (context) => obs));
         if (recObservacao != null) {
-          if (_caprinoSelecionado != null) {
+          if (_animalSelecionado != null) {
             observacaoHelper.saveObservacao(recObservacao);
             _getAllObservacoes();
           }
@@ -596,7 +601,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     bool cond = false;
     List<Widget> lista = List();
     lista.add(Tab(text: "Informações"));
-    if (_caprinoSelecionado.status == "2") {
+    if (_animalSelecionado.status == "2") {
       qtdEventos = 5;
       lista.add(Tab(
         text: "Morte",
@@ -606,7 +611,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
     lista.add(Tab(text: "Tratamentos"));
     lista.add(Tab(text: "Pesagens"));
     lista.add(Tab(text: "Observações"));
-    if (_caprinoSelecionado.sexo == "Fêmea") {
+    if (_animalSelecionado.sexo == "Fêmea") {
       lista.add(Tab(text: "Ordenhas"));
       if (cond == true) {
         qtdEventos = 6;
@@ -632,20 +637,22 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                        image: _caprinoSelecionado.img != null
-                            ? FileImage(File(_caprinoSelecionado.img))
-                            : AssetImage("images/caprino.png"),
+                        image: _animalSelecionado.img != null
+                            ? FileImage(File(_animalSelecionado.img))
+                            : AssetImage("images/" +
+                                especie.descricao.toLowerCase() +
+                                ".png"),
                         fit: BoxFit.cover),
                   ),
                 ),
               ),
             ],
           ),
-          _informacoesAnimal(_caprinoSelecionado),
+          _informacoesAnimal(_animalSelecionado),
         ],
       ),
     ));
-    if (_caprinoSelecionado.status == "2") {
+    if (_animalSelecionado.status == "2") {
       //imagem do animal morto
       lista.add(
         Container(
@@ -661,9 +668,9 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                            image: _caprinoSelecionado.imgMorte != null
-                                ? FileImage(File(_caprinoSelecionado.imgMorte))
-                                : AssetImage("images/caprino.png"),
+                            image: _animalSelecionado.imgMorte != null
+                                ? FileImage(File(_animalSelecionado.imgMorte))
+                                : AssetImage("images/animal.png"),
                             fit: BoxFit.cover),
                       ),
                     ),
@@ -672,7 +679,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              ImagemPage(_caprinoSelecionado.imgMorte),
+                              ImagemPage(_animalSelecionado.imgMorte),
                         ),
                       );
                     },
@@ -690,13 +697,13 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
                       DataRow(cells: [
                         DataCell(Text("Data da Morte")),
                         DataCell(
-                          Text(exibicaoDataPadrao(
-                              _caprinoSelecionado.dataMorte)),
+                          Text(
+                              exibicaoDataPadrao(_animalSelecionado.dataMorte)),
                         )
                       ]),
                       DataRow(cells: [
                         DataCell(Text("Motivo da Morte")),
-                        DataCell(Text(_caprinoSelecionado.descricaoMorte)),
+                        DataCell(Text(_animalSelecionado.descricaoMorte)),
                       ]),
                     ],
                   ),
@@ -741,7 +748,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
         return exibicaoPadraoDeEvento(context, index, observacoes, 3, 3);
       },
     ));
-    if (_caprinoSelecionado.sexo == "Fêmea") {
+    if (_animalSelecionado.sexo == "Fêmea") {
       lista.add(ListView.builder(
         padding: EdgeInsets.all(10.0),
         itemCount: ordenhas.length,
@@ -757,10 +764,9 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
   Future<void> _getAllCategorias() async {
     await categoriaHelper.getAllCategorias().then((listaC) {
       print(listaC);
-      print(_caprinoSelecionado);
+      print(_animalSelecionado);
       setState(() {
-        categoriaSelecionada =
-            listaC[_caprinoSelecionado.idCategoria].descricao;
+        categoriaSelecionada = listaC[_animalSelecionado.idCategoria].descricao;
       });
     });
   }
@@ -770,7 +776,15 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       print(listaR);
 
       setState(() {
-        racaSelecionada = listaR[_caprinoSelecionado.idRaca].descricao;
+        racaSelecionada = listaR[_animalSelecionado.idRaca].descricao;
+      });
+    });
+  }
+
+  _getEspecie() async {
+    await especieHelper.getEspecie(widget.animal.idEspecie).then((ep) {
+      setState(() {
+        especie = ep;
       });
     });
   }
@@ -781,7 +795,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       print(listaT);
       if (listaT.isNotEmpty) {
         for (var tratamento in listaT) {
-          if (tratamento.animalId == _caprinoSelecionado.idAnimal) {
+          if (tratamento.animalId == _animalSelecionado.idAnimal) {
             tratamentosFinal.add(tratamento);
           }
         }
@@ -806,7 +820,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       print(listaO);
       if (listaO.isNotEmpty) {
         for (var observacao in listaO) {
-          if (observacao.animalId == _caprinoSelecionado.idAnimal) {
+          if (observacao.animalId == _animalSelecionado.idAnimal) {
             observacoesFinal.add(observacao);
           }
         }
@@ -828,9 +842,9 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       print(listaAni);
       if (listaAni.isNotEmpty) {
         for (var ani in listaAni) {
-          if (ani.idAnimal == _caprinoSelecionado.idPai) {
+          if (ani.idAnimal == _animalSelecionado.idPai) {
             paiDoAnimal = ani;
-          } else if (ani.idAnimal == _caprinoSelecionado.idMae) {
+          } else if (ani.idAnimal == _animalSelecionado.idMae) {
             maeDoAnimal = ani;
           }
         }
@@ -844,7 +858,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       print(listaP);
       if (listaP.isNotEmpty) {
         for (var peso in listaP) {
-          if (peso.animalId == _caprinoSelecionado.idAnimal) {
+          if (peso.animalId == _animalSelecionado.idAnimal) {
             pesagemFinal.add(peso);
           }
         }
@@ -870,7 +884,7 @@ class _CaprinoInformationState extends State<CaprinoInformation> {
       print(listaOrdenhas);
       if (listaOrdenhas.isNotEmpty) {
         for (var ordenha in listaOrdenhas) {
-          if (ordenha.animalId == _caprinoSelecionado.idAnimal) {
+          if (ordenha.animalId == _animalSelecionado.idAnimal) {
             ordenhasFinal.add(ordenha);
           }
         }
