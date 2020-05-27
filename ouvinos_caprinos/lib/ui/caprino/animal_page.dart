@@ -65,7 +65,7 @@ class _AnimalPageState extends State<AnimalPage> {
         length: 4,
         child: Scaffold(
           appBar: AppBar(
-            title: Text("Rebanho " + especies[widget.especieId - 1].descricao),
+            title: Text("Rebanho " + especies[widget.especieId - 1].descricao ?? "Rebanho"),
             backgroundColor: Colors.green,
             actions: <Widget>[
               IconButton(

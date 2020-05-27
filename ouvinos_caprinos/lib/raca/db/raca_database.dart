@@ -7,7 +7,6 @@ final String tableName = "Raca";
 final String idRacaColumn = "id_raca";
 final String especieIdColumn = "id_especie";
 final String descricaoColumn = "descricao";
-final String descricaoMesticoColumn = "descricao_mestico";
 
 class RacaHelper {
   static final RacaHelper _instance = RacaHelper.internal();
@@ -37,8 +36,7 @@ class RacaHelper {
       await db.execute(
           "CREATE TABLE IF NOT EXISTS $tableName (  $idRacaColumn INTEGER PRIMARY KEY  ,"
           "$especieIdColumn INTEGER, "
-          "$descricaoColumn TEXT, "
-          "$descricaoMesticoColumn TEXT)");
+          "$descricaoColumn TEXT)");
       print("Raca dataBase was created");
     });
   }
@@ -52,7 +50,11 @@ class RacaHelper {
   Future<Raca> getRaca(int id) async {
     Database dbRaca = await db;
     List<Map> maps = await dbRaca.query(tableName,
-        columns: [idRacaColumn, especieIdColumn, descricaoColumn, descricaoMesticoColumn],
+        columns: [
+          idRacaColumn,
+          especieIdColumn,
+          descricaoColumn,
+        ],
         where: "$idRacaColumn = ?",
         whereArgs: [id]);
     if (maps.length > 0) {
@@ -97,24 +99,96 @@ class RacaHelper {
   Future racasPadrao() async {
     int a = await getNumber();
     if (a == 0) {
-      saveRaca(new Raca(id: null, especieId: 1, descricao: "Alpino", descricaoMestico: null));
-      saveRaca(new Raca(id: null, especieId: 1, descricao: "Anglo Nubiano",  descricaoMestico: null));
-      saveRaca(new Raca(id: null, especieId: 1, descricao: "Boer",  descricaoMestico: null));
-      saveRaca(new Raca(id: null, especieId: 1, descricao: "Mestiço",  descricaoMestico: null));
-      saveRaca(new Raca(id: null, especieId: 1, descricao: "Saanen",  descricaoMestico: null));
-      saveRaca(new Raca(id: null, especieId: 1, descricao: "Toggenburg",  descricaoMestico: null));
-      saveRaca(new Raca(id: null, especieId: 2, descricao: "Bergamácia Brasileira",  descricaoMestico: null));
-      saveRaca(new Raca(id: null, especieId: 2, descricao: "Dorper",  descricaoMestico: null));
-      saveRaca(new Raca(id: null, especieId: 2, descricao: "Dâmara",  descricaoMestico: null));
-      saveRaca(new Raca(id: null, especieId: 2, descricao: "Hampshire Down",  descricaoMestico: null));
-      saveRaca(new Raca(id: null, especieId: 2, descricao: "Ile de France",  descricaoMestico: null));
-      saveRaca(new Raca(id: null, especieId: 2, descricao: "Lacaune",  descricaoMestico: null));
-      saveRaca(new Raca(id: null, especieId: 2, descricao: "Mestiço",  descricaoMestico: null));
-      saveRaca(new Raca(id: null, especieId: 2, descricao: "Morada Nova",  descricaoMestico: null));
-      saveRaca(new Raca(id: null, especieId: 2, descricao: "Santa Inês",  descricaoMestico: null));
-      saveRaca(new Raca(id: null, especieId: 2, descricao: "Somalis Brasileira",  descricaoMestico: null));
-      saveRaca(new Raca(id: null, especieId: 2, descricao: "Suffolk",  descricaoMestico: null));
-      saveRaca(new Raca(id: null, especieId: 2, descricao: "Texel",  descricaoMestico: null));
+      saveRaca(new Raca(
+        id: null,
+        especieId: 1,
+        descricao: "Alpino",
+      ));
+      saveRaca(new Raca(
+        id: null,
+        especieId: 1,
+        descricao: "Anglo Nubiano",
+      ));
+      saveRaca(new Raca(
+        id: null,
+        especieId: 1,
+        descricao: "Boer",
+      ));
+      saveRaca(new Raca(
+        id: null,
+        especieId: 1,
+        descricao: "Mestiço",
+      ));
+      saveRaca(new Raca(
+        id: null,
+        especieId: 1,
+        descricao: "Saanen",
+      ));
+      saveRaca(new Raca(
+        id: null,
+        especieId: 1,
+        descricao: "Toggenburg",
+      ));
+      saveRaca(new Raca(
+        id: null,
+        especieId: 2,
+        descricao: "Bergamácia Brasileira",
+      ));
+      saveRaca(new Raca(
+        id: null,
+        especieId: 2,
+        descricao: "Dorper",
+      ));
+      saveRaca(new Raca(
+        id: null,
+        especieId: 2,
+        descricao: "Dâmara",
+      ));
+      saveRaca(new Raca(
+        id: null,
+        especieId: 2,
+        descricao: "Hampshire Down",
+      ));
+      saveRaca(new Raca(
+        id: null,
+        especieId: 2,
+        descricao: "Ile de France",
+      ));
+      saveRaca(new Raca(
+        id: null,
+        especieId: 2,
+        descricao: "Lacaune",
+      ));
+      saveRaca(new Raca(
+        id: null,
+        especieId: 2,
+        descricao: "Mestiço",
+      ));
+      saveRaca(new Raca(
+        id: null,
+        especieId: 2,
+        descricao: "Morada Nova",
+      ));
+      saveRaca(new Raca(
+        id: null,
+        especieId: 2,
+        descricao: "Santa Inês",
+      ));
+      saveRaca(new Raca(
+        id: null,
+        especieId: 2,
+        descricao: "Somalis Brasileira",
+      ));
+      saveRaca(new Raca(
+        id: null,
+        especieId: 2,
+        descricao: "Suffolk",
+      ));
+      saveRaca(new Raca(
+        id: null,
+        especieId: 2,
+        descricao: "Texel",
+      ));
     }
   }
 }

@@ -29,6 +29,7 @@ final String motivoRemocaoColumn = "motivo_remocao";
 final String valorVendaColumn = "valor_venda";
 final String nomeCompradorColumn = "nome_comprador";
 final String anotacoesVendaColumn = "anotacoes_venda";
+final String descricaoMesticoColumn = "descricao_mestico";
 
 class AnimalHelper {
   static final AnimalHelper _instance = AnimalHelper.internal();
@@ -79,6 +80,7 @@ class AnimalHelper {
           "$motivoRemocaoColumn TEXT,"
           "$valorVendaColumn TEXT,"
           "$nomeCompradorColumn TEXT,"
+          "$descricaoMesticoColumn TEXT,"
           "$anotacoesVendaColumn TEXT)");
       print("Animal database was created");
     });
@@ -118,7 +120,8 @@ class AnimalHelper {
           motivoRemocaoColumn,
           valorVendaColumn,
           nomeCompradorColumn,
-          anotacoesVendaColumn
+          anotacoesVendaColumn,
+          descricaoMesticoColumn,
         ],
         where: "$idAnimalColumn = ?",
         whereArgs: [id]);

@@ -26,7 +26,7 @@ class Animal {
   String valorVenda;
   String nomeComprador;
   String anotacoesVenda;
-
+  String descricaoMestico;
   Animal(
       {this.idAnimal,
       this.idEspecie,
@@ -51,7 +51,8 @@ class Animal {
       this.motivoRemocao,
       this.valorVenda,
       this.nomeComprador,
-      this.anotacoesVenda});
+      this.anotacoesVenda,
+      this.descricaoMestico});
 
   Animal.fromMap(Map map) {
     idAnimal = map[idAnimalColumn];
@@ -79,6 +80,7 @@ class Animal {
     valorVenda = map[valorVendaColumn];
     nomeComprador = map[nomeCompradorColumn];
     anotacoesVenda = map[anotacoesVendaColumn];
+    descricaoMestico = map[descricaoMesticoColumn];
   }
 
   Map toMap() {
@@ -106,7 +108,8 @@ class Animal {
       motivoRemocaoColumn: motivoRemocao,
       valorVendaColumn: valorVenda,
       nomeCompradorColumn: nomeComprador,
-      anotacoesVendaColumn: anotacoesVenda
+      anotacoesVendaColumn: anotacoesVenda,
+      descricaoMesticoColumn: descricaoMestico,
     };
     if (idAnimal != null) {
       map[idAnimalColumn] = idAnimal;
@@ -116,6 +119,6 @@ class Animal {
 
   @override
   String toString() {
-    return "Animal(idAnimal: $idAnimal, idEspecie:$idEspecie, name: $nome, sexo:$sexo, idCategoria:$idCategoria ,idRaca: $idRaca, brinco de controle:$brincoControle, idPai:$idPai, idMae:$idMae, data de nascimento:$dataNascimento, data de aquisicao:$dataAquisicao, valor de aquisicao: $valorAquisicao, nome do vendedor:$nomeVendedor, patrimonio:$patrimonio, img: $img, imgMorte: $imgMorte, dataMorte: $dataMorte, descricaoMorte: $descricaoMorte, dr: $dataRemocao, dva: $dataVendaAnimal, mr: $motivoRemocao, vv: $valorVenda, nomeComprador: $nomeComprador, anotacoesVenda: $anotacoesVenda)\n";
+    return "Animal(idAnimal: $idAnimal, idEspecie:$idEspecie, name: $nome, sexo:$sexo, idCategoria:$idCategoria ,idRaca: $idRaca, brinco de controle:$brincoControle, idPai:$idPai, idMae:$idMae, data de nascimento:$dataNascimento, data de aquisicao:$dataAquisicao, valor de aquisicao: $valorAquisicao, nome do vendedor:$nomeVendedor, patrimonio:$patrimonio, img: $img, imgMorte: $imgMorte, dataMorte: $dataMorte, descricaoMorte: $descricaoMorte, dr: $dataRemocao, dva: $dataVendaAnimal, mr: $motivoRemocao, vv: $valorVenda, nomeComprador: $nomeComprador, anotacoesVenda: $anotacoesVenda, descricaoMestico: $descricaoMestico)\n";
   }
 }
