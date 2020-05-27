@@ -3,22 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/categoria/db/categoria_database.dart';
+import 'package:ouvinos_caprinos/especie/class/especie.dart';
 import 'package:ouvinos_caprinos/especie/db/especie_database.dart';
 import 'package:ouvinos_caprinos/icones_personalizados/my_flutter_app_icons.dart';
 import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
-import 'package:ouvinos_caprinos/ui/caprino/show_caprino_information.dart';
+import 'package:ouvinos_caprinos/ui/caprino/cadastro_animal_page.dart';
+import 'package:ouvinos_caprinos/ui/caprino/show_animal_information.dart';
 import 'package:ouvinos_caprinos/ui/comum/search_bar.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
-import 'cadastro_caprino_page.dart';
 
 enum OrderOptions { orderaz, orderza, orderbyid }
 
-class CaprinoPage extends StatefulWidget {
+class AnimalPage extends StatefulWidget {
+  final int especieId;
+
+  AnimalPage({this.especieId});
+
   @override
-  _CaprinoPageState createState() => _CaprinoPageState();
+  _AnimalPageState createState() => _AnimalPageState();
 }
 
-class _CaprinoPageState extends State<CaprinoPage> {
+class _AnimalPageState extends State<AnimalPage> {
   // variaveis para inicializacao do db
   AnimalHelper animalHelper = AnimalHelper();
   CategoriaHelper categoriaHelper = CategoriaHelper();
@@ -31,6 +36,8 @@ class _CaprinoPageState extends State<CaprinoPage> {
   List<Animal> animaisCaprinosMortos = List();
   List<Animal> animaisCaprinosEcluidos = List();
   List<Animal> allAnimals = List();
+
+  List<Especie> especies = List();
 
   @override
   void initState() {
@@ -58,7 +65,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
         length: 4,
         child: Scaffold(
           appBar: AppBar(
-            title: Text("Rebanho Caprino"),
+            title: Text("Rebanho " + especies[widget.especieId - 1].descricao ?? "Rebanho"),
             backgroundColor: Colors.green,
             actions: <Widget>[
               IconButton(
@@ -98,47 +105,14 @@ class _CaprinoPageState extends State<CaprinoPage> {
             ),
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: _showCadastroCaprinoPage,
+            onPressed: _showCadastroAnimalPage,
             child: Icon(Icons.add),
             backgroundColor: Colors.green,
           ),
           drawer: Drawer(
             child: ListView(
               padding: EdgeInsets.zero,
-              children: <Widget>[
-                DrawerHeader(
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                  ),
-                  child: Text(
-                    'Espécies Disponiveis',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 25,
-                    ),
-                  ),
-                ),
-                ListTile(
-                  leading: Icon(MyFlutterApp.bode_icon),
-                  title: Text('Caprinos'),
-                ),
-                ListTile(
-                  leading: Icon((MyFlutterApp.ovelha_icon)),
-                  title: Text('Ovinos'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          // builder: (context) => OvinoPage(),
-                          ),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.settings),
-                  title: Text('Settings'),
-                ),
-              ],
+              children: listaLateral(),
             ),
           ),
           body: TabBarView(
@@ -193,7 +167,11 @@ class _CaprinoPageState extends State<CaprinoPage> {
                   image: DecorationImage(
                       image: lista[index].img != null
                           ? FileImage(File(lista[index].img))
-                          : AssetImage("images/caprino.png"),
+                          : AssetImage("images/" +
+                              especies[widget.especieId - 1]
+                                  .descricao
+                                  .toLowerCase() +
+                              ".png"),
                       fit: BoxFit.cover),
                 ),
               ),
@@ -266,7 +244,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                          _showCadastroCaprinoPage(animal: lista[index]);
+                          _showCadastroAnimalPage(animal: lista[index]);
                         },
                       ),
                     ),
@@ -302,25 +280,77 @@ class _CaprinoPageState extends State<CaprinoPage> {
         });
   }
 
+  List<Widget> listaLateral() {
+    List<Widget> listaLateral = List();
+
+    listaLateral.add(
+      DrawerHeader(
+        decoration: BoxDecoration(
+          color: Colors.green,
+        ),
+        child: Text(
+          'Espécies Disponiveis',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 25,
+          ),
+        ),
+      ),
+    );
+
+    for (var especie in especies) {
+      listaLateral.add(ListTile(
+        leading: Icon((MyFlutterApp.ovelha_icon)),
+        title: Text(especie.descricao),
+        onTap: () {
+          if (especie.id != widget.especieId) {
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AnimalPage(
+                  especieId: especie.id,
+                ),
+              ),
+            );
+          }
+        },
+      ));
+    }
+
+    listaLateral.add(
+      ListTile(
+        leading: Icon(Icons.settings),
+        title: Text('Configurações'),
+      ),
+    );
+    return listaLateral;
+  }
+
   // direciona para a pagina de exibicao do animal
   void _showCaprinoInformation({Animal animal}) async {
     await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => CaprinoInformation(
-                  caprino: animal,
-                )));
+      context,
+      MaterialPageRoute(
+        builder: (context) => AnimalInformation(
+          animal: animal,
+        ),
+      ),
+    );
     _getAllAnimals();
   }
 
   // direciona para a pagina de cadastro do caprino
-  void _showCadastroCaprinoPage({Animal animal}) async {
+  void _showCadastroAnimalPage({Animal animal}) async {
     final recAnimal = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => CadastroCaprinoPage(
-                  animalCaprino: animal,
-                )));
+      context,
+      MaterialPageRoute(
+        builder: (context) => CadastroAnimalPage(
+          animal: animal,
+          idEspecie: widget.especieId,
+        ),
+      ),
+    );
     if (recAnimal != null) {
       if (animal != null) {
         await animalHelper.updateAnimal(recAnimal);
@@ -344,7 +374,11 @@ class _CaprinoPageState extends State<CaprinoPage> {
 
 // carrega o banco de dados das especies
   void _getAllEspecies() {
-    especieHelper.getAllEspecies();
+    especieHelper.getAllEspecies().then((listaE) {
+      setState(() {
+        especies = listaE;
+      });
+    });
   }
 
   // recupera todos os animais cadastrados no banco de dados
@@ -357,7 +391,7 @@ class _CaprinoPageState extends State<CaprinoPage> {
       List<Animal> listaFinalExcluidos = new List();
 
       for (var ani in list) {
-        if (ani.idEspecie == 1) {
+        if (ani.idEspecie == widget.especieId) {
           if (ani.status == "0") {
             listaFinalDisponiveis.add(ani);
           } else if (ani.status == "1") {

@@ -14,16 +14,17 @@ import 'package:ouvinos_caprinos/raca/class/raca.dart';
 import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
 
-class CadastroCaprinoPage extends StatefulWidget {
-  final Animal animalCaprino;
+class CadastroAnimalPage extends StatefulWidget {
+  final Animal animal;
+  final int idEspecie;
 
-  CadastroCaprinoPage({this.animalCaprino});
+  CadastroAnimalPage({this.animal, this.idEspecie});
 
   @override
-  _CadastroCaprinoPageState createState() => _CadastroCaprinoPageState();
+  _CadastroAnimalPageState createState() => _CadastroAnimalPageState();
 }
 
-class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
+class _CadastroAnimalPageState extends State<CadastroAnimalPage> {
   // variavel responsavel pela chave do formulario
   bool autoValidate = true;
   bool readOnly = false;
@@ -42,6 +43,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
   final _selectedValorAquisicao = MoneyMaskedTextController();
   final _selectedNomeVendedor = TextEditingController();
   final _selectedPatrimonio = TextEditingController();
+  final _textoDescricaoMestico = TextEditingController();
 
   // animal a ser criado/editado
   Animal _editedAnimal;
@@ -74,6 +76,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
   String textNascimento = "Informa a data de Nascimento";
   String textoAquisicao = "Informa a data de Aquisição";
   bool dataAquisicaoInformada = false;
+  bool descricaoMestico = false;
 
   // funcao para o usuario escolhar a data de nascimento
   Future<Null> _selectDataNascimento(BuildContext context) async {
@@ -140,15 +143,15 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
   void initState() {
     super.initState();
 
-    if (widget.animalCaprino == null) {
+    if (widget.animal == null) {
       _editedAnimal = Animal();
-      _editedAnimal.idEspecie = 1;
+      _editedAnimal.idEspecie = widget.idEspecie;
       _editedAnimal.status = "0";
 
       _editedAnimal.dataNascimento = dataFormatada(_dataNascimento);
       print(_editedAnimal);
     } else {
-      _editedAnimal = Animal.fromMap(widget.animalCaprino.toMap());
+      _editedAnimal = Animal.fromMap(widget.animal.toMap());
       _selectedGender = _retornaNumeracaoSexo(_editedAnimal.sexo);
       _selectedCategoria = _editedAnimal.idCategoria;
       _selectedRaca = _editedAnimal.idRaca;
@@ -188,9 +191,15 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
   }
 
   _getAllRacas() async {
+    List<Raca> listaFinalRacas = List();
     await racaHelper.getAllRacas().then((listaR) {
+      for (var raca in listaR) {
+        if (raca.especieId == widget.idEspecie) {
+          listaFinalRacas.add(raca);
+        }
+      }
       setState(() {
-        racas = listaR;
+        racas = listaFinalRacas;
       });
     });
   }
@@ -201,7 +210,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
       List<Animal> maesFinal = List();
 
       for (var animal in listaA) {
-        if (animal.idEspecie == 1) {
+        if (animal.idEspecie == widget.idEspecie) {
           if (animal.sexo == "Macho") {
             paisFinal.add(animal);
           } else {
@@ -334,7 +343,7 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
         //barra superior com informacoes
         appBar: AppBar(
           backgroundColor: Colors.green,
-          title: Text(_editedAnimal.nome ?? "Novo Caprino"),
+          title: Text(_editedAnimal.nome ?? "Novo Animal"),
           centerTitle: true,
         ),
         // botao salvar
@@ -380,7 +389,11 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
                 image: DecorationImage(
                     image: _editedAnimal.img != null
                         ? FileImage(File(_editedAnimal.img))
-                        : AssetImage("images/caprino.png"),
+                        : AssetImage("images/" +
+                            especies[widget.idEspecie - 1]
+                                .descricao
+                                .toLowerCase() +
+                            ".png"),
                     fit: BoxFit.cover),
               ),
             ),
@@ -489,6 +502,12 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
         },
         onChanged: (value) {
           setState(() {
+            if (racas[(racas.length - value + 1).abs()].descricao ==
+                "Mestiço") {
+              descricaoMestico = true;
+            }else{
+              descricaoMestico = false;
+            }
             _userEdited = true;
             _selectedRaca = value;
             _editedAnimal.idRaca = racaList[value].value;
@@ -496,6 +515,27 @@ class _CadastroCaprinoPageState extends State<CadastroCaprinoPage> {
         },
       ),
     );
+    if (descricaoMestico) {
+      formWidget.add(espacamentoPadrao());
+      formWidget.add(
+        new TextFormField(
+          decoration: estiloPadrao("Descrição Mestiço", 1),
+          validator: (value) {
+            if (value == "") {
+              return 'Por favor, informe a descrição do mestiço';
+            }
+            return null;
+          },
+          controller: _textoDescricaoMestico,
+          onChanged: (text) {
+            setState(() {
+              _userEdited = true;
+              _editedAnimal.descricaoMestico = text;
+            });
+          },
+        ),
+      );
+    }
 
     // widget para inserir o numero do brinco de controle
     formWidget.add(espacamentoPadrao());

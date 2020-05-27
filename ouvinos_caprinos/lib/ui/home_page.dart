@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ouvinos_caprinos/especie/class/especie.dart';
 import 'package:ouvinos_caprinos/especie/db/especie_database.dart';
-import 'package:ouvinos_caprinos/ui/caprino/caprino_page.dart';
+import 'package:ouvinos_caprinos/ui/caprino/animal_page.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -91,21 +91,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _goToPage(int index) {
-    if (index == 0) {
+    
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => CaprinoPage(),
+          builder: (context) => AnimalPage(especieId: index+1,),
         ),
       );
-    } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            // builder: (context) => OvinoPage(),
-            ),
-      );
-    }
+    
   }
 
   String capitalize(String string) {
