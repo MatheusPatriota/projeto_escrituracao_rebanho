@@ -502,15 +502,17 @@ class _CadastroAnimalPageState extends State<CadastroAnimalPage> {
         },
         onChanged: (value) {
           setState(() {
+            _userEdited = true;
+            _selectedRaca = value;
+            _editedAnimal.idRaca = racas[value-1].id;
+
             if (racas[(racas.length - value + 1).abs()].descricao ==
                 "Mestiço") {
               descricaoMestico = true;
             }else{
               descricaoMestico = false;
             }
-            _userEdited = true;
-            _selectedRaca = value;
-            _editedAnimal.idRaca = racaList[value].value;
+            
           });
         },
       ),

@@ -1,20 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
 
-class MortePage extends StatefulWidget {
-  final Animal animalMorte;
+class ExclusaoPage extends StatefulWidget {
+  final Animal animalExcluido;
 
-  MortePage({this.animalMorte});
+  ExclusaoPage({this.animalExcluido});
 
   @override
-  _MortePageState createState() => _MortePageState();
+  _ExclusaoPageState createState() => _ExclusaoPageState();
 }
 
-class _MortePageState extends State<MortePage> {
+class _ExclusaoPageState extends State<ExclusaoPage> {
   Animal _animalSelecionado;
 
   DateTime _dataSelecionada = DateTime.now();
@@ -28,8 +27,8 @@ class _MortePageState extends State<MortePage> {
   @override
   void initState() {
     super.initState();
-    _animalSelecionado = Animal.fromMap(widget.animalMorte.toMap());
-    _animalSelecionado.dataMorte = _dataFormatada();
+    _animalSelecionado = Animal.fromMap(widget.animalExcluido.toMap());
+    _animalSelecionado.dataRemocao = _dataFormatada();
   }
 
   String _dataFormatada() {
@@ -50,7 +49,8 @@ class _MortePageState extends State<MortePage> {
     return "${_dataSelecionada.year}-" + nm + "-" + nd;
   }
 
-  Future<Null> _selectDataMorte(BuildContext context) async {
+  // lembrar de refatorar a data (muitas ocorrencias)
+  Future<Null> _selectDataExclusao(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
       initialDate: _dataSelecionada,
@@ -60,7 +60,7 @@ class _MortePageState extends State<MortePage> {
     if (picked != null && picked != _dataSelecionada) {
       setState(() {
         _dataSelecionada = picked;
-        _animalSelecionado.dataMorte = _dataFormatada();
+        _animalSelecionado.dataRemocao = _dataFormatada();
       });
     }
   }
@@ -70,13 +70,13 @@ class _MortePageState extends State<MortePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green,
-        title: Text("Registrar Morte"),
+        title: Text("Registrar Remoção"),
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (_formKey.currentState.validate()) {
-            _showAlert();
+            Navigator.pop(context, _animalSelecionado);
           }
         },
         child: Icon(Icons.check),
@@ -88,28 +88,29 @@ class _MortePageState extends State<MortePage> {
           padding: EdgeInsets.all(13.0),
           child: ListView(children: [
             Container(
-              child: Text("Data da Morte*"),
+              child: Text("Data da Remoção*"),
               padding: EdgeInsets.only(top: 10.0),
             ),
             RaisedButton(
               child: Text(exibicaoDataPadrao(_dataFormatada())),
               onPressed: () {
-                _selectDataMorte(context);
+                _selectDataExclusao(context);
               },
             ),
             espacamentoPadrao(),
             TextFormField(
-              decoration: estiloPadrao("Motivo da Morte*", 1),
+              decoration: estiloPadrao("Motivo da Remoção*", 1),
               controller: _motivoMorte,
               validator: (value) {
                 if (value.isEmpty) {
-                  return 'Por favor, insira o motivo da morte';
+                  return 'Por favor, insira o motivo da remoção';
                 }
                 return null;
               },
               onChanged: (text) {
                 setState(() {
-                  _animalSelecionado.descricaoMorte = text;
+                  _animalSelecionado.motivoRemocao = text;
+                  _animalSelecionado.status = "3";
                 });
               },
             ),
@@ -117,36 +118,5 @@ class _MortePageState extends State<MortePage> {
         ),
       ),
     );
-  }
-
-  void _showAlert() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text("Vamos tirar uma foto do animal Morto, prepare-se!"),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("OK"),
-                onPressed: () {
-                  Navigator.pop(context);
-                  _selecionaImagemMorte();               
-                },
-              ),
-            ],
-          );
-        });
-  }
-
-  _selecionaImagemMorte() {
-    ImagePicker.pickImage(source: ImageSource.camera).then((file) {
-      if (file == null) return;
-      setState(() {
-        _animalSelecionado.status = "2";
-        _animalSelecionado.imgMorte = file.path;
-      });
-      Navigator.pop(context, _animalSelecionado);
-      Navigator.pop(context);
-    });
   }
 }

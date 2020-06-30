@@ -9,6 +9,7 @@ import 'package:ouvinos_caprinos/icones_personalizados/my_flutter_app_icons.dart
 import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
 import 'package:ouvinos_caprinos/ui/caprino/cadastro_animal_page.dart';
 import 'package:ouvinos_caprinos/ui/caprino/show_animal_information.dart';
+import 'package:ouvinos_caprinos/ui/comum/exclusao_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/search_bar.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
 
@@ -65,7 +66,8 @@ class _AnimalPageState extends State<AnimalPage> {
         length: 4,
         child: Scaffold(
           appBar: AppBar(
-            title: Text("Rebanho " + especies[widget.especieId - 1].descricao ?? "Rebanho"),
+            title: Text("Rebanho " + especies[widget.especieId - 1].descricao ??
+                "Rebanho"),
             backgroundColor: Colors.green,
             actions: <Widget>[
               IconButton(
@@ -255,20 +257,20 @@ class _AnimalPageState extends State<AnimalPage> {
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
                         ),
-                        onPressed: () {
-                          if (lista[index].status != "3") {
-                            lista[index].status = "3";
-                            animalHelper.updateAnimal(lista[index]);
-                            setState(() {
-                              _getAllAnimals();
-                              lista.removeAt(index);
-                              Navigator.pop(context);
-                            });
-                          } else {
-                            setState(() {
-                              Navigator.pop(context);
-                            });
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          final recExclusao = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ExclusaoPage(
+                                animalExcluido: lista[index],
+                              ),
+                            ),
+                          );
+                          if(recExclusao.motivoRemocao != null){
+                            await animalHelper.updateAnimal(recExclusao);
                           }
+                          _getAllAnimals();
                         },
                       ),
                     ),

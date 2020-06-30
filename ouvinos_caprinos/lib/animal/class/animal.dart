@@ -119,6 +119,6 @@ class Animal {
 
   @override
   String toString() {
-    return "Animal(idAnimal: $idAnimal, idEspecie:$idEspecie, name: $nome, sexo:$sexo, idCategoria:$idCategoria ,idRaca: $idRaca, brinco de controle:$brincoControle, idPai:$idPai, idMae:$idMae, data de nascimento:$dataNascimento, data de aquisicao:$dataAquisicao, valor de aquisicao: $valorAquisicao, nome do vendedor:$nomeVendedor, patrimonio:$patrimonio, img: $img, imgMorte: $imgMorte, dataMorte: $dataMorte, descricaoMorte: $descricaoMorte, dr: $dataRemocao, dva: $dataVendaAnimal, mr: $motivoRemocao, vv: $valorVenda, nomeComprador: $nomeComprador, anotacoesVenda: $anotacoesVenda, descricaoMestico: $descricaoMestico)\n";
+    return "Animal(idAnimal: $idAnimal, idEspecie:$idEspecie, name: $nome, status: $status,sexo:$sexo, idCategoria:$idCategoria ,idRaca: $idRaca, brinco de controle:$brincoControle, idPai:$idPai, idMae:$idMae, data de nascimento:$dataNascimento, data de aquisicao:$dataAquisicao, valor de aquisicao: $valorAquisicao, nome do vendedor:$nomeVendedor, patrimonio:$patrimonio, img: $img, imgMorte: $imgMorte, dataMorte: $dataMorte, descricaoMorte: $descricaoMorte, dr: $dataRemocao, dva: $dataVendaAnimal, mr: $motivoRemocao, vv: $valorVenda, nomeComprador: $nomeComprador, anotacoesVenda: $anotacoesVenda, descricaoMestico: $descricaoMestico)\n";
   }
 }

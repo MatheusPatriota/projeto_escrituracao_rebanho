@@ -601,10 +601,24 @@ class _CaprinoInformationState extends State<AnimalInformation> {
     bool cond = false;
     List<Widget> lista = List();
     lista.add(Tab(text: "Informações"));
+     if (_animalSelecionado.status == "1") {
+      qtdEventos = 5;
+      lista.add(Tab(
+        text: "Venda",
+      ));
+      cond = true;
+    }
     if (_animalSelecionado.status == "2") {
       qtdEventos = 5;
       lista.add(Tab(
         text: "Morte",
+      ));
+      cond = true;
+    }
+    if (_animalSelecionado.status == "3") {
+      qtdEventos = 5;
+      lista.add(Tab(
+        text: "Remoção",
       ));
       cond = true;
     }
@@ -652,6 +666,47 @@ class _CaprinoInformationState extends State<AnimalInformation> {
         ],
       ),
     ));
+    if(_animalSelecionado.status == "1"){
+      // caso o animal tenha sido removido
+      lista.add(
+        Container(
+          padding: EdgeInsets.all(13.0),
+          child: ListView(
+            children: [
+              Column(
+                children: <Widget>[
+                  DataTable(
+                    columns: <DataColumn>[
+                      DataColumn(
+                        label: Text(''),
+                      ),
+                      DataColumn(
+                        label: Text(''),
+                      ),
+                    ],
+                    rows: [
+                      DataRow(cells: [
+                        DataCell(Text("Data da Venda")),
+                        DataCell(
+                          Text(
+                              exibicaoDataPadrao(_animalSelecionado.dataVendaAnimal)),
+                        )
+                      ]),
+                      DataRow(cells: [
+                        DataCell(Text("Comprador")),
+                        DataCell(Text(_animalSelecionado.nomeComprador)),
+                      ]),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+
+    }
+    //status 1= venda, 2=morte, 3=exclusao
     if (_animalSelecionado.status == "2") {
       //imagem do animal morto
       lista.add(
@@ -716,6 +771,45 @@ class _CaprinoInformationState extends State<AnimalInformation> {
       // data da morte
       // descricao da morte
     }
+    if (_animalSelecionado.status == "3") {
+      // caso o animal tenha sido removido
+      lista.add(
+        Container(
+          padding: EdgeInsets.all(13.0),
+          child: ListView(
+            children: [
+              Column(
+                children: <Widget>[
+                  DataTable(
+                    columns: <DataColumn>[
+                      DataColumn(
+                        label: Text(''),
+                      ),
+                      DataColumn(
+                        label: Text(''),
+                      ),
+                    ],
+                    rows: [
+                      DataRow(cells: [
+                        DataCell(Text("Data da Remoção")),
+                        DataCell(
+                          Text(exibicaoDataPadrao(
+                              _animalSelecionado.dataRemocao)),
+                        )
+                      ]),
+                      DataRow(cells: [
+                        DataCell(Text("Motivo da Remoção")),
+                        DataCell(Text(_animalSelecionado.motivoRemocao)),
+                      ]),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     lista.add(ListView.builder(
       padding: EdgeInsets.all(10.0),
       itemCount: tratamentos.length,
@@ -774,10 +868,11 @@ class _CaprinoInformationState extends State<AnimalInformation> {
   Future<void> _getAllRacas() async {
     await racaHelper.getAllRacas().then((listaR) {
       print(listaR);
-
-      setState(() {
-        racaSelecionada = listaR[_animalSelecionado.idRaca].descricao;
-      });
+      if (listaR.isNotEmpty) {
+        setState(() {
+          racaSelecionada = listaR[_animalSelecionado.idRaca - 1].descricao;
+        });
+      }
     });
   }
 
