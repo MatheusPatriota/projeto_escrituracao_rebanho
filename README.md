@@ -1,5 +1,3 @@
-# README File
-
 # Organização deste documento:
 1. Apresentação                                           
 2. Considerações de uso                                   
