@@ -76,7 +76,7 @@ class _MortePageState extends State<MortePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (_formKey.currentState.validate()) {
-            _showAlert();
+            showAlertDialog(context);
           }
         },
         child: Icon(Icons.check),
@@ -119,23 +119,46 @@ class _MortePageState extends State<MortePage> {
     );
   }
 
-  void _showAlert() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text("Vamos tirar uma foto do animal Morto, prepare-se!"),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("OK"),
-                onPressed: () {
-                  Navigator.pop(context);
-                  _selecionaImagemMorte();               
-                },
-              ),
-            ],
-          );
+  showAlertDialog(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("Não"),
+      onPressed: () {
+        Navigator.of(context).pop();
+        setState(() {
+          _animalSelecionado.status = "2";
+          _animalSelecionado.imgMorte = null;
         });
+        Navigator.pop(context, _animalSelecionado);
+        Navigator.pop(context);
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text("Sim"),
+      onPressed: () {
+        Navigator.of(context).pop();
+        _selecionaImagemMorte();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Confirmação"),
+      content: Text(
+          "Você deseja realizar o registro fotográfico da morte do animal?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   _selecionaImagemMorte() {
