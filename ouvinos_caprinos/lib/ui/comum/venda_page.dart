@@ -121,6 +121,7 @@ class _VendaPageState extends State<VendaPage> {
                 }
                 return null;
               },
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               onChanged: (text) {
                 setState(() {
                   _animalSelecionado.valorVenda = text;
@@ -135,8 +136,7 @@ class _VendaPageState extends State<VendaPage> {
                   return 'Por favor, insira a o nome do Comprador';
                 }
                 return null;
-              },
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              },             
               controller: _selectedVendendor,
               onChanged: (text) {
                 setState(() {

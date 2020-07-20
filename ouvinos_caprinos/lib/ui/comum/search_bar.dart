@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/icones_personalizados/my_flutter_app_icons.dart';
-import 'package:ouvinos_caprinos/ui/caprino/show_animal_information.dart';
+import 'package:ouvinos_caprinos/ui/animal/show_animal_information.dart';
 
 enum OrderOptions { maleOption, femaleOption }
 

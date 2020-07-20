@@ -670,7 +670,6 @@ class _CadastroAnimalPageState extends State<CadastroAnimalPage> {
     formWidget.add(espacamentoPadrao());
     formWidget.add(
       new TextField(
-        keyboardType: TextInputType.number,
         decoration: estiloPadrao("Número do Patrimonio/Valor do Patrimonio", 1),
         controller: _selectedPatrimonio,
         onChanged: (text) {

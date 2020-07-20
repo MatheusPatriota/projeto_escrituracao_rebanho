@@ -7,8 +7,8 @@ import 'package:ouvinos_caprinos/especie/class/especie.dart';
 import 'package:ouvinos_caprinos/especie/db/especie_database.dart';
 import 'package:ouvinos_caprinos/icones_personalizados/my_flutter_app_icons.dart';
 import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
-import 'package:ouvinos_caprinos/ui/caprino/cadastro_animal_page.dart';
-import 'package:ouvinos_caprinos/ui/caprino/show_animal_information.dart';
+import 'package:ouvinos_caprinos/ui/animal/cadastro_animal_page.dart';
+import 'package:ouvinos_caprinos/ui/animal/show_animal_information.dart';
 import 'package:ouvinos_caprinos/ui/comum/exclusao_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/search_bar.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
@@ -32,10 +32,10 @@ class _AnimalPageState extends State<AnimalPage> {
   EspecieHelper especieHelper = EspecieHelper();
   // variaveis para armazenar os estados dos animais
 
-  List<Animal> animaisCaprinos = List();
-  List<Animal> animaisCaprinosVendidos = List();
-  List<Animal> animaisCaprinosMortos = List();
-  List<Animal> animaisCaprinosEcluidos = List();
+  List<Animal> animais = List();
+  List<Animal> animaisVendidos = List();
+  List<Animal> animaisMortos = List();
+  List<Animal> animaisExcluidos = List();
   List<Animal> allAnimals = List();
 
   List<Especie> especies = List();
@@ -119,37 +119,85 @@ class _AnimalPageState extends State<AnimalPage> {
           ),
           body: TabBarView(
             children: [
-              ListView.builder(
-                padding: EdgeInsets.all(10.0),
-                itemCount: animaisCaprinos.length,
-                itemBuilder: (context, index) {
-                  return _animalCard(context, index, animaisCaprinos);
-                },
+              RefreshIndicator(
+                child: ListView.builder(
+                  padding: EdgeInsets.all(10.0),
+                  itemCount: animais.length,
+                  itemBuilder: (context, index) {
+                    return _animalCard(context, index, animais);
+                  },
+                ),
+                onRefresh: _reloadLists,
               ),
-              ListView.builder(
-                padding: EdgeInsets.all(10.0),
-                itemCount: animaisCaprinosVendidos.length,
-                itemBuilder: (context, index) {
-                  return _animalCard(context, index, animaisCaprinosVendidos);
-                },
+              RefreshIndicator(
+                child: ListView.builder(
+                  padding: EdgeInsets.all(10.0),
+                  itemCount: animaisVendidos.length,
+                  itemBuilder: (context, index) {
+                    return _animalCard(context, index, animaisVendidos);
+                  },
+                ),
+                onRefresh: _reloadLists,
               ),
-              ListView.builder(
-                padding: EdgeInsets.all(10.0),
-                itemCount: animaisCaprinosMortos.length,
-                itemBuilder: (context, index) {
-                  return _animalCard(context, index, animaisCaprinosMortos);
-                },
+              RefreshIndicator(
+                child: ListView.builder(
+                  padding: EdgeInsets.all(10.0),
+                  itemCount: animaisMortos.length,
+                  itemBuilder: (context, index) {
+                    return _animalCard(context, index, animaisMortos);
+                  },
+                ),
+                onRefresh: _reloadLists,
               ),
-              ListView.builder(
-                padding: EdgeInsets.all(10.0),
-                itemCount: animaisCaprinosEcluidos.length,
-                itemBuilder: (context, index) {
-                  return _animalCard(context, index, animaisCaprinosEcluidos);
-                },
+              RefreshIndicator(
+                child: ListView.builder(
+                  padding: EdgeInsets.all(10.0),
+                  itemCount: animaisExcluidos.length,
+                  itemBuilder: (context, index) {
+                    return _animalCard(context, index, animaisExcluidos);
+                  },
+                ),
+                onRefresh: _reloadLists,
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Future<void> _reloadLists() async {
+    await Future.delayed(
+      Duration(seconds: 2),
+      () => animalHelper.getAllAnimals().then(
+        (list) {
+          print(list);
+          List<Animal> listaFinalDisponiveis = new List();
+          List<Animal> listaFinalVendidos = new List();
+          List<Animal> listaFinalMortos = new List();
+          List<Animal> listaFinalExcluidos = new List();
+
+          for (var ani in list) {
+            if (ani.idEspecie == widget.especieId) {
+              if (ani.status == "0") {
+                listaFinalDisponiveis.add(ani);
+              } else if (ani.status == "1") {
+                listaFinalVendidos.add(ani);
+              } else if (ani.status == "2") {
+                listaFinalMortos.add(ani);
+              } else if (ani.status == "3") {
+                listaFinalExcluidos.add(ani);
+              }
+            }
+          }
+          setState(() {
+            animais = listaFinalDisponiveis;
+            animaisVendidos = listaFinalVendidos;
+            animaisMortos = listaFinalMortos;
+            animaisExcluidos = listaFinalExcluidos;
+            allAnimals = list;
+          });
+        },
       ),
     );
   }
@@ -208,6 +256,7 @@ class _AnimalPageState extends State<AnimalPage> {
       ),
       onTap: () {
         _showOptions(context, index, lista);
+        _getAllAnimals();
       },
     );
   }
@@ -217,69 +266,112 @@ class _AnimalPageState extends State<AnimalPage> {
         context: context,
         builder: (context) {
           return BottomSheet(
-            onClosing: () {},
+            onClosing: () {
+              _getAllAnimals();
+            },
             builder: (context) {
               return Container(
                 padding: EdgeInsets.all(10.0),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
-                        child: Text(
-                          "Ver Informações",
-                          style: TextStyle(color: Colors.green, fontSize: 20.0),
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                          _showCaprinoInformation(animal: lista[index]);
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
-                        child: Text(
-                          "Editar",
-                          style: TextStyle(color: Colors.green, fontSize: 20.0),
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                          _showCadastroAnimalPage(animal: lista[index]);
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
-                        child: Text(
-                          "Excluir",
-                          style: TextStyle(color: Colors.red, fontSize: 20.0),
-                        ),
-                        onPressed: () async {
-                          Navigator.pop(context);
-                          final recExclusao = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ExclusaoPage(
-                                animalExcluido: lista[index],
-                              ),
-                            ),
-                          );
-                          if(recExclusao.motivoRemocao != null){
-                            await animalHelper.updateAnimal(recExclusao);
-                          }
-                          _getAllAnimals();
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+                    mainAxisSize: MainAxisSize.min,
+                    children: listaOpcoes(index, lista, context)),
               );
             },
           );
         });
+  }
+
+  List<Widget> listaOpcoes(
+      int index, List<Animal> lista, BuildContext context) {
+    List<Widget> listaOpcoes = List();
+    //ver informacoes comum para todos os status
+    listaOpcoes.add(Padding(
+      padding: EdgeInsets.all(10.0),
+      child: FlatButton(
+        child: Text(
+          "Ver Informações",
+          style: TextStyle(color: Colors.green, fontSize: 20.0),
+        ),
+        onPressed: () {
+          Navigator.pop(context);
+          _showCaprinoInformation(animal: lista[index]);
+        },
+      ),
+    ));
+    // caso o status do animal seja ativo
+    if (lista[index].status == "0") {
+      listaOpcoes.add(Padding(
+        padding: EdgeInsets.all(10.0),
+        child: FlatButton(
+          child: Text(
+            "Editar",
+            style: TextStyle(color: Colors.green, fontSize: 20.0),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+            _showCadastroAnimalPage(animal: lista[index]);
+          },
+        ),
+      ));
+      listaOpcoes.add(Padding(
+        padding: EdgeInsets.all(10.0),
+        child: FlatButton(
+          child: Text(
+            "Excluir",
+            style: TextStyle(color: Colors.red, fontSize: 20.0),
+          ),
+          onPressed: () async {
+            Navigator.pop(context);
+            final recExclusao = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ExclusaoPage(
+                  animalExcluido: lista[index],
+                ),
+              ),
+            );
+            if (recExclusao.motivoRemocao != null) {
+              await animalHelper.updateAnimal(recExclusao);
+            }
+            _getAllAnimals();
+          },
+        ),
+      ));
+    }
+    // caso o status do animal seja vendido-morto-excluido
+    else {
+      listaOpcoes.add(Padding(
+        padding: EdgeInsets.all(10.0),
+        child: FlatButton(
+          child: Text(
+            "Restaurar Animal",
+            style: TextStyle(color: Colors.green, fontSize: 20.0),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+            //atualizar status
+            lista[index].status = "0";
+            // caso o animal tenha sido vendido
+            lista[index].nomeComprador = null;
+            lista[index].valorVenda = null;
+            lista[index].dataVendaAnimal = null;
+            lista[index].anotacoesVenda = null;
+            // caso o animal tenha sido morto
+            lista[index].imgMorte = null;
+            lista[index].dataMorte = null;
+            lista[index].descricaoMorte = null;
+            // caso o animal tenha sido removido
+            lista[index].dataRemocao = null;
+            lista[index].motivoRemocao = null;
+            //atualizando o animal no bd
+
+            animalHelper.updateAnimal(lista[index]);
+          },
+        ),
+      ));
+    }
+
+    return listaOpcoes;
   }
 
   List<Widget> listaLateral() {
@@ -406,10 +498,10 @@ class _AnimalPageState extends State<AnimalPage> {
         }
       }
       setState(() {
-        animaisCaprinos = listaFinalDisponiveis;
-        animaisCaprinosVendidos = listaFinalVendidos;
-        animaisCaprinosMortos = listaFinalMortos;
-        animaisCaprinosEcluidos = listaFinalExcluidos;
+        animais = listaFinalDisponiveis;
+        animaisVendidos = listaFinalVendidos;
+        animaisMortos = listaFinalMortos;
+        animaisExcluidos = listaFinalExcluidos;
         allAnimals = list;
       });
     });
@@ -419,44 +511,44 @@ class _AnimalPageState extends State<AnimalPage> {
   void _orderList(OrderOptions result) {
     switch (result) {
       case OrderOptions.orderaz:
-        animaisCaprinos.sort((a, b) {
+        animais.sort((a, b) {
           return a.nome.toLowerCase().compareTo(b.nome.toLowerCase());
         });
-        animaisCaprinosVendidos.sort((a, b) {
+        animaisVendidos.sort((a, b) {
           return a.nome.toLowerCase().compareTo(b.nome.toLowerCase());
         });
-        animaisCaprinosMortos.sort((a, b) {
+        animaisMortos.sort((a, b) {
           return a.nome.toLowerCase().compareTo(b.nome.toLowerCase());
         });
-        animaisCaprinosEcluidos.sort((a, b) {
+        animaisExcluidos.sort((a, b) {
           return a.nome.toLowerCase().compareTo(b.nome.toLowerCase());
         });
         break;
       case OrderOptions.orderza:
-        animaisCaprinos.sort((a, b) {
+        animais.sort((a, b) {
           return b.nome.toLowerCase().compareTo(a.nome.toLowerCase());
         });
-        animaisCaprinosVendidos.sort((a, b) {
+        animaisVendidos.sort((a, b) {
           return b.nome.toLowerCase().compareTo(a.nome.toLowerCase());
         });
-        animaisCaprinosMortos.sort((a, b) {
+        animaisMortos.sort((a, b) {
           return b.nome.toLowerCase().compareTo(a.nome.toLowerCase());
         });
-        animaisCaprinosEcluidos.sort((a, b) {
+        animaisExcluidos.sort((a, b) {
           return b.nome.toLowerCase().compareTo(a.nome.toLowerCase());
         });
         break;
       case OrderOptions.orderbyid:
-        animaisCaprinos.sort((a, b) {
+        animais.sort((a, b) {
           return a.idAnimal.compareTo(b.idAnimal);
         });
-        animaisCaprinosVendidos.sort((a, b) {
+        animaisVendidos.sort((a, b) {
           return a.idAnimal.compareTo(b.idAnimal);
         });
-        animaisCaprinosMortos.sort((a, b) {
+        animaisMortos.sort((a, b) {
           return a.idAnimal.compareTo(b.idAnimal);
         });
-        animaisCaprinosEcluidos.sort((a, b) {
+        animaisExcluidos.sort((a, b) {
           return a.idAnimal.compareTo(b.idAnimal);
         });
         break;
