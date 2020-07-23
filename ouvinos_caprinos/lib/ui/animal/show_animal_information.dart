@@ -601,7 +601,7 @@ class _CaprinoInformationState extends State<AnimalInformation> {
     bool cond = false;
     List<Widget> lista = List();
     lista.add(Tab(text: "Informações"));
-     if (_animalSelecionado.status == "1") {
+    if (_animalSelecionado.status == "1") {
       qtdEventos = 5;
       lista.add(Tab(
         text: "Venda",
@@ -666,7 +666,7 @@ class _CaprinoInformationState extends State<AnimalInformation> {
         ],
       ),
     ));
-    if(_animalSelecionado.status == "1"){
+    if (_animalSelecionado.status == "1") {
       // caso o animal tenha sido removido
       lista.add(
         Container(
@@ -688,8 +688,8 @@ class _CaprinoInformationState extends State<AnimalInformation> {
                       DataRow(cells: [
                         DataCell(Text("Data da Venda")),
                         DataCell(
-                          Text(
-                              exibicaoDataPadrao(_animalSelecionado.dataVendaAnimal)),
+                          Text(exibicaoDataPadrao(
+                              _animalSelecionado.dataVendaAnimal)),
                         )
                       ]),
                       DataRow(cells: [
@@ -704,7 +704,6 @@ class _CaprinoInformationState extends State<AnimalInformation> {
           ),
         ),
       );
-
     }
     //status 1= venda, 2=morte, 3=exclusao
     if (_animalSelecionado.status == "2") {
@@ -725,18 +724,20 @@ class _CaprinoInformationState extends State<AnimalInformation> {
                         image: DecorationImage(
                             image: _animalSelecionado.imgMorte != null
                                 ? FileImage(File(_animalSelecionado.imgMorte))
-                                : AssetImage("images/animal.png"),
+                                : AssetImage("images/no-image.png"),
                             fit: BoxFit.cover),
                       ),
                     ),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              ImagemPage(_animalSelecionado.imgMorte),
-                        ),
-                      );
+                      if (_animalSelecionado.imgMorte != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ImagemPage(_animalSelecionado.imgMorte),
+                          ),
+                        );
+                      }
                     },
                   ),
                   DataTable(

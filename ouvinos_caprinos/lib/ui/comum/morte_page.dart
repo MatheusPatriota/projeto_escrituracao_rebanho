@@ -122,6 +122,12 @@ class _MortePageState extends State<MortePage> {
   showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = FlatButton(
+      child: Text("Cancelar"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+    Widget naoButton = FlatButton(
       child: Text("Não"),
       onPressed: () {
         Navigator.of(context).pop();
@@ -133,7 +139,7 @@ class _MortePageState extends State<MortePage> {
         Navigator.pop(context);
       },
     );
-    Widget continueButton = FlatButton(
+    Widget simButton = FlatButton(
       child: Text("Sim"),
       onPressed: () {
         Navigator.of(context).pop();
@@ -148,7 +154,8 @@ class _MortePageState extends State<MortePage> {
           "Você deseja realizar o registro fotográfico da morte do animal?"),
       actions: [
         cancelButton,
-        continueButton,
+        naoButton,
+        simButton,
       ],
     );
 
