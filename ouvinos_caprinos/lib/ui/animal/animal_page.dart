@@ -366,6 +366,7 @@ class _AnimalPageState extends State<AnimalPage> {
             //atualizando o animal no bd
 
             animalHelper.updateAnimal(lista[index]);
+            _getAllAnimals();
           },
         ),
       ));
