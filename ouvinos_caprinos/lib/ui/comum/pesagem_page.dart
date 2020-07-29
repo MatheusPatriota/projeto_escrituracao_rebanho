@@ -39,25 +39,6 @@ class _PesagemPageState extends State<PesagemPage> {
     }
   }
 
-  //  essa funcao eh uma possivel fatoracao de codigo
-  
-  Future<Null> _selectDataPesagem(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
-      context: context,
-      initialDate: _dataSelecionada,
-      firstDate: new DateTime(1900),
-      lastDate: new DateTime(2100),
-    );
-    if (picked.compareTo(_dataSelecionada) > 0) {
-      _showAlert();
-    } else if (picked != null && picked != _dataSelecionada) {
-      setState(() {
-        _dataSelecionada = picked;
-        _pesoCadastrado.data = dataFormatada(picked);
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,8 +67,17 @@ class _PesagemPageState extends State<PesagemPage> {
             ),
             RaisedButton(
               child: Text(exibicaoDataPadrao(dataFormatada(_dataSelecionada))),
-              onPressed: () {
-                _selectDataPesagem(context);
+              onPressed: () async {
+                DateTime _dataComparativa =
+                    await selectDate(context, _dataSelecionada);
+                if (_dataComparativa.compareTo(_dataSelecionada) > 0) {
+                  showAlert(context, _dataSelecionada, "Pesagem");
+                } else {
+                  setState(() {
+                    _dataSelecionada = _dataComparativa;
+                    _pesoCadastrado.data = dataFormatada(_dataSelecionada);
+                  });
+                }
               },
             ),
             espacamentoPadrao(),
@@ -111,25 +101,5 @@ class _PesagemPageState extends State<PesagemPage> {
         ),
       ),
     );
-  }
-
-  // alerta para caso o usuario tente cadastra uma pesgem futura(nao permitido)
-  void _showAlert() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text("Você não pode cadastrar uma pesagem futura!"),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("OK"),
-                onPressed: () {
-                  Navigator.pop(context);
-                  _selectDataPesagem(context);
-                },
-              ),
-            ],
-          );
-        });
   }
 }

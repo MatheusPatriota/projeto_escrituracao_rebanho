@@ -31,43 +31,10 @@ class _ObservacaoPageState extends State<ObservacaoPage> {
 
     if (widget.observacao == null) {
       _observacaoCriada = Observacao(animalId: widget.animalId);
-      _observacaoCriada.data = _dataFormatada();
+      _observacaoCriada.data = dataFormatada(_dataSelecionada);
     } else {
       _observacaoCriada = Observacao.fromMap(widget.observacao.toMap());
       _selectedObservacao.text = _observacaoCriada.descricao;
-    }
-  }
-
-  String _dataFormatada() {
-    String dia = "${_dataSelecionada.day}";
-    String nd = "";
-    String mes = "${_dataSelecionada.month}";
-    String nm = "";
-    if (dia.length < 2) {
-      nd = "0" + dia;
-    } else {
-      nd = dia;
-    }
-    if (mes.length < 2) {
-      nm = "0" + mes;
-    } else {
-      nm = mes;
-    }
-    return "${_dataSelecionada.year}-" + nm + "-" + nd;
-  }
-
-  Future<Null> _selectDataPesagem(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
-      context: context,
-      initialDate: _dataSelecionada,
-      firstDate: new DateTime(1900),
-      lastDate: new DateTime(2100),
-    );
-    if (picked != null && picked != _dataSelecionada) {
-      setState(() {
-        _dataSelecionada = picked;
-        _observacaoCriada.data = _dataFormatada();
-      });
     }
   }
 
@@ -81,7 +48,7 @@ class _ObservacaoPageState extends State<ObservacaoPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (_formKey.currentState.validate()) {       
+          if (_formKey.currentState.validate()) {
             Navigator.pop(context, _observacaoCriada);
           }
         },
@@ -98,12 +65,13 @@ class _ObservacaoPageState extends State<ObservacaoPage> {
               padding: EdgeInsets.only(top: 10.0),
             ),
             RaisedButton(
-              child: Text(exibicaoDataPadrao(_dataFormatada())),
-              onPressed: () {
-                _selectDataPesagem(context);
+              child: Text(exibicaoDataPadrao(dataFormatada(_dataSelecionada))),
+              onPressed: () async {
+                _dataSelecionada = await selectDate(context, _dataSelecionada);
                 setState(() {
-                  // _userEdited = true;
-                  // _editedAnimal.dataNascimento = _dataNascimentoFormatada;
+                  setState(() {
+                    _observacaoCriada.data = dataFormatada(_dataSelecionada);
+                  });
                 });
               },
             ),

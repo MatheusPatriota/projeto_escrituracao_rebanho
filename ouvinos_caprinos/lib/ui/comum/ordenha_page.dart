@@ -39,25 +39,6 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
     }
   }
 
-  //  essa funcao eh uma possivel fatoracao de codigo
-  
-  Future<Null> _selectDataOrdenha(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
-      context: context,
-      initialDate: _dataSelecionada,
-      firstDate: new DateTime(1900),
-      lastDate: new DateTime(2100),
-    );
-    if (picked.compareTo(_dataSelecionada) > 0) {
-      _showAlert();
-    } else if (picked != null && picked != _dataSelecionada) {
-      setState(() {
-        _dataSelecionada = picked;
-        _ordenhaCadastrada.data = dataFormatada(picked);
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,8 +67,17 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
             ),
             RaisedButton(
               child: Text(exibicaoDataPadrao(dataFormatada(_dataSelecionada))),
-              onPressed: () {
-                _selectDataOrdenha(context);
+              onPressed: () async {
+                DateTime _dataComparativa =
+                    await selectDate(context, _dataSelecionada);
+                if (_dataComparativa.compareTo(_dataSelecionada) > 0) {
+                  showAlert(context, _dataSelecionada, "Ordenha");
+                } else {
+                  setState(() {
+                    _dataSelecionada = _dataComparativa;
+                    _ordenhaCadastrada.data = dataFormatada(_dataSelecionada);
+                  });
+                }
               },
             ),
             espacamentoPadrao(),
@@ -111,25 +101,5 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
         ),
       ),
     );
-  }
-
-  // alerta para caso o usuario tente cadastra uma pesgem futura(nao permitido)
-  void _showAlert() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text("Você não pode cadastrar uma Ordenha futura!"),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("OK"),
-                onPressed: () {
-                  Navigator.pop(context);
-                  _selectDataOrdenha(context);
-                },
-              ),
-            ],
-          );
-        });
   }
 }

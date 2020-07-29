@@ -29,40 +29,7 @@ class _MortePageState extends State<MortePage> {
   void initState() {
     super.initState();
     _animalSelecionado = Animal.fromMap(widget.animalMorte.toMap());
-    _animalSelecionado.dataMorte = _dataFormatada();
-  }
-
-  String _dataFormatada() {
-    String dia = "${_dataSelecionada.day}";
-    String nd = "";
-    String mes = "${_dataSelecionada.month}";
-    String nm = "";
-    if (dia.length < 2) {
-      nd = "0" + dia;
-    } else {
-      nd = dia;
-    }
-    if (mes.length < 2) {
-      nm = "0" + mes;
-    } else {
-      nm = mes;
-    }
-    return "${_dataSelecionada.year}-" + nm + "-" + nd;
-  }
-
-  Future<Null> _selectDataMorte(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
-      context: context,
-      initialDate: _dataSelecionada,
-      firstDate: new DateTime(1900),
-      lastDate: new DateTime(2100),
-    );
-    if (picked != null && picked != _dataSelecionada) {
-      setState(() {
-        _dataSelecionada = picked;
-        _animalSelecionado.dataMorte = _dataFormatada();
-      });
-    }
+    _animalSelecionado.dataMorte = dataFormatada(_dataSelecionada);
   }
 
   @override
@@ -92,9 +59,13 @@ class _MortePageState extends State<MortePage> {
               padding: EdgeInsets.only(top: 10.0),
             ),
             RaisedButton(
-              child: Text(exibicaoDataPadrao(_dataFormatada())),
-              onPressed: () {
-                _selectDataMorte(context);
+              child: Text(exibicaoDataPadrao(dataFormatada(_dataSelecionada))),
+              onPressed: () async {
+                _dataSelecionada = await selectDate(context, _dataSelecionada);
+                setState(() {
+                  _animalSelecionado.dataMorte =
+                      dataFormatada(_dataSelecionada);
+                });
               },
             ),
             espacamentoPadrao(),

@@ -37,24 +37,6 @@ class _TratamentoPageState extends State<TratamentoPage> {
 
   bool agendamento = false;
 
-  String _dataFormatada(data) {
-    String dia = "${data.day}";
-    String nd = "";
-    String mes = "${data.month}";
-    String nm = "";
-    if (dia.length < 2) {
-      nd = "0" + dia;
-    } else {
-      nd = dia;
-    }
-    if (mes.length < 2) {
-      nm = "0" + mes;
-    } else {
-      nm = mes;
-    }
-    return "${_dataTratamentoSelecionada.year}-" + nm + "-" + nd;
-  }
-
   Future<Null> _selectDataTratamento(BuildContext context, int opcao) async {
     final DateTime picked = await showDatePicker(
       context: context,
@@ -69,14 +51,14 @@ class _TratamentoPageState extends State<TratamentoPage> {
           _dataTratamentoSelecionada = picked;
 
           _tratamentoCadastrado.dataTratamento =
-              _dataFormatada(_dataTratamentoSelecionada);
+              dataFormatada(_dataTratamentoSelecionada);
         });
       } else {
         setState(() {
           _edited = true;
           _dataAgendamentoSelecionada = picked;
           _tratamentoCadastrado.dataAgendamento =
-              _dataFormatada(_dataAgendamentoSelecionada);
+              dataFormatada(_dataAgendamentoSelecionada);
         });
       }
     }
@@ -86,7 +68,7 @@ class _TratamentoPageState extends State<TratamentoPage> {
     if (a == true) {
       return RaisedButton(
         child: Text(
-            exibicaoDataPadrao(_dataFormatada(_dataAgendamentoSelecionada))),
+            exibicaoDataPadrao(dataFormatada(_dataAgendamentoSelecionada))),
         onPressed: () {
           _selectDataTratamento(context, 1);
           setState(() {
@@ -149,9 +131,9 @@ class _TratamentoPageState extends State<TratamentoPage> {
       _tratamentoCadastrado = Tratamento();
       _tratamentoCadastrado.animalId = widget.animalId;
       _tratamentoCadastrado.dataTratamento =
-          _dataFormatada(_dataTratamentoSelecionada);
+          dataFormatada(_dataTratamentoSelecionada);
       _tratamentoCadastrado.dataAgendamento =
-          _dataFormatada(_dataAgendamentoSelecionada);
+          dataFormatada(_dataAgendamentoSelecionada);
     } else {
       _tratamentoCadastrado = Tratamento.fromMap(widget.tratamento.toMap());
       _selectedMotivo.text = _tratamentoCadastrado.motivo;
@@ -201,7 +183,7 @@ class _TratamentoPageState extends State<TratamentoPage> {
                   ),
                   RaisedButton(
                     child: Text(exibicaoDataPadrao(
-                        _dataFormatada(_dataTratamentoSelecionada))),
+                        dataFormatada(_dataTratamentoSelecionada))),
                     onPressed: () {
                       _selectDataTratamento(context, 0);
                       setState(() {
@@ -321,10 +303,17 @@ class _TratamentoPageState extends State<TratamentoPage> {
             backgroundColor: Colors.green,
             onPressed: () async {
               // altere aqui o temporizador para aparecer a notificacao
-              notificacao( "Tratamento/Medicação","O medicamento " +
-          _tratamentoCadastrado.medicacao +
-          " Deve ser aplicado Hoje!", 10,0);
-              notificacao("Periodo de Carencia", "O periodo de carencia do animal de id: " + widget.animalId.toString() + " venceu hoje!", 10,1);
+              //     notificacao( "Tratamento/Medicação","O medicamento " +
+              // _tratamentoCadastrado.medicacao +
+              // " Deve ser aplicado Hoje!", 10,0);
+
+              notificacao(
+                  "Periodo de Carencia",
+                  "O periodo de carencia do animal de id: " +
+                      widget.animalId.toString() +
+                      " venceu hoje!",
+                  _tratamentoCadastrado.periodoCarencia,
+                  0);
               if (_formKey.currentState.validate()) {
                 Navigator.pop(context, _tratamentoCadastrado);
               }
@@ -334,7 +323,7 @@ class _TratamentoPageState extends State<TratamentoPage> {
         onWillPop: _requestPop);
   }
 
-  notificacao(titulo, texto, duracao,hash) async {
+  notificacao(titulo, texto, duracao, hash) async {
     DateTime now = DateTime.now().toUtc().add(
           Duration(seconds: duracao),
         );

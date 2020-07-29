@@ -72,7 +72,7 @@ Widget calculoDiasRestantes(String dia, String mes, String ano, String data) {
   if (diferenca > newData) {
     texto = "Ja passou da data";
   } else if (diferenca == newData) {
-    texto = "1 dias";
+    texto = "1 dia";
   } else if (diferenca < newData) {
     return Text((newData - diferenca).toString() + " dias",
         style: TextStyle(color: Colors.red));
@@ -89,20 +89,54 @@ String exibicaoDataPadrao(String dataSelecionada) {
   return dia + "/" + mes + "/" + ano;
 }
 
+// funcao base para formatar data
 String dataFormatada(DateTime data) {
-    String dia = "${data.day}";
-    String nd = "";
-    String mes = "${data.month}";
-    String nm = "";
-    if (dia.length < 2) {
-      nd = "0" + dia;
-    } else {
-      nd = dia;
-    }
-    if (mes.length < 2) {
-      nm = "0" + mes;
-    } else {
-      nm = mes;
-    }
-    return "${data.year}-" + nm + "-" + nd;
+  String dia = "${data.day}";
+  String nd = "";
+  String mes = "${data.month}";
+  String nm = "";
+  if (dia.length < 2) {
+    nd = "0" + dia;
+  } else {
+    nd = dia;
   }
+  if (mes.length < 2) {
+    nm = "0" + mes;
+  } else {
+    nm = mes;
+  }
+  return "${data.year}-" + nm + "-" + nd;
+}
+
+// funcao base para selecao de data (retorno dynamic)
+selectDate(BuildContext context, DateTime dataSelecionada) async {
+  final DateTime picked = await showDatePicker(
+    context: context,
+    initialDate: dataSelecionada,
+    firstDate: new DateTime(1900),
+    lastDate: new DateTime(2100),
+  );
+  if (picked != null && picked != dataSelecionada) {
+    return picked;
+  }
+  return dataSelecionada;
+}
+
+// alerta para caso o usuario tente cadastra uma pesgem futura(nao permitido)
+showAlert(BuildContext context, DateTime dataSelecionada, String texto) {
+  showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Você não pode cadastrar uma $texto futura!"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("OK"),
+              onPressed: () async {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      });
+}
