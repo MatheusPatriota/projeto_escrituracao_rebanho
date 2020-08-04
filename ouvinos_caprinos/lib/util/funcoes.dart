@@ -10,13 +10,17 @@ String ehvazio(dynamic a) {
 }
 
 //funcao que calcula a idade do animal
-String idadeAnimal(String ano, String mes) {
+String idadeAnimal(String ano, String mes, {int condicao}) {
   DateTime _dataAtual = new DateTime.now();
   String anoAtual = "${_dataAtual.year}";
   String mesAtual = "${_dataAtual.month}";
   String resultado = "";
   int anos = int.parse(anoAtual) - int.parse(ano);
   int meses = (int.parse(mesAtual) - int.parse(mes));
+
+  if (condicao != null) {
+    return meses.toString();
+  }
 
   if (meses < 0) {
     meses = meses + 12;

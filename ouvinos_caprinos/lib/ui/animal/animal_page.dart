@@ -451,7 +451,10 @@ class _AnimalPageState extends State<AnimalPage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => RelatorioAnaliticoPage()));
+                  builder: (context) => RelatorioAnaliticoPage(
+                        especieId: widget.especieId,
+                        animaisSelecionados: animais,
+                      )));
         },
       ),
     );
