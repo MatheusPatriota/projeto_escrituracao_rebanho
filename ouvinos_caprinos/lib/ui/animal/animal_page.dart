@@ -9,7 +9,9 @@ import 'package:ouvinos_caprinos/icones_personalizados/my_flutter_app_icons.dart
 import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
 import 'package:ouvinos_caprinos/ui/animal/cadastro_animal_page.dart';
 import 'package:ouvinos_caprinos/ui/animal/show_animal_information.dart';
+import 'package:ouvinos_caprinos/ui/comum/backup_restore_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/exclusao_page.dart';
+import 'package:ouvinos_caprinos/ui/comum/relatorio_analitico_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/search_bar.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
 
@@ -380,22 +382,39 @@ class _AnimalPageState extends State<AnimalPage> {
 
     listaLateral.add(
       DrawerHeader(
-        decoration: BoxDecoration(
-          color: Colors.green,
-        ),
-        child: Text(
-          'Espécies Disponiveis',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 25,
-          ),
-        ),
-      ),
+          decoration: BoxDecoration(
+              gradient:
+                  LinearGradient(colors: <Color>[Colors.green, Colors.green])),
+          child: Container(
+            child: Column(
+              children: <Widget>[
+                Material(
+                  borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                  elevation: 10,
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Image.asset("images/home_logo.png",
+                        height: 90, width: 90),
+                  ),
+                ),
+                Text(
+                  'Menu Principal',
+                  style: TextStyle(color: Colors.white, fontSize: 20.0),
+                )
+              ],
+            ),
+          )),
     );
 
     for (var especie in especies) {
+      Icon icone;
+      if (especie.descricao.toLowerCase() == "caprino") {
+        icone = Icon((MyFlutterApp.bode_icon));
+      } else {
+        icone = Icon((MyFlutterApp.ovelha_icon));
+      }
       listaLateral.add(ListTile(
-        leading: Icon((MyFlutterApp.ovelha_icon)),
+        leading: icone,
         title: Text(especie.descricao),
         onTap: () {
           if (especie.id != widget.especieId) {
@@ -415,10 +434,28 @@ class _AnimalPageState extends State<AnimalPage> {
 
     listaLateral.add(
       ListTile(
-        leading: Icon(Icons.settings),
-        title: Text('Configurações'),
+        leading: Icon(Icons.backup),
+        title: Text('Backup/Restore'),
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => BackupRestorePage()));
+        },
       ),
     );
+
+    listaLateral.add(
+      ListTile(
+        leading: Icon(Icons.assignment),
+        title: Text('Gerar Relatório'),
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => RelatorioAnaliticoPage()));
+        },
+      ),
+    );
+
     return listaLateral;
   }
 
