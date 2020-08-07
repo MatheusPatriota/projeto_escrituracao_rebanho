@@ -12,6 +12,7 @@ import 'package:ouvinos_caprinos/ui/animal/cadastro_animal_page.dart';
 import 'package:ouvinos_caprinos/ui/animal/show_animal_information.dart';
 import 'package:ouvinos_caprinos/ui/comum/backup_restore_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/exclusao_page.dart';
+import 'package:ouvinos_caprinos/ui/comum/graficos_analiticos.dart';
 import 'package:ouvinos_caprinos/ui/comum/relatorio_analitico_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/search_bar.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
@@ -71,8 +72,7 @@ class _AnimalPageState extends State<AnimalPage> {
         length: 4,
         child: Scaffold(
           appBar: AppBar(
-            title: Text("Rebanho " + especies[widget.especieId - 1].descricao ??
-                "Rebanho"),
+            title: Text("Rebanho "),
             backgroundColor: Colors.green,
             actions: <Widget>[
               IconButton(
@@ -452,13 +452,34 @@ class _AnimalPageState extends State<AnimalPage> {
         title: Text('Gerar Relatório'),
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => RelatorioAnaliticoPage(
-                        especieId: widget.especieId,
-                        animaisSelecionados: animais,
-                        listaDeRacas: listaDeRacasSelecionadas,
-                      )));
+            context,
+            MaterialPageRoute(
+              builder: (context) => RelatorioAnaliticoPage(
+                especieId: widget.especieId,
+                animaisSelecionados: animais,
+                listaDeRacas: listaDeRacasSelecionadas,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+
+    listaLateral.add(
+      ListTile(
+        leading: Icon(Icons.assessment),
+        title: Text('Gerar Gráficos'),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => GraficosAnaliticosPage(
+                especieId: widget.especieId,
+                animaisSelecionados: animais,
+                listaDeRacas: listaDeRacasSelecionadas,
+              ),
+            ),
+          );
         },
       ),
     );

@@ -102,17 +102,6 @@ class _RelatorioAnaliticoPageState extends State<RelatorioAnaliticoPage> {
     });
   }
 
-  int count(lista, elemento) {
-    int contador = 0;
-
-    for (var i = 0; i < lista.length; i++) {
-      if (lista[i] == elemento) {
-        contador++;
-      }
-    }
-    return contador;
-  }
-
   @override
   void initState() {
     animaisDiponiveis = 0;

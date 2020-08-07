@@ -144,3 +144,14 @@ showAlert(BuildContext context, DateTime dataSelecionada, String texto) {
         );
       });
 }
+
+int count(lista, elemento) {
+  int contador = 0;
+
+  for (var i = 0; i < lista.length; i++) {
+    if (lista[i] == elemento) {
+      contador++;
+    }
+  }
+  return contador;
+}
