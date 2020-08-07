@@ -6,6 +6,7 @@ import 'package:ouvinos_caprinos/categoria/db/categoria_database.dart';
 import 'package:ouvinos_caprinos/especie/class/especie.dart';
 import 'package:ouvinos_caprinos/especie/db/especie_database.dart';
 import 'package:ouvinos_caprinos/icones_personalizados/my_flutter_app_icons.dart';
+import 'package:ouvinos_caprinos/raca/class/raca.dart';
 import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
 import 'package:ouvinos_caprinos/ui/animal/cadastro_animal_page.dart';
 import 'package:ouvinos_caprinos/ui/animal/show_animal_information.dart';
@@ -41,6 +42,8 @@ class _AnimalPageState extends State<AnimalPage> {
   List<Animal> allAnimals = List();
 
   List<Especie> especies = List();
+
+  List<Raca> listaDeRacasSelecionadas = List();
 
   @override
   void initState() {
@@ -454,6 +457,7 @@ class _AnimalPageState extends State<AnimalPage> {
                   builder: (context) => RelatorioAnaliticoPage(
                         especieId: widget.especieId,
                         animaisSelecionados: animais,
+                        listaDeRacas: listaDeRacasSelecionadas,
                       )));
         },
       ),
@@ -504,7 +508,17 @@ class _AnimalPageState extends State<AnimalPage> {
 
 // carrega o banco de dados de racas
   void _getAllRacas() {
-    racaHelper.getAllRacas();
+    List<Raca> listaRacasS = List();
+    racaHelper.getAllRacas().then((listaRacas) {
+      for (var raca in listaRacas) {
+        if (raca.especieId == widget.especieId) {
+          listaRacasS.add(raca);
+        }
+      }
+      setState(() {
+        listaDeRacasSelecionadas = listaRacasS;
+      });
+    });
   }
 
 // carrega o banco de dados das especies

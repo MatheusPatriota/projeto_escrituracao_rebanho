@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
+import 'package:ouvinos_caprinos/raca/class/raca.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
 
 class RelatorioAnaliticoPage extends StatefulWidget {
   final int especieId;
   final List<Animal> animaisSelecionados;
-  RelatorioAnaliticoPage({this.especieId, this.animaisSelecionados});
+  final List<Raca> listaDeRacas;
+  RelatorioAnaliticoPage(
+      {this.especieId, this.animaisSelecionados, this.listaDeRacas});
   @override
   _RelatorioAnaliticoPageState createState() => _RelatorioAnaliticoPageState();
 }
@@ -29,6 +32,8 @@ int maisqueTrintaSeis = 0;
 int cria = 0;
 int recria = 0;
 int terminacao = 0;
+List<int> idsRacasAnimais = List();
+List<String> racas = List();
 
 class _RelatorioAnaliticoPageState extends State<RelatorioAnaliticoPage> {
   void _getAllAnimals() {
@@ -81,10 +86,31 @@ class _RelatorioAnaliticoPageState extends State<RelatorioAnaliticoPage> {
       } else if (ani.idCategoria == 3) {
         terminacao += 1;
       }
+
+      // raca do animal
+      idsRacasAnimais.add(ani.idRaca);
+    }
+
+    for (var raca in widget.listaDeRacas) {
+      int ocorrencias = count(idsRacasAnimais, raca.id);
+      if (ocorrencias > 0) {
+        racas.add(raca.descricao + ": " + ocorrencias.toString());
+      }
     }
     setState(() {
       print("ok");
     });
+  }
+
+  int count(lista, elemento) {
+    int contador = 0;
+
+    for (var i = 0; i < lista.length; i++) {
+      if (lista[i] == elemento) {
+        contador++;
+      }
+    }
+    return contador;
   }
 
   @override
@@ -103,6 +129,8 @@ class _RelatorioAnaliticoPageState extends State<RelatorioAnaliticoPage> {
     cria = 0;
     recria = 0;
     terminacao = 0;
+    idsRacasAnimais = List();
+    racas = List();
     super.initState();
   }
 
@@ -138,6 +166,7 @@ class _RelatorioAnaliticoPageState extends State<RelatorioAnaliticoPage> {
 
     lista.add(divider);
 
+    //status dos animais
     lista.add(configTexto(
         "Total de animais Disponíveis: " + animaisDiponiveis.toString()));
     lista.add(configTexto(
@@ -147,11 +176,13 @@ class _RelatorioAnaliticoPageState extends State<RelatorioAnaliticoPage> {
 
     lista.add(divider);
 
+    //sexo do animais
     lista.add(configTexto("Machos: " + machos.toString()));
     lista.add(configTexto("Fêmeas: " + femeas.toString()));
 
     lista.add(divider);
 
+    //idades dos animais
     lista.add(configTexto("0-6 meses: " + zeroSeis.toString()));
     lista.add(configTexto("7-12 meses: " + seteDoze.toString()));
     lista.add(configTexto("13-18 meses: " + trezeDezoito.toString()));
@@ -162,12 +193,18 @@ class _RelatorioAnaliticoPageState extends State<RelatorioAnaliticoPage> {
 
     lista.add(divider);
 
+    // categorias dos animais
     lista.add(configTexto("Cria: " + cria.toString()));
     lista.add(configTexto("Recria: " + recria.toString()));
     lista.add(configTexto("Terminação: " + terminacao.toString()));
 
     lista.add(divider);
-    // _getAllAnimals();
+
+    // racas dos animais
+    for (var raca in racas) {
+      lista.add(configTexto(raca));
+    }
+
     return lista;
   }
 
