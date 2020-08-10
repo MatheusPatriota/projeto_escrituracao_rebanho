@@ -17,17 +17,21 @@ class GraficosAnaliticosPage extends StatefulWidget {
 
 class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
   List<charts.Series<AnimaisRaca, String>> _graficoQtdAnimaisRaca = List();
-  List<charts.Series<MortosRaca, int>> _graficoQtdMortosRaca = List();
+  List<charts.Series<MortosRaca, String>> _graficoQtdMortosRaca = List();
   List<charts.Series<EvolucaoRebanho, DateTime>> _graficoEvolucaoRebanho =
       List();
 
   List<Animal> listaFinal = List();
   List<int> idsRacasAnimais = List();
+  List<int> idsAnimaisMortos = List();
 
   _ordenaPorData() {
     for (var ani in widget.animaisSelecionados) {
       listaFinal.add(ani);
       idsRacasAnimais.add(ani.idRaca);
+      if (ani.status == "2") {
+        idsAnimaisMortos.add(ani.idRaca);
+      }
     }
 
     if (widget.animaisSelecionados.isNotEmpty) {
@@ -46,19 +50,9 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
   }
 
   _generateData() {
+    //inicializacoes necessarias
     _ordenaPorData();
-    // mortes por raca
-    var qtdMortosRaca = [
-      // new MortosRaca('Work', 35.8, Color(0xff3366cc)),
-      // new MortosRaca('Eat', 8.3, Color(0xff990099)),
-      // new MortosRaca('Commute', 10.8, Color(0xff109618)),
-      // new MortosRaca('TV', 15.6, Color(0xfffdbe19)),
-      // new MortosRaca('Sleep', 19.2, Color(0xffff9900)),
-      // new MortosRaca('Other', 10.3, Color(0xffdc3912)),
-    ];
-    // quantidade de animais por raca
-    List<AnimaisRaca> qtdAnimaisRaca = List();
-
+    //paleta e cores
     List<Color> listaDeCores = [
       Color(0xff3366cc),
       Color(0xff990099),
@@ -73,6 +67,22 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
       Colors.white60,
       Colors.blueAccent,
     ];
+
+    // animais mortos por raca
+    List<MortosRaca> qtdMortosRaca = List();
+    int contadorAnimaisMortos = 0;
+    for (var raca in widget.listaDeRacas) {
+      int ocorrencias = count(idsAnimaisMortos, raca.id);
+      if (ocorrencias > 0) {
+        qtdMortosRaca.add(new MortosRaca(
+            raca.descricao, ocorrencias, listaDeCores[contadorAnimaisMortos]));
+      }
+      contadorAnimaisMortos++;
+    }
+
+    // quantidade de animais por raca
+    List<AnimaisRaca> qtdAnimaisRaca = List();
+
     int contadorAnimaisPorRaca = 0;
     for (var raca in widget.listaDeRacas) {
       int ocorrencias = count(idsRacasAnimais, raca.id);
@@ -83,8 +93,7 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
       contadorAnimaisPorRaca++;
     }
 
-    // List<DateTime, String> nome = List();
-
+    //evolucao do rebanho
     List<EvolucaoRebanho> evolucaoRebanho = [];
     evolucaoRebanho.add(new EvolucaoRebanho(new DateTime(2020, 1, 1), 0));
     int contadorAnimais = 0;
@@ -96,6 +105,7 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
           contadorAnimais));
     }
 
+    //adicionando ao grafico e animais por raca
     _graficoQtdAnimaisRaca.add(
       charts.Series(
         domainFn: (AnimaisRaca raca, _) => raca.raca,
@@ -108,6 +118,20 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
       ),
     );
 
+    //adicionando ao grafico e animais por raca
+    _graficoQtdMortosRaca.add(
+      charts.Series(
+        domainFn: (MortosRaca raca, _) => raca.raca,
+        measureFn: (MortosRaca raca, _) => raca.qtdMortos,
+        colorFn: (MortosRaca raca, _) =>
+            charts.ColorUtil.fromDartColor(raca.cor),
+        id: 'Animais por Raca',
+        data: qtdMortosRaca,
+        labelAccessorFn: (MortosRaca row, _) => '${row.qtdMortos}',
+      ),
+    );
+
+    //adicionano ao grafico de evolucao do rebanho
     _graficoEvolucaoRebanho.add(
       charts.Series<EvolucaoRebanho, DateTime>(
         id: 'EvolucaoRebanho',
@@ -132,7 +156,7 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -144,6 +168,7 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
                 icon: Icon(FontAwesomeIcons.chartLine),
               ),
               Tab(icon: Icon(FontAwesomeIcons.chartPie)),
+              Tab(icon: Icon(Icons.pie_chart)),
               // Tab(icon: Icon(FontAwesomeIcons.solidChartBar)),
             ],
           ),
@@ -188,6 +213,51 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
                       Expanded(
                         child: charts.PieChart(
                           _graficoQtdAnimaisRaca,
+                          animate: true,
+                          animationDuration: Duration(seconds: 5),
+                          behaviors: [
+                            new charts.DatumLegend(
+                              outsideJustification:
+                                  charts.OutsideJustification.endDrawArea,
+                              horizontalFirst: false,
+                              desiredMaxRows: 2,
+                              cellPadding:
+                                  new EdgeInsets.only(right: 4.0, bottom: 4.0),
+                              entryTextStyle: charts.TextStyleSpec(
+                                  color: charts
+                                      .MaterialPalette.purple.shadeDefault,
+                                  fontFamily: 'Georgia',
+                                  fontSize: 11),
+                            )
+                          ],
+                          defaultRenderer: new charts.ArcRendererConfig(
+                            arcWidth: 100,
+                            arcRendererDecorators: [
+                              new charts.ArcLabelDecorator(
+                                  labelPosition: charts.ArcLabelPosition.inside)
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Container(
+                child: Center(
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        'Quantidade de animais Mortos por Raça',
+                        style: TextStyle(
+                            fontSize: 24.0, fontWeight: FontWeight.bold),
+                      ),
+                      Expanded(
+                        child: charts.PieChart(
+                          _graficoQtdMortosRaca,
                           animate: true,
                           animationDuration: Duration(seconds: 5),
                           behaviors: [

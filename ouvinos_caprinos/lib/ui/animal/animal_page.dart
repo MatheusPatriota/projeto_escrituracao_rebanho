@@ -456,7 +456,7 @@ class _AnimalPageState extends State<AnimalPage> {
             MaterialPageRoute(
               builder: (context) => RelatorioAnaliticoPage(
                 especieId: widget.especieId,
-                animaisSelecionados: animais,
+                animaisSelecionados: allAnimals,
                 listaDeRacas: listaDeRacasSelecionadas,
               ),
             ),
@@ -475,7 +475,7 @@ class _AnimalPageState extends State<AnimalPage> {
             MaterialPageRoute(
               builder: (context) => GraficosAnaliticosPage(
                 especieId: widget.especieId,
-                animaisSelecionados: animais,
+                animaisSelecionados: allAnimals,
                 listaDeRacas: listaDeRacasSelecionadas,
               ),
             ),
@@ -555,6 +555,7 @@ class _AnimalPageState extends State<AnimalPage> {
   void _getAllAnimals() {
     animalHelper.getAllAnimals().then((list) {
       print(list);
+      List<Animal> listaFinalAnimalEspecieSelecionada = new List();
       List<Animal> listaFinalDisponiveis = new List();
       List<Animal> listaFinalVendidos = new List();
       List<Animal> listaFinalMortos = new List();
@@ -562,6 +563,7 @@ class _AnimalPageState extends State<AnimalPage> {
 
       for (var ani in list) {
         if (ani.idEspecie == widget.especieId) {
+          listaFinalAnimalEspecieSelecionada.add(ani);
           if (ani.status == "0") {
             listaFinalDisponiveis.add(ani);
           } else if (ani.status == "1") {
@@ -578,7 +580,7 @@ class _AnimalPageState extends State<AnimalPage> {
         animaisVendidos = listaFinalVendidos;
         animaisMortos = listaFinalMortos;
         animaisExcluidos = listaFinalExcluidos;
-        allAnimals = list;
+        allAnimals = listaFinalAnimalEspecieSelecionada;
       });
     });
   }
