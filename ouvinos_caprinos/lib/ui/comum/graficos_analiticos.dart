@@ -18,12 +18,19 @@ class GraficosAnaliticosPage extends StatefulWidget {
 class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
   List<charts.Series<AnimaisRaca, String>> _graficoQtdAnimaisRaca = List();
   List<charts.Series<MortosRaca, String>> _graficoQtdMortosRaca = List();
+  List<charts.Series<AnimaisIdade, String>> _graficoAnimaisIdade = List();
   List<charts.Series<EvolucaoRebanho, DateTime>> _graficoEvolucaoRebanho =
       List();
 
   List<Animal> listaFinal = List();
   List<int> idsRacasAnimais = List();
   List<int> idsAnimaisMortos = List();
+  int zeroSeis = 0;
+  int seteDoze = 0;
+  int trezeDezoito = 0;
+  int dezenoveVinteQuatro = 0;
+  int vinteCincoTrintaSeis = 0;
+  int maisqueTrintaSeis = 0;
 
   _ordenaPorData() {
     for (var ani in widget.animaisSelecionados) {
@@ -66,6 +73,37 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
       Colors.lime,
       Colors.white60,
       Colors.blueAccent,
+    ];
+
+    //quatidade de animais por idade
+
+    //idade
+    for (var ani in widget.animaisSelecionados) {
+      List<String> dataSplitada = ani.dataNascimento.split("-");
+      int idadeAni =
+          int.parse(idadeAnimal(dataSplitada[0], dataSplitada[1], condicao: 0));
+      if (idadeAni >= 0 && idadeAni <= 6) {
+        zeroSeis += 1;
+      } else if (idadeAni >= 7 && idadeAni <= 12) {
+        seteDoze += 1;
+      } else if (idadeAni >= 13 && idadeAni <= 18) {
+        trezeDezoito += 1;
+      } else if (idadeAni >= 19 && idadeAni <= 24) {
+        dezenoveVinteQuatro += 1;
+      } else if (idadeAni >= 25 && idadeAni <= 36) {
+        vinteCincoTrintaSeis += 1;
+      } else if (idadeAni >= 36) {
+        maisqueTrintaSeis += 1;
+      }
+    }
+
+    final data = [
+      new AnimaisIdade('0-6 meses', zeroSeis),
+      new AnimaisIdade('7-12', seteDoze),
+      new AnimaisIdade('13-18', trezeDezoito),
+      new AnimaisIdade('19-24', dezenoveVinteQuatro),
+      new AnimaisIdade('25-36', vinteCincoTrintaSeis),
+      new AnimaisIdade('mais que 36', maisqueTrintaSeis),
     ];
 
     // animais mortos por raca
@@ -125,7 +163,7 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
         measureFn: (MortosRaca raca, _) => raca.qtdMortos,
         colorFn: (MortosRaca raca, _) =>
             charts.ColorUtil.fromDartColor(raca.cor),
-        id: 'Animais por Raca',
+        id: 'Animais Mortos por Raca',
         data: qtdMortosRaca,
         labelAccessorFn: (MortosRaca row, _) => '${row.qtdMortos}',
       ),
@@ -141,22 +179,28 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
         data: evolucaoRebanho,
       ),
     );
+
+    //adicionano ao grafico de animais por idadde
+    _graficoAnimaisIdade.add(
+      charts.Series<AnimaisIdade, String>(
+        id: 'Animais por Idade',
+        domainFn: (AnimaisIdade sales, _) => sales.idade,
+        measureFn: (AnimaisIdade sales, _) => sales.qtdAnimais,
+        data: data,
+      ),
+    );
   }
 
   @override
   void initState() {
     super.initState();
-    // _graficoQtdAnimaisRaca = List<charts.Series<AnimaisRaca, String>>();
-    // _graficoQtdMortosRaca = List<charts.Series<MortosRaca, String>>();
-    _graficoEvolucaoRebanho = List<charts.Series<EvolucaoRebanho, DateTime>>();
-
     _generateData();
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -169,7 +213,7 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
               ),
               Tab(icon: Icon(FontAwesomeIcons.chartPie)),
               Tab(icon: Icon(Icons.pie_chart)),
-              // Tab(icon: Icon(FontAwesomeIcons.solidChartBar)),
+              Tab(icon: Icon(FontAwesomeIcons.solidChartBar)),
             ],
           ),
           title: Text('Gráficos Analíticos'),
@@ -289,23 +333,29 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
                 ),
               ),
             ),
-
-            //  Padding(
-            //   padding: EdgeInsets.all(8.0),
-            //   child: Container(
-            //     child: Center(
-            //       child: Column(
-            //         children: <Widget>[
-            //           Text(
-            //             'Evolução do Rebanho',
-            //             style: TextStyle(
-            //                 fontSize: 24.0, fontWeight: FontWeight.bold),
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            // ),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Container(
+                child: Center(
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        'Animais por Idade(qtd/meses)',
+                        style: TextStyle(
+                            fontSize: 24.0, fontWeight: FontWeight.bold),
+                      ),
+                      Expanded(
+                        child: charts.BarChart(
+                          _graficoAnimaisIdade,
+                          animate: true,
+                          defaultInteractions: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
