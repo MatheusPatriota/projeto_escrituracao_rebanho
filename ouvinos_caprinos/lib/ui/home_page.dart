@@ -91,14 +91,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _goToPage(int index) {
-    
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AnimalPage(especieId: index+1,),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AnimalPage(
+          especieId: index + 1,
         ),
-      );
-    
+      ),
+    );
   }
 
   String capitalize(String string) {

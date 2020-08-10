@@ -6,10 +6,14 @@ import 'package:ouvinos_caprinos/categoria/db/categoria_database.dart';
 import 'package:ouvinos_caprinos/especie/class/especie.dart';
 import 'package:ouvinos_caprinos/especie/db/especie_database.dart';
 import 'package:ouvinos_caprinos/icones_personalizados/my_flutter_app_icons.dart';
+import 'package:ouvinos_caprinos/raca/class/raca.dart';
 import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
 import 'package:ouvinos_caprinos/ui/animal/cadastro_animal_page.dart';
 import 'package:ouvinos_caprinos/ui/animal/show_animal_information.dart';
+import 'package:ouvinos_caprinos/ui/comum/backup_restore_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/exclusao_page.dart';
+import 'package:ouvinos_caprinos/ui/comum/graficos_analiticos.dart';
+import 'package:ouvinos_caprinos/ui/comum/relatorio_analitico_page.dart';
 import 'package:ouvinos_caprinos/ui/comum/search_bar.dart';
 import 'package:ouvinos_caprinos/util/funcoes.dart';
 
@@ -40,6 +44,8 @@ class _AnimalPageState extends State<AnimalPage> {
 
   List<Especie> especies = List();
 
+  List<Raca> listaDeRacasSelecionadas = List();
+
   @override
   void initState() {
     super.initState();
@@ -66,8 +72,7 @@ class _AnimalPageState extends State<AnimalPage> {
         length: 4,
         child: Scaffold(
           appBar: AppBar(
-            title: Text("Rebanho " + especies[widget.especieId - 1].descricao ??
-                "Rebanho"),
+            title: Text("Rebanho "),
             backgroundColor: Colors.green,
             actions: <Widget>[
               IconButton(
@@ -380,22 +385,39 @@ class _AnimalPageState extends State<AnimalPage> {
 
     listaLateral.add(
       DrawerHeader(
-        decoration: BoxDecoration(
-          color: Colors.green,
-        ),
-        child: Text(
-          'Espécies Disponiveis',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 25,
-          ),
-        ),
-      ),
+          decoration: BoxDecoration(
+              gradient:
+                  LinearGradient(colors: <Color>[Colors.green, Colors.green])),
+          child: Container(
+            child: Column(
+              children: <Widget>[
+                Material(
+                  borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                  elevation: 10,
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Image.asset("images/home_logo.png",
+                        height: 90, width: 90),
+                  ),
+                ),
+                Text(
+                  'Menu Principal',
+                  style: TextStyle(color: Colors.white, fontSize: 20.0),
+                )
+              ],
+            ),
+          )),
     );
 
     for (var especie in especies) {
+      Icon icone;
+      if (especie.descricao.toLowerCase() == "caprino") {
+        icone = Icon((MyFlutterApp.bode_icon));
+      } else {
+        icone = Icon((MyFlutterApp.ovelha_icon));
+      }
       listaLateral.add(ListTile(
-        leading: Icon((MyFlutterApp.ovelha_icon)),
+        leading: icone,
         title: Text(especie.descricao),
         onTap: () {
           if (especie.id != widget.especieId) {
@@ -415,10 +437,53 @@ class _AnimalPageState extends State<AnimalPage> {
 
     listaLateral.add(
       ListTile(
-        leading: Icon(Icons.settings),
-        title: Text('Configurações'),
+        leading: Icon(Icons.backup),
+        title: Text('Backup/Restore'),
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => BackupRestorePage()));
+        },
       ),
     );
+
+    listaLateral.add(
+      ListTile(
+        leading: Icon(Icons.assignment),
+        title: Text('Gerar Relatório'),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RelatorioAnaliticoPage(
+                especieId: widget.especieId,
+                animaisSelecionados: allAnimals,
+                listaDeRacas: listaDeRacasSelecionadas,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+
+    listaLateral.add(
+      ListTile(
+        leading: Icon(Icons.assessment),
+        title: Text('Gerar Gráficos'),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => GraficosAnaliticosPage(
+                especieId: widget.especieId,
+                animaisSelecionados: allAnimals,
+                listaDeRacas: listaDeRacasSelecionadas,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+
     return listaLateral;
   }
 
@@ -464,7 +529,17 @@ class _AnimalPageState extends State<AnimalPage> {
 
 // carrega o banco de dados de racas
   void _getAllRacas() {
-    racaHelper.getAllRacas();
+    List<Raca> listaRacasS = List();
+    racaHelper.getAllRacas().then((listaRacas) {
+      for (var raca in listaRacas) {
+        if (raca.especieId == widget.especieId) {
+          listaRacasS.add(raca);
+        }
+      }
+      setState(() {
+        listaDeRacasSelecionadas = listaRacasS;
+      });
+    });
   }
 
 // carrega o banco de dados das especies
@@ -480,6 +555,7 @@ class _AnimalPageState extends State<AnimalPage> {
   void _getAllAnimals() {
     animalHelper.getAllAnimals().then((list) {
       print(list);
+      List<Animal> listaFinalAnimalEspecieSelecionada = new List();
       List<Animal> listaFinalDisponiveis = new List();
       List<Animal> listaFinalVendidos = new List();
       List<Animal> listaFinalMortos = new List();
@@ -487,6 +563,7 @@ class _AnimalPageState extends State<AnimalPage> {
 
       for (var ani in list) {
         if (ani.idEspecie == widget.especieId) {
+          listaFinalAnimalEspecieSelecionada.add(ani);
           if (ani.status == "0") {
             listaFinalDisponiveis.add(ani);
           } else if (ani.status == "1") {
@@ -503,7 +580,7 @@ class _AnimalPageState extends State<AnimalPage> {
         animaisVendidos = listaFinalVendidos;
         animaisMortos = listaFinalMortos;
         animaisExcluidos = listaFinalExcluidos;
-        allAnimals = list;
+        allAnimals = listaFinalAnimalEspecieSelecionada;
       });
     });
   }

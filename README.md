@@ -8,6 +8,7 @@
 7. Procedimento de instalação do App                            
 8. Agradecimentos
 9. Desenvolvedor
+10. Equipe do Projeto
 
 ## 1. Apresentação 
 
@@ -28,8 +29,6 @@ A versão do S.O. Android requerida pela aplicação é que seja superior à ver
 
 ## 5. Funções da Aplicação
 
-## 5.1. Destaque para as principais funções do software (features)
-
 O software é uma aplicação de gerenciamento de rebanho caprino/ovino para micro, pequenos e médios produtores rurais. Ele conta com duas seções distintas para o rebanho ovino e caprino, assim os animais não se misturam. A aplicação conta com as seguintes funcionalidades:
 
 - Adicionar novos animais ao rebanho;
@@ -40,16 +39,6 @@ O software é uma aplicação de gerenciamento de rebanho caprino/ovino para mic
 - Filtro de animais, por raça ou sexo do animal;
 - Detalhamento do animal (ocorridos);
 - Realização de cópias de segurança.
-
-
-## 5.2. Alterações Adicionais
-
-- Especificação da categoria do animal;
-- Inclusão da categoria ao relatório;
-- Acréscimo do campo patrimônio ao animal;
-- Estabelecimento parental entre os animais;
-- Ajuste no gerenciamento de dependências;
-- Ajustes da interface gráfica.
 
 ## 6. Permissão da Aplicação
 
@@ -69,4 +58,9 @@ Em nome de todos os componentes do projeto de extensão deste trabalho, agradece
 
 * [Matheus Patriota](https://github.com/MatheusPatriota/) - Aluno do Curso de Engenharia de Software do IFPE - Campus Belo Jardim
 
+## 10. Equipe do Projeto
 
+. Matheus Patriota
+. Gustavo Nobrega
+. Alcilene Samay
+. Cicero

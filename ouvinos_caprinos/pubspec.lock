@@ -21,7 +21,7 @@ packages:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.4.1"
+    version: "2.4.2"
   boolean_selector:
     dependency: transitive
     description:
@@ -29,6 +29,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
+  characters:
+    dependency: transitive
+    description:
+      name: characters
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   charcode:
     dependency: transitive
     description:
@@ -36,13 +43,34 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.3"
+  charts_common:
+    dependency: transitive
+    description:
+      name: charts_common
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.9.0"
+  charts_flutter:
+    dependency: "direct main"
+    description:
+      name: charts_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.9.0"
+  clock:
+    dependency: transitive
+    description:
+      name: clock
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   collection:
     dependency: transitive
     description:
       name: collection
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.14.12"
+    version: "1.14.13"
   convert:
     dependency: transitive
     description:
@@ -57,13 +85,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.4"
-  csv:
-    dependency: transitive
-    description:
-      name: csv
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.0.3"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -85,25 +106,25 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
-  effective_dart:
+  fake_async:
     dependency: transitive
     description:
-      name: effective_dart
+      name: fake_async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.1"
-  ffi:
-    dependency: transitive
-    description:
-      name: ffi
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.3"
+    version: "1.1.0"
   flutter:
     dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_archive:
+    dependency: "direct main"
+    description:
+      name: flutter_archive
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   flutter_chips_input:
     dependency: transitive
     description:
@@ -191,6 +212,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  font_awesome_flutter:
+    dependency: "direct main"
+    description:
+      name: font_awesome_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "8.8.1"
   groovin_widgets:
     dependency: "direct main"
     description:
@@ -233,20 +261,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.16.1"
-  io:
-    dependency: transitive
-    description:
-      name: io
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.4"
-  json_rpc_2:
-    dependency: transitive
-    description:
-      name: json_rpc_2
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.1"
   logging:
     dependency: transitive
     description:
@@ -260,7 +274,7 @@ packages:
       name: matcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.12.6"
+    version: "0.12.8"
   material_design_icons_flutter:
     dependency: "direct main"
     description:
@@ -275,27 +289,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.8"
-  moor:
-    dependency: transitive
-    description:
-      name: moor
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.2"
-  moor_ffi:
-    dependency: transitive
-    description:
-      name: moor_ffi
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.5.0"
   path:
     dependency: transitive
     description:
       name: path
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.6.4"
+    version: "1.7.0"
   pedantic:
     dependency: transitive
     description:
@@ -324,27 +324,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
-  process_run:
-    dependency: transitive
-    description:
-      name: process_run
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.10.9"
-  pub_semver:
-    dependency: transitive
-    description:
-      name: pub_semver
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.4.4"
-  quiver:
-    dependency: transitive
-    description:
-      name: quiver
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.3"
   scheduled_notifications:
     dependency: "direct main"
     description:
@@ -352,20 +331,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
-  shelf:
-    dependency: transitive
-    description:
-      name: shelf
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.7.5"
-  shelf_web_socket:
-    dependency: transitive
-    description:
-      name: shelf_web_socket
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.3"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -392,65 +357,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
-  sqflite_common_ffi:
-    dependency: transitive
-    description:
-      name: sqflite_common_ffi
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0+2"
-  sqflite_common_server:
-    dependency: transitive
-    description:
-      path: sqflite_common_server
-      ref: dart2
-      resolved-ref: d71dc29be35727bf70c0d703e21bb89c6e0dd9c2
-      url: "git://github.com/tekartik/sqflite_more"
-    source: git
-    version: "0.3.3"
-  sqflite_common_test:
-    dependency: transitive
-    description:
-      path: sqflite_common_test
-      ref: develop
-      resolved-ref: d2b63d163fa2d99f2a3362fca59cda6d8afaf250
-      url: "git://github.com/tekartik/sqflite"
-    source: git
-    version: "0.3.1"
-  sqflite_porter:
-    dependency: "direct main"
-    description:
-      path: sqflite_porter
-      ref: dart2
-      resolved-ref: d71dc29be35727bf70c0d703e21bb89c6e0dd9c2
-      url: "git://github.com/tekartik/sqflite_more"
-    source: git
-    version: "0.2.0+1"
-  sqflite_server:
-    dependency: transitive
-    description:
-      path: sqflite_server
-      ref: dart2
-      resolved-ref: d71dc29be35727bf70c0d703e21bb89c6e0dd9c2
-      url: "git://github.com/tekartik/sqflite_more"
-    source: git
-    version: "0.3.3"
-  sqflite_test:
-    dependency: transitive
-    description:
-      path: sqflite_test
-      ref: dart2
-      resolved-ref: d71dc29be35727bf70c0d703e21bb89c6e0dd9c2
-      url: "git://github.com/tekartik/sqflite_more"
-    source: git
-    version: "0.2.4"
   stack_trace:
     dependency: transitive
     description:
       name: stack_trace
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.9.3"
+    version: "1.9.5"
   stream_channel:
     dependency: transitive
     description:
@@ -479,33 +392,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.0"
-  tekartik_common_utils:
-    dependency: transitive
-    description:
-      path: "."
-      ref: dart2
-      resolved-ref: c85ee7a93bc5545964d6754e2aa78536219bbbbb
-      url: "git://github.com/tekartik/common_utils.dart"
-    source: git
-    version: "0.10.12+3"
-  tekartik_web_socket:
-    dependency: transitive
-    description:
-      path: web_socket
-      ref: dart2
-      resolved-ref: "4f68573fbb4ee02a5b3de2fc239c2bb3fb3ccdbe"
-      url: "git://github.com/tekartik/web_socket.dart"
-    source: git
-    version: "0.2.2"
-  tekartik_web_socket_io:
-    dependency: transitive
-    description:
-      path: web_socket_io
-      ref: dart2
-      resolved-ref: "4f68573fbb4ee02a5b3de2fc239c2bb3fb3ccdbe"
-      url: "git://github.com/tekartik/web_socket.dart"
-    source: git
-    version: "0.2.2"
   term_glyph:
     dependency: transitive
     description:
@@ -519,14 +405,14 @@ packages:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.15"
+    version: "0.2.17"
   typed_data:
     dependency: transitive
     description:
       name: typed_data
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.6"
+    version: "1.2.0"
   url_launcher:
     dependency: "direct main"
     description:
@@ -569,13 +455,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.8"
-  web_socket_channel:
-    dependency: transitive
-    description:
-      name: web_socket_channel
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.0"
   xml:
     dependency: transitive
     description:
@@ -591,5 +470,5 @@ packages:
     source: hosted
     version: "2.2.0"
 sdks:
-  dart: ">=2.7.0 <3.0.0"
+  dart: ">=2.9.0-14.0.dev <3.0.0"
   flutter: ">=1.12.13 <2.0.0"
