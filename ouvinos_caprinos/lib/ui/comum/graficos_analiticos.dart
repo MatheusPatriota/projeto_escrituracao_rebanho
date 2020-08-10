@@ -3,6 +3,7 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ouvinos_caprinos/animal/class/animal.dart';
 import 'package:ouvinos_caprinos/raca/class/raca.dart';
+import 'package:ouvinos_caprinos/util/funcoes.dart';
 
 class GraficosAnaliticosPage extends StatefulWidget {
   final int especieId;
@@ -15,11 +16,37 @@ class GraficosAnaliticosPage extends StatefulWidget {
 }
 
 class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
-  List<charts.Series<AnimaisRaca, int>> _graficoQtdAnimaisRaca;
-  List<charts.Series<MortosRaca, int>> _graficoQtdMortosRaca;
-  List<charts.Series<EvolucaoRebanho, DateTime>> _graficoEvolucaoRebanho;
+  List<charts.Series<AnimaisRaca, String>> _graficoQtdAnimaisRaca = List();
+  List<charts.Series<MortosRaca, int>> _graficoQtdMortosRaca = List();
+  List<charts.Series<EvolucaoRebanho, DateTime>> _graficoEvolucaoRebanho =
+      List();
+
+  List<Animal> listaFinal = List();
+  List<int> idsRacasAnimais = List();
+
+  _ordenaPorData() {
+    for (var ani in widget.animaisSelecionados) {
+      listaFinal.add(ani);
+      idsRacasAnimais.add(ani.idRaca);
+    }
+
+    if (widget.animaisSelecionados.isNotEmpty) {
+      Comparator<Animal> dataComparator = (a, b) {
+        DateTime dateTimeA =
+            DateTime.parse("${a.dataNascimento}" + " 00:00:00");
+        DateTime dateTimeB =
+            DateTime.parse("${b.dataNascimento}" + " 00:00:00");
+        return dateTimeA.compareTo(dateTimeB);
+      };
+      listaFinal.sort(dataComparator);
+      listaFinal.forEach((Animal item) {
+        print('${item.idAnimal} - ${item.dataNascimento} - ${item.idRaca}');
+      });
+    }
+  }
 
   _generateData() {
+    _ordenaPorData();
     // mortes por raca
     var qtdMortosRaca = [
       // new MortosRaca('Work', 35.8, Color(0xff3366cc)),
@@ -30,37 +57,56 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
       // new MortosRaca('Other', 10.3, Color(0xffdc3912)),
     ];
     // quantidade de animais por raca
-    var qtdAnimaisRaca = [
-      // new MortosRaca('Work', 35.8, Color(0xff3366cc)),
-      // new MortosRaca('Eat', 8.3, Color(0xff990099)),
-      // new MortosRaca('Commute', 10.8, Color(0xff109618)),
-      // new MortosRaca('TV', 15.6, Color(0xfffdbe19)),
-      // new MortosRaca('Sleep', 19.2, Color(0xffff9900)),
-      // new MortosRaca('Other', 10.3, Color(0xffdc3912)),
-    ];
+    List<AnimaisRaca> qtdAnimaisRaca = List();
 
-    var evolucaoRebanho = [
-      new EvolucaoRebanho(new DateTime(2017, 9, 19), 5),
-      new EvolucaoRebanho(new DateTime(2017, 9, 26), 25),
-      new EvolucaoRebanho(new DateTime(2017, 10, 3), 100),
-      new EvolucaoRebanho(new DateTime(2017, 10, 10), 110),
-      new EvolucaoRebanho(new DateTime(2018, 2, 19), 100),
-      new EvolucaoRebanho(new DateTime(2018, 3, 26), 125),
-      new EvolucaoRebanho(new DateTime(2018, 5, 3), 150),
-      new EvolucaoRebanho(new DateTime(2018, 7, 10), 175),
+    List<Color> listaDeCores = [
+      Color(0xff3366cc),
+      Color(0xff990099),
+      Color(0xff109618),
+      Color(0xfffdbe19),
+      Color(0xffff9900),
+      Color(0xffdc3912),
+      Colors.black,
+      Colors.amber[500],
+      Colors.grey,
+      Colors.lime,
+      Colors.white60,
+      Colors.blueAccent,
     ];
+    int contadorAnimaisPorRaca = 0;
+    for (var raca in widget.listaDeRacas) {
+      int ocorrencias = count(idsRacasAnimais, raca.id);
+      if (ocorrencias > 0) {
+        qtdAnimaisRaca.add(new AnimaisRaca(
+            raca.descricao, ocorrencias, listaDeCores[contadorAnimaisPorRaca]));
+      }
+      contadorAnimaisPorRaca++;
+    }
 
-    // _graficoQtdAnimaisRaca.add(
-    //   charts.Series(
-    //     domainFn: (AnimaisRaca pollution, _) => pollution.raca,
-    //     measureFn: (AnimaisRaca pollution, _) => pollution.quantity,
-    //     id: '2017',
-    //     data: data1,
-    //     fillPatternFn: (_, __) => charts.FillPatternType.solid,
-    //     fillColorFn: (AnimaisRaca pollution, _) =>
-    //         charts.ColorUtil.fromDartColor(Color(0xff990099)),
-    //   ),
-    // );
+    // List<DateTime, String> nome = List();
+
+    List<EvolucaoRebanho> evolucaoRebanho = [];
+    evolucaoRebanho.add(new EvolucaoRebanho(new DateTime(2020, 1, 1), 0));
+    int contadorAnimais = 0;
+    for (var ani in listaFinal) {
+      contadorAnimais++;
+      List<String> data = ani.dataNascimento.split("-");
+      evolucaoRebanho.add(EvolucaoRebanho(
+          DateTime(int.parse(data[0]), int.parse(data[1]), int.parse(data[2])),
+          contadorAnimais));
+    }
+
+    _graficoQtdAnimaisRaca.add(
+      charts.Series(
+        domainFn: (AnimaisRaca raca, _) => raca.raca,
+        measureFn: (AnimaisRaca raca, _) => raca.qtdAnimais,
+        colorFn: (AnimaisRaca raca, _) =>
+            charts.ColorUtil.fromDartColor(raca.cor),
+        id: 'Animais por Raca',
+        data: qtdAnimaisRaca,
+        labelAccessorFn: (AnimaisRaca row, _) => '${row.qtdAnimais}',
+      ),
+    );
 
     _graficoEvolucaoRebanho.add(
       charts.Series<EvolucaoRebanho, DateTime>(
@@ -79,13 +125,14 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
     // _graficoQtdAnimaisRaca = List<charts.Series<AnimaisRaca, String>>();
     // _graficoQtdMortosRaca = List<charts.Series<MortosRaca, String>>();
     _graficoEvolucaoRebanho = List<charts.Series<EvolucaoRebanho, DateTime>>();
+
     _generateData();
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 1,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -96,7 +143,7 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
               Tab(
                 icon: Icon(FontAwesomeIcons.chartLine),
               ),
-              // Tab(icon: Icon(FontAwesomeIcons.chartPie)),
+              Tab(icon: Icon(FontAwesomeIcons.chartPie)),
               // Tab(icon: Icon(FontAwesomeIcons.solidChartBar)),
             ],
           ),
@@ -127,6 +174,68 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
                 ),
               ),
             ),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Container(
+                child: Center(
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        'Quantidade de animais por Raça',
+                        style: TextStyle(
+                            fontSize: 24.0, fontWeight: FontWeight.bold),
+                      ),
+                      Expanded(
+                        child: charts.PieChart(
+                          _graficoQtdAnimaisRaca,
+                          animate: true,
+                          animationDuration: Duration(seconds: 5),
+                          behaviors: [
+                            new charts.DatumLegend(
+                              outsideJustification:
+                                  charts.OutsideJustification.endDrawArea,
+                              horizontalFirst: false,
+                              desiredMaxRows: 2,
+                              cellPadding:
+                                  new EdgeInsets.only(right: 4.0, bottom: 4.0),
+                              entryTextStyle: charts.TextStyleSpec(
+                                  color: charts
+                                      .MaterialPalette.purple.shadeDefault,
+                                  fontFamily: 'Georgia',
+                                  fontSize: 11),
+                            )
+                          ],
+                          defaultRenderer: new charts.ArcRendererConfig(
+                            arcWidth: 100,
+                            arcRendererDecorators: [
+                              new charts.ArcLabelDecorator(
+                                  labelPosition: charts.ArcLabelPosition.inside)
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            //  Padding(
+            //   padding: EdgeInsets.all(8.0),
+            //   child: Container(
+            //     child: Center(
+            //       child: Column(
+            //         children: <Widget>[
+            //           Text(
+            //             'Evolução do Rebanho',
+            //             style: TextStyle(
+            //                 fontSize: 24.0, fontWeight: FontWeight.bold),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -138,10 +247,10 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
 
 class AnimaisRaca {
   String raca;
-  int qtdMortos;
+  int qtdAnimais;
   Color cor;
 
-  AnimaisRaca(this.qtdMortos, this.raca, this.cor);
+  AnimaisRaca(this.raca, this.qtdAnimais, this.cor);
 }
 
 class MortosRaca {
