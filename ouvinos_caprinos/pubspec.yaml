@@ -39,6 +39,7 @@ dependencies:
   flutter_archive: ^1.0.2
   charts_flutter: ^0.9.0
   font_awesome_flutter: ^8.8.1
+  share: ^0.6.5+1
 
 dev_dependencies:
   flutter_test:
