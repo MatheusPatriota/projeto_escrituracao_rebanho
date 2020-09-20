@@ -389,11 +389,7 @@ class _CadastroAnimalPageState extends State<CadastroAnimalPage> {
                 image: DecorationImage(
                     image: _editedAnimal.img != null
                         ? FileImage(File(_editedAnimal.img))
-                        : AssetImage("images/" +
-                            especies[widget.idEspecie - 1]
-                                .descricao
-                                .toLowerCase() +
-                            ".png"),
+                        : AssetImage("images/no-image.png"),
                     fit: BoxFit.cover),
               ),
             ),
@@ -504,15 +500,14 @@ class _CadastroAnimalPageState extends State<CadastroAnimalPage> {
           setState(() {
             _userEdited = true;
             _selectedRaca = value;
-            _editedAnimal.idRaca = racas[value-1].id;
+            _editedAnimal.idRaca = racas[value - 1].id;
 
             if (racas[(racas.length - value + 1).abs()].descricao ==
                 "Mestiço") {
               descricaoMestico = true;
-            }else{
+            } else {
               descricaoMestico = false;
             }
-            
           });
         },
       ),
