@@ -653,9 +653,7 @@ class _CaprinoInformationState extends State<AnimalInformation> {
                     image: DecorationImage(
                         image: _animalSelecionado.img != null
                             ? FileImage(File(_animalSelecionado.img))
-                            : AssetImage("images/" +
-                                especie.descricao.toLowerCase() +
-                                ".png"),
+                            : AssetImage("images/no-image.png"),
                         fit: BoxFit.cover),
                   ),
                 ),
