@@ -144,23 +144,6 @@ class _TratamentoPageState extends State<TratamentoPage> {
     }
   }
 
-  Future singleNotification(
-      DateTime datetime, String message, String subtext, int hashcode,
-      {String sound}) async {
-    var androidChannel = AndroidNotificationDetails(
-      'channel-id',
-      'channel-name',
-      'channel-description',
-      importance: Importance.Max,
-      priority: Priority.Max,
-    );
-
-    var iosChannel = IOSNotificationDetails();
-    var platformChannel = NotificationDetails(androidChannel, iosChannel);
-    localNotificationsPlugin.schedule(
-        hashcode, message, subtext, datetime, platformChannel,
-        payload: hashcode.toString());
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -302,18 +285,6 @@ class _TratamentoPageState extends State<TratamentoPage> {
             child: Icon(Icons.check),
             backgroundColor: Colors.green,
             onPressed: () async {
-              // altere aqui o temporizador para aparecer a notificacao
-              //     notificacao( "Tratamento/Medicação","O medicamento " +
-              // _tratamentoCadastrado.medicacao +
-              // " Deve ser aplicado Hoje!", 10,0);
-
-              notificacao(
-                  "Periodo de Carencia",
-                  "O periodo de carencia do animal de id: " +
-                      widget.animalId.toString() +
-                      " venceu hoje!",
-                  _tratamentoCadastrado.periodoCarencia,
-                  0);
               if (_formKey.currentState.validate()) {
                 Navigator.pop(context, _tratamentoCadastrado);
               }
@@ -321,17 +292,5 @@ class _TratamentoPageState extends State<TratamentoPage> {
           ),
         ),
         onWillPop: _requestPop);
-  }
-
-  notificacao(titulo, texto, duracao, hash) async {
-    DateTime now = DateTime.now().toUtc().add(
-          Duration(seconds: duracao),
-        );
-    await singleNotification(
-      now,
-      titulo,
-      texto,
-      hash,
-    );
   }
 }

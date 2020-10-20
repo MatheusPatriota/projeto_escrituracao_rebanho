@@ -386,8 +386,8 @@ class _AnimalPageState extends State<AnimalPage> {
     listaLateral.add(
       DrawerHeader(
           decoration: BoxDecoration(
-              gradient:
-                  LinearGradient(colors: <Color>[Colors.green, Colors.green])),
+            color: Colors.green,
+          ),
           child: Container(
             child: Column(
               children: <Widget>[
