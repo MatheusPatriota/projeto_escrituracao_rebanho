@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_archive/flutter_archive.dart';
@@ -32,20 +33,20 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                 onTap: () async {
                   String path = await getDatabasesPath();
                   final dataDir = Directory(path);
-                  final zipFile = File('$path/backup_app_extensao');
-                  try {
-                    ZipFile.createFromDirectory(
-                        sourceDir: dataDir,
-                        zipFile: zipFile,
-                        recurseSubDirs: true);
-                  } catch (e) {
-                    print(e);
-                  }
-                  Share.shareFiles(['$path/backup_app_extensao'],
-                      text: 'Backup File');
-                  print(path);
-                  print(dataDir.path);
-                  print(zipFile); // which is data/data/<package_name>/databases
+                  print(dataDir.existsSync());
+                  var files = dataDir.listSync().toList();
+                  var timestamp = DateTime.now().millisecondsSinceEpoch;
+                  var date = new DateTime.fromMillisecondsSinceEpoch(timestamp);
+                  var encoder = ZipFileEncoder();
+                  encoder.create(
+                      dataDir.path + "/" + date.toIso8601String() + '.zip');
+                  files.forEach((element) => encoder.addFile(element));
+                  encoder.close();
+                  files = dataDir.listSync().toList();
+                  files.forEach((element) => print(element));
+                  Share.shareFiles(['$path/' + date.toIso8601String() + '.zip'],
+                      text: 'Backup File' + date.toIso8601String());
+                  // which is data/data/<package_name>/databases
                 }),
             ListTile(
               leading: Icon(Icons.restore),
