@@ -431,7 +431,7 @@ class _CaprinoInformationState extends State<AnimalInformation> {
         ]),
         DataRow(cells: [
           DataCell(Text("Sexo")),
-          DataCell(Text(_animalSelecionado.sexo))
+          DataCell(Text(_animalSelecionado.sexo.toString()))
         ]),
         DataRow(cells: [
           DataCell(Text("Categoria")),

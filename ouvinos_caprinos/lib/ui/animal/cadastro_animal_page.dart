@@ -59,7 +59,7 @@ class _CadastroAnimalPageState extends State<CadastroAnimalPage> {
   List<DropdownMenuItem<int>> racaList = [];
   List<DropdownMenuItem<int>> paiList = [];
   List<DropdownMenuItem<int>> maeList = [];
-
+  List<String> sexos = ["Macho","Fêmea"];
   // checa se o animal foi editado
   bool _userEdited = false;
 
@@ -421,7 +421,7 @@ class _CadastroAnimalPageState extends State<CadastroAnimalPage> {
     );
     formWidget.add(espacamentoPadrao());
     formWidget.add(Container(
-      child: Text("Gênero"),
+      child: Text("Gênero*"),
       padding: EdgeInsets.only(top: 10.0),
     ));
 
@@ -443,10 +443,17 @@ class _CadastroAnimalPageState extends State<CadastroAnimalPage> {
         onChanged: (value) {
           setState(() {
             _userEdited = true;
+            
+            print(value);
 
             _selectedGender = value;
-            _editedAnimal.sexo =
-                removeCaracteres(genderList[value].child.toString());
+
+            print(genderList);
+            print(genderList[value]);
+            print((genderList[value].child.toString()));
+
+            _editedAnimal.sexo = sexos[value-1];
+            print(sexos[value-1]);
           });
         },
       ),

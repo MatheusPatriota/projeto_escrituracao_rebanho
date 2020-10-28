@@ -249,7 +249,7 @@ class _AnimalPageState extends State<AnimalPage> {
                       style: TextStyle(fontSize: 18.0),
                     ),
                     Text(
-                      "Sexo: " + lista[index].sexo ?? "",
+                      "Sexo: " + lista[index].sexo.toString() ?? "",
                       style: TextStyle(fontSize: 18.0),
                     )
                   ],

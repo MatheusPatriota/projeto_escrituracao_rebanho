@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
 import 'package:ouvinos_caprinos/tratamento/class/tratamento.dart';
@@ -113,20 +112,10 @@ class _TratamentoPageState extends State<TratamentoPage> {
     }
   }
 
-  FlutterLocalNotificationsPlugin localNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  initializeNotifications() async {
-    var initializeAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializeIOS = IOSInitializationSettings();
-    var initSettings = InitializationSettings(initializeAndroid, initializeIOS);
-    await localNotificationsPlugin.initialize(initSettings);
-  }
 
   @override
   void initState() {
     super.initState();
-    initializeNotifications();
     if (widget.tratamento == null) {
       _tratamentoCadastrado = Tratamento();
       _tratamentoCadastrado.animalId = widget.animalId;
