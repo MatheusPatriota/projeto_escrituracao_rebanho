@@ -1,4 +1,4 @@
-import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
+import 'package:ovinos_caprinos/raca/db/raca_database.dart';
 
 class Raca {
   int id;

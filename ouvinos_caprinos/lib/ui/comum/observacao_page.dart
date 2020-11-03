@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
-import 'package:ouvinos_caprinos/observacao/class/observacao.dart';
-import 'package:ouvinos_caprinos/util/funcoes.dart';
+import 'package:ovinos_caprinos/animal/db/animal_database.dart';
+import 'package:ovinos_caprinos/observacao/class/observacao.dart';
+import 'package:ovinos_caprinos/util/funcoes.dart';
 
 class ObservacaoPage extends StatefulWidget {
   final Observacao observacao;

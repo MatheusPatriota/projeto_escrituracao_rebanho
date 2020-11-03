@@ -1,4 +1,4 @@
-# ouvinos_caprinos
+# ovinos_caprinos
 
 A new Flutter application.
 

@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:ouvinos_caprinos/animal/class/animal.dart';
+import 'package:ovinos_caprinos/animal/class/animal.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 

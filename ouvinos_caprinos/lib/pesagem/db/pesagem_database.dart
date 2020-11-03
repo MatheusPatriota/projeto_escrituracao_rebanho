@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:ouvinos_caprinos/pesagem/class/pesagem.dart';
+import 'package:ovinos_caprinos/pesagem/class/pesagem.dart';
 
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -20,7 +20,7 @@ class PesagemHelper {
   Database _pesagemDataBase;
 
   Future<Database> get db async {
-    if (_pesagemDataBase != null) {      
+    if (_pesagemDataBase != null) {
       return _pesagemDataBase;
     } else {
       _pesagemDataBase = await initDb();
@@ -39,7 +39,7 @@ class PesagemHelper {
           "$idAnimalColumn INTEGER, "
           "$dataColumn TEXT,"
           "$pesoColumn TEXT)");
-          print("Pesagem dataBase was created");
+      print("Pesagem dataBase was created");
     });
   }
 
@@ -94,5 +94,4 @@ class PesagemHelper {
     Database dbPesagem = await db;
     dbPesagem.close();
   }
-
 }

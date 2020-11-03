@@ -1,4 +1,4 @@
-package matheuspatriota.com.br.ouvinos_caprinos
+package matheuspatriota.com.br.ovinos_caprinos
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

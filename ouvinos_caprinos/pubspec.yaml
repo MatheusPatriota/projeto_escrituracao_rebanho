@@ -1,4 +1,4 @@
-name: ouvinos_caprinos
+name: ovinos_caprinos
 description: A new Flutter application.
 
 # The following defines the version and build number for your application.
@@ -20,6 +20,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   flutter_speed_dial: ^1.0.9
   material_design_icons_flutter: ^3.4.4995
   groovin_widgets: ^1.4.5
@@ -37,8 +39,11 @@ dependencies:
   flutter_archive: ^1.0.2
   charts_flutter: ^0.9.0
   font_awesome_flutter: ^8.8.1
-  share: ^0.6.5+1
+  share: ^0.6.5+3
+  flutter_document_picker: ^4.0.0
   archive: ^2.0.13
+
+
 
 dev_dependencies:
   flutter_test:

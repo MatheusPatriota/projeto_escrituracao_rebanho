@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
-import 'package:ouvinos_caprinos/ordenha/class/ordenha.dart';
-import 'package:ouvinos_caprinos/ordenha/db/ordenha_database.dart';
-import 'package:ouvinos_caprinos/util/funcoes.dart';
+import 'package:ovinos_caprinos/animal/db/animal_database.dart';
+import 'package:ovinos_caprinos/ordenha/class/ordenha.dart';
+import 'package:ovinos_caprinos/ordenha/db/ordenha_database.dart';
+import 'package:ovinos_caprinos/util/funcoes.dart';
 
 class OrdenhaPage extends StatefulWidget {
   final Ordenha ordenha;

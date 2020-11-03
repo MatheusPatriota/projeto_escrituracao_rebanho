@@ -1,4 +1,4 @@
-import 'package:ouvinos_caprinos/especie/db/especie_database.dart';
+import 'package:ovinos_caprinos/especie/db/especie_database.dart';
 
 class Especie {
   int id;

@@ -1,4 +1,4 @@
-import 'package:ouvinos_caprinos/tratamento/db/tratamento_database.dart';
+import 'package:ovinos_caprinos/tratamento/db/tratamento_database.dart';
 
 class Tratamento {
   int idTratamento;
@@ -33,7 +33,6 @@ class Tratamento {
     periodoCarencia = map[periodoCarenciaColumn];
     custo = map[custoColumn];
     anotacoes = map[anotacoesColumn];
-
   }
 
   Map toMap() {
@@ -46,7 +45,7 @@ class Tratamento {
       periodoCarenciaColumn: periodoCarencia,
       custoColumn: custo,
       anotacoesColumn: anotacoes
-      };
+    };
     if (idTratamento != null) {
       map[idTratamentoColumn] = idTratamento;
     }

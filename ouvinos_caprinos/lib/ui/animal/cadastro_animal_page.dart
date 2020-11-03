@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:groovin_widgets/groovin_widgets.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ouvinos_caprinos/animal/class/animal.dart';
-import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
-import 'package:ouvinos_caprinos/categoria/class/categoria.dart';
-import 'package:ouvinos_caprinos/categoria/db/categoria_database.dart';
-import 'package:ouvinos_caprinos/especie/class/especie.dart';
-import 'package:ouvinos_caprinos/especie/db/especie_database.dart';
-import 'package:ouvinos_caprinos/raca/class/raca.dart';
-import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
-import 'package:ouvinos_caprinos/util/funcoes.dart';
+import 'package:ovinos_caprinos/animal/class/animal.dart';
+import 'package:ovinos_caprinos/animal/db/animal_database.dart';
+import 'package:ovinos_caprinos/categoria/class/categoria.dart';
+import 'package:ovinos_caprinos/categoria/db/categoria_database.dart';
+import 'package:ovinos_caprinos/especie/class/especie.dart';
+import 'package:ovinos_caprinos/especie/db/especie_database.dart';
+import 'package:ovinos_caprinos/raca/class/raca.dart';
+import 'package:ovinos_caprinos/raca/db/raca_database.dart';
+import 'package:ovinos_caprinos/util/funcoes.dart';
 
 class CadastroAnimalPage extends StatefulWidget {
   final Animal animal;
@@ -59,7 +59,7 @@ class _CadastroAnimalPageState extends State<CadastroAnimalPage> {
   List<DropdownMenuItem<int>> racaList = [];
   List<DropdownMenuItem<int>> paiList = [];
   List<DropdownMenuItem<int>> maeList = [];
-  List<String> sexos = ["Macho","Fêmea"];
+  List<String> sexos = ["Macho", "Fêmea"];
   // checa se o animal foi editado
   bool _userEdited = false;
 
@@ -73,8 +73,8 @@ class _CadastroAnimalPageState extends State<CadastroAnimalPage> {
   List<Animal> pais = List();
   List<Animal> maes = List();
 
-  String textNascimento = "Informa a data de Nascimento";
-  String textoAquisicao = "Informa a data de Aquisição";
+  String textNascimento = "Informar a data de Nascimento";
+  String textoAquisicao = "Informar a data de Aquisição";
   bool dataAquisicaoInformada = false;
   bool descricaoMestico = false;
 
@@ -148,7 +148,7 @@ class _CadastroAnimalPageState extends State<CadastroAnimalPage> {
       _editedAnimal.idEspecie = widget.idEspecie;
       _editedAnimal.status = "0";
 
-      _editedAnimal.dataNascimento = dataFormatada(_dataNascimento);
+      _editedAnimal.dataNascimento = "Não Informada";
       print(_editedAnimal);
     } else {
       _editedAnimal = Animal.fromMap(widget.animal.toMap());
@@ -349,13 +349,7 @@ class _CadastroAnimalPageState extends State<CadastroAnimalPage> {
         // botao salvar
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            if (_formKey.currentState.validate()) {
-              if (textNascimento == "Informa a data de Nascimento") {
-                _showAlert("Data de Nascimento Vazio", 3);
-              } else {
-                Navigator.pop(context, _editedAnimal);
-              }
-            }
+            Navigator.pop(context, _editedAnimal);
           },
           child: Icon(Icons.save),
           backgroundColor: Colors.green,
@@ -443,7 +437,7 @@ class _CadastroAnimalPageState extends State<CadastroAnimalPage> {
         onChanged: (value) {
           setState(() {
             _userEdited = true;
-            
+
             print(value);
 
             _selectedGender = value;
@@ -452,8 +446,8 @@ class _CadastroAnimalPageState extends State<CadastroAnimalPage> {
             print(genderList[value]);
             print((genderList[value].child.toString()));
 
-            _editedAnimal.sexo = sexos[value-1];
-            print(sexos[value-1]);
+            _editedAnimal.sexo = sexos[value - 1];
+            print(sexos[value - 1]);
           });
         },
       ),
@@ -608,10 +602,10 @@ class _CadastroAnimalPageState extends State<CadastroAnimalPage> {
     ));
     formWidget.add(espacamentoPadrao());
     formWidget.add(Container(
-      child: Text("Data de Nascimento*"),
+      child: Text("Data de Nascimento"),
       padding: EdgeInsets.only(top: 10.0),
     ));
-    // widget para data de nascimentoque eh obrigatoria
+    // widget para data de nascimento
     formWidget.add(espacamentoPadrao());
     formWidget.add(
       new RaisedButton(

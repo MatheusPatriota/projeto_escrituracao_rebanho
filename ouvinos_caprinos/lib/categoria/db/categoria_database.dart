@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:ouvinos_caprinos/categoria/class/categoria.dart';
+import 'package:ovinos_caprinos/categoria/class/categoria.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -96,12 +96,15 @@ class CategoriaHelper {
   Future categoriasPadrao() async {
     int a = await getNumber();
     if (a == 0) {
-      saveCategoria(new Categoria(id: null, especieId: 1, descricao: "Não Selecionado"));
+      saveCategoria(
+          new Categoria(id: null, especieId: 1, descricao: "Não Selecionado"));
       saveCategoria(new Categoria(id: null, especieId: 1, descricao: "Cria"));
       saveCategoria(new Categoria(id: null, especieId: 1, descricao: "Recria"));
-      saveCategoria(new Categoria(id: null, especieId: 1, descricao: "Terminação"));
+      saveCategoria(
+          new Categoria(id: null, especieId: 1, descricao: "Terminação"));
       saveCategoria(new Categoria(id: null, especieId: 1, descricao: "Matriz"));
-      saveCategoria(new Categoria(id: null, especieId: 1, descricao: "Reprodutor"));
+      saveCategoria(
+          new Categoria(id: null, especieId: 1, descricao: "Reprodutor"));
     }
   }
 }

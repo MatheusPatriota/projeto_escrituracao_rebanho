@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:ouvinos_caprinos/especie/class/especie.dart';
+import 'package:ovinos_caprinos/especie/class/especie.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -35,7 +35,7 @@ class EspecieHelper {
       await db.execute(
           "CREATE TABLE IF NOT EXISTS $tableName (  $idEspecieColumn INTEGER PRIMARY KEY  ,"
           "$descricaoColumn TEXTL)");
-          print("Especie dataBase was created");
+      print("Especie dataBase was created");
     });
   }
 
@@ -96,7 +96,6 @@ class EspecieHelper {
     if (a == 0) {
       saveEspecie(new Especie(id: null, descricao: "Caprino"));
       saveEspecie(new Especie(id: null, descricao: "Ovino"));
-     
     }
   }
 }

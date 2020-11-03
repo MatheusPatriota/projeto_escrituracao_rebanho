@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:ouvinos_caprinos/animal/class/animal.dart';
-import 'package:ouvinos_caprinos/raca/class/raca.dart';
-import 'package:ouvinos_caprinos/util/funcoes.dart';
+import 'package:ovinos_caprinos/animal/class/animal.dart';
+import 'package:ovinos_caprinos/raca/class/raca.dart';
+import 'package:ovinos_caprinos/util/funcoes.dart';
 
 class GraficosAnaliticosPage extends StatefulWidget {
   final int especieId;

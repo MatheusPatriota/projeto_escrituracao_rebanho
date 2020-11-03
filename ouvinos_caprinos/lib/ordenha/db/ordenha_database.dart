@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:ouvinos_caprinos/ordenha/class/ordenha.dart';
+import 'package:ovinos_caprinos/ordenha/class/ordenha.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -19,7 +19,7 @@ class OrdenhaHelper {
   Database _ordenhaDataBase;
 
   Future<Database> get db async {
-    if (_ordenhaDataBase != null) {      
+    if (_ordenhaDataBase != null) {
       return _ordenhaDataBase;
     } else {
       _ordenhaDataBase = await initDb();
@@ -38,7 +38,7 @@ class OrdenhaHelper {
           "$idAnimalColumn INTEGER, "
           "$dataColumn TEXT,"
           "$pesoColumn TEXT)");
-          print("Ordenha dataBase was created");
+      print("Ordenha dataBase was created");
     });
   }
 
@@ -93,5 +93,4 @@ class OrdenhaHelper {
     Database dbOrdenha = await db;
     dbOrdenha.close();
   }
-
 }

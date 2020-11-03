@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
-import 'package:ouvinos_caprinos/tratamento/class/tratamento.dart';
-import 'package:ouvinos_caprinos/util/funcoes.dart';
+import 'package:ovinos_caprinos/animal/db/animal_database.dart';
+import 'package:ovinos_caprinos/tratamento/class/tratamento.dart';
+import 'package:ovinos_caprinos/util/funcoes.dart';
 
 class TratamentoPage extends StatefulWidget {
   final Tratamento tratamento;
@@ -112,7 +112,6 @@ class _TratamentoPageState extends State<TratamentoPage> {
     }
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -132,7 +131,6 @@ class _TratamentoPageState extends State<TratamentoPage> {
       _selectedAnotacoes.text = _tratamentoCadastrado.anotacoes;
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

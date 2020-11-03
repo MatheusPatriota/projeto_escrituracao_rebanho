@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:ouvinos_caprinos/animal/class/animal.dart';
-import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
-import 'package:ouvinos_caprinos/util/funcoes.dart';
+import 'package:ovinos_caprinos/animal/class/animal.dart';
+import 'package:ovinos_caprinos/animal/db/animal_database.dart';
+import 'package:ovinos_caprinos/util/funcoes.dart';
 
 class VendaPage extends StatefulWidget {
   final Animal animalVenda;

@@ -86,11 +86,15 @@ Widget calculoDiasRestantes(String dia, String mes, String ano, String data) {
 
 //funcao para exibir a data no formato brasileiro
 String exibicaoDataPadrao(String dataSelecionada) {
-  dynamic date = dataSelecionada.split("-");
-  String dia = date[2];
-  String mes = date[1];
-  String ano = date[0];
-  return dia + "/" + mes + "/" + ano;
+  if (dataSelecionada == "Não Informada") {
+    return dataSelecionada;
+  } else {
+    dynamic date = dataSelecionada.split("-");
+    String dia = date[2];
+    String mes = date[1];
+    String ano = date[0];
+    return dia + "/" + mes + "/" + ano;
+  }
 }
 
 // funcao base para formatar data

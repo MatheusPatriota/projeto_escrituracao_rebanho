@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ouvinos_caprinos/especie/db/especie_database.dart';
-import 'package:ouvinos_caprinos/ui/home_page.dart';
+import 'package:ovinos_caprinos/especie/db/especie_database.dart';
+import 'package:ovinos_caprinos/ui/home_page.dart';
 
 class BemVindo extends StatefulWidget {
   BemVindo({Key key}) : super(key: key);

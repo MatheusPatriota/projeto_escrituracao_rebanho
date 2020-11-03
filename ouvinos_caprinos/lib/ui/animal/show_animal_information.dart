@@ -3,29 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:groovin_widgets/groovin_expansion_tile.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:ouvinos_caprinos/animal/class/animal.dart';
-import 'package:ouvinos_caprinos/animal/db/animal_database.dart';
-import 'package:ouvinos_caprinos/categoria/db/categoria_database.dart';
-import 'package:ouvinos_caprinos/especie/class/especie.dart';
-import 'package:ouvinos_caprinos/especie/db/especie_database.dart';
-import 'package:ouvinos_caprinos/observacao/class/observacao.dart';
-import 'package:ouvinos_caprinos/observacao/db/observacao_database.dart';
-import 'package:ouvinos_caprinos/ordenha/class/ordenha.dart';
-import 'package:ouvinos_caprinos/ordenha/db/ordenha_database.dart';
-import 'package:ouvinos_caprinos/pesagem/class/pesagem.dart';
-import 'package:ouvinos_caprinos/pesagem/db/pesagem_database.dart';
-import 'package:ouvinos_caprinos/raca/db/raca_database.dart';
-import 'package:ouvinos_caprinos/tratamento/class/tratamento.dart';
-import 'package:ouvinos_caprinos/tratamento/db/tratamento_database.dart';
-import 'package:ouvinos_caprinos/ui/comum/morte_page.dart';
-import 'package:ouvinos_caprinos/ui/comum/observacao_page.dart';
-import 'package:ouvinos_caprinos/ui/comum/ordenha_page.dart';
-import 'package:ouvinos_caprinos/ui/comum/pesagem_page.dart';
-import 'package:ouvinos_caprinos/ui/comum/tratamento_page.dart';
-import 'package:ouvinos_caprinos/ui/comum/venda_page.dart';
-import 'package:ouvinos_caprinos/ui/comum/visualizar_evento.dart';
-import 'package:ouvinos_caprinos/ui/comum/visualizar_imagem_padrao.dart';
-import 'package:ouvinos_caprinos/util/funcoes.dart';
+import 'package:ovinos_caprinos/animal/class/animal.dart';
+import 'package:ovinos_caprinos/animal/db/animal_database.dart';
+import 'package:ovinos_caprinos/categoria/db/categoria_database.dart';
+import 'package:ovinos_caprinos/especie/class/especie.dart';
+import 'package:ovinos_caprinos/especie/db/especie_database.dart';
+import 'package:ovinos_caprinos/observacao/class/observacao.dart';
+import 'package:ovinos_caprinos/observacao/db/observacao_database.dart';
+import 'package:ovinos_caprinos/ordenha/class/ordenha.dart';
+import 'package:ovinos_caprinos/ordenha/db/ordenha_database.dart';
+import 'package:ovinos_caprinos/pesagem/class/pesagem.dart';
+import 'package:ovinos_caprinos/pesagem/db/pesagem_database.dart';
+import 'package:ovinos_caprinos/raca/db/raca_database.dart';
+import 'package:ovinos_caprinos/tratamento/class/tratamento.dart';
+import 'package:ovinos_caprinos/tratamento/db/tratamento_database.dart';
+import 'package:ovinos_caprinos/ui/comum/morte_page.dart';
+import 'package:ovinos_caprinos/ui/comum/observacao_page.dart';
+import 'package:ovinos_caprinos/ui/comum/ordenha_page.dart';
+import 'package:ovinos_caprinos/ui/comum/pesagem_page.dart';
+import 'package:ovinos_caprinos/ui/comum/tratamento_page.dart';
+import 'package:ovinos_caprinos/ui/comum/venda_page.dart';
+import 'package:ovinos_caprinos/ui/comum/visualizar_evento.dart';
+import 'package:ovinos_caprinos/ui/comum/visualizar_imagem_padrao.dart';
+import 'package:ovinos_caprinos/util/funcoes.dart';
 
 class AnimalInformation extends StatefulWidget {
   final Animal animal;
@@ -73,7 +73,10 @@ class _CaprinoInformationState extends State<AnimalInformation> {
   void initState() {
     super.initState();
     _animalSelecionado = Animal.fromMap(widget.animal.toMap());
-    _dataComSplit = _animalSelecionado.dataNascimento.split("-");
+    if (_animalSelecionado.dataNascimento != "Não Informada") {
+      _dataComSplit = _animalSelecionado.dataNascimento.split("-");
+    }
+
     if (_animalSelecionado.idCategoria != null) {
       _getAllCategorias();
     }
@@ -395,28 +398,53 @@ class _CaprinoInformationState extends State<AnimalInformation> {
   }
 
   Widget _informacoesAnimal(Animal caprinoSelecionado) {
-    return DataTable(
-      columns: <DataColumn>[
-        DataColumn(
-          label: Text(''),
+    return DataTable(columns: <DataColumn>[
+      DataColumn(
+        label: Text(''),
+      ),
+      DataColumn(
+        label: Text(''),
+      ),
+    ], rows: linhas());
+  }
+
+  List<DataRow> linhas() {
+    List<DataRow> linhas = new List();
+    linhas.add(
+      DataRow(cells: [
+        DataCell(Text("Patrimônio")),
+        DataCell(
+          Text(ehvazio(_animalSelecionado.patrimonio)),
         ),
-        DataColumn(
-          label: Text(''),
+      ]),
+    );
+    linhas.add(
+      DataRow(cells: [
+        DataCell(Text("Brinco")),
+        DataCell(
+          Text(ehvazio(_animalSelecionado.brincoControle)),
         ),
-      ],
-      rows: [
+      ]),
+    );
+    linhas.add(
+      DataRow(cells: [
+        DataCell(Text("ID")),
+        DataCell(Text(_animalSelecionado.idAnimal.toString())),
+      ]),
+    );
+    if (_animalSelecionado.dataNascimento == "Não Informada") {
+      linhas.add(
         DataRow(cells: [
-          DataCell(Text("Patrimônio")),
-          DataCell(Text(ehvazio(_animalSelecionado.patrimonio)))
+          DataCell(Text("Idade")),
+          DataCell(
+            Text(
+              "Não Informada",
+            ),
+          ),
         ]),
-        DataRow(cells: [
-          DataCell(Text("Brinco")),
-          DataCell(Text(ehvazio(_animalSelecionado.brincoControle)))
-        ]),
-        DataRow(cells: [
-          DataCell(Text("ID")),
-          DataCell(Text(_animalSelecionado.idAnimal.toString()))
-        ]),
+      );
+    } else {
+      linhas.add(
         DataRow(cells: [
           DataCell(Text("Idade")),
           DataCell(
@@ -425,34 +453,55 @@ class _CaprinoInformationState extends State<AnimalInformation> {
             ),
           ),
         ]),
-        DataRow(cells: [
-          DataCell(Text("Nome")),
-          DataCell(Text(ehvazio(_animalSelecionado.nome)))
-        ]),
-        DataRow(cells: [
-          DataCell(Text("Sexo")),
-          DataCell(Text(_animalSelecionado.sexo.toString()))
-        ]),
-        DataRow(cells: [
-          DataCell(Text("Categoria")),
-          DataCell(Text(ehvazio(categoriaSelecionada)))
-        ]),
-        DataRow(
-            cells: [DataCell(Text("Raça")), DataCell(Text(racaSelecionada))]),
-        DataRow(cells: [
-          DataCell(Text("Pai")),
-          DataCell(Text(exibicaoParentalPadrao(paiDoAnimal))),
-        ]),
-        DataRow(cells: [
-          DataCell(Text("Mãe")),
-          DataCell(Text(exibicaoParentalPadrao(maeDoAnimal))),
-        ]),
-        DataRow(cells: [
-          DataCell(Text("Nascimento")),
-          DataCell(Text(exibicaoDataPadrao(_animalSelecionado.dataNascimento))),
-        ]),
-      ],
+      );
+    }
+
+    linhas.add(
+      DataRow(cells: [
+        DataCell(Text("Nome")),
+        DataCell(Text(ehvazio(_animalSelecionado.nome)))
+      ]),
     );
+    linhas.add(
+      DataRow(cells: [
+        DataCell(Text("Sexo")),
+        DataCell(Text(_animalSelecionado.sexo.toString()))
+      ]),
+    );
+    linhas.add(
+      DataRow(cells: [
+        DataCell(Text("Categoria")),
+        DataCell(Text(ehvazio(categoriaSelecionada)))
+      ]),
+    );
+    linhas.add(
+      DataRow(cells: [
+        DataCell(Text("Raça")),
+        DataCell(
+          Text(racaSelecionada),
+        ),
+      ]),
+    );
+    linhas.add(
+      DataRow(cells: [
+        DataCell(Text("Pai")),
+        DataCell(Text(exibicaoParentalPadrao(paiDoAnimal))),
+      ]),
+    );
+    linhas.add(
+      DataRow(cells: [
+        DataCell(Text("Mãe")),
+        DataCell(Text(exibicaoParentalPadrao(maeDoAnimal))),
+      ]),
+    );
+    linhas.add(
+      DataRow(cells: [
+        DataCell(Text("Nascimento")),
+        DataCell(Text(exibicaoDataPadrao(_animalSelecionado.dataNascimento))),
+      ]),
+    );
+
+    return linhas;
   }
 
   String exibicaoParentalPadrao(Animal info) {

@@ -1,5 +1,4 @@
-import 'package:ouvinos_caprinos/eventos/class/enumerate_enventos.dart';
-
+import 'package:ovinos_caprinos/eventos/class/enumerate_enventos.dart';
 
 class Evento {
   int idEvento;
@@ -7,13 +6,7 @@ class Evento {
   Eventos tipoEvento;
   String data;
 
-  Evento({
-    this.idEvento,
-    this.data,
-    this.tipoEvento,
-    this.descricao
-
-  });
+  Evento({this.idEvento, this.data, this.tipoEvento, this.descricao});
 
   @override
   String toString() {

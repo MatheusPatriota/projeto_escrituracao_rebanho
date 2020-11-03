@@ -1,4 +1,4 @@
-import 'package:ouvinos_caprinos/tratamento/class/tratamento.dart';
+import 'package:ovinos_caprinos/tratamento/class/tratamento.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 import 'package:path/path.dart';
@@ -55,7 +55,8 @@ class TratamentoHelper {
   Future<Tratamento> saveTratamento(Tratamento tratamento) async {
     Database dbTratamento = await db;
     print(dbTratamento);
-    tratamento.idTratamento = await dbTratamento.insert(tableName, tratamento.toMap());
+    tratamento.idTratamento =
+        await dbTratamento.insert(tableName, tratamento.toMap());
     print("Tratamento Salvo");
     return tratamento;
   }
