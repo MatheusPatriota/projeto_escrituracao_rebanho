@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_archive/flutter_archive.dart' as fa;
 import 'package:flutter_document_picker/flutter_document_picker.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:share/share.dart';
+import 'package:path_provider/path_provider.dart';
 
 class BackupRestorePage extends StatefulWidget {
   BackupRestorePage({Key key}) : super(key: key);
@@ -35,6 +35,12 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                 onTap: () async {
                   String path = await getDatabasesPath();
                   final dataDir = Directory(path);
+                  final String pathImages =
+                      (await getApplicationSupportDirectory()).path;
+                  final dataDirImages = Directory(pathImages);
+                  var filesImages = dataDirImages.listSync().toList();
+                  print(dataDirImages);
+                  print(filesImages);
                   print(dataDir.existsSync());
                   var files = dataDir.listSync().toList();
                   var timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -49,9 +55,17 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                       encoder.addFile(element);
                     }
                   }
+                  for (var element in filesImages) {
+                    if (element.path.substring(
+                            element.path.length - 3, element.path.length) ==
+                        "jpg") {
+                      encoder.addFile(element);
+                    }
+                  }
                   encoder.close();
-                  files = dataDir.listSync().toList();
+
                   files.forEach((element) => print(element));
+                  filesImages.forEach((element) => print(element));
                   Share.shareFiles(['$path/' + date.toIso8601String() + '.zip'],
                       text: 'Backup File' + date.toIso8601String());
                   // which is data/data/<package_name>/databases
@@ -61,7 +75,9 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                 title: Text('Realizar Restore'),
                 onTap: () async {
                   String path = await getDatabasesPath();
+
                   final dataDir = Directory(path);
+
                   print(dataDir.existsSync());
                   var files = dataDir.listSync().toList();
 
@@ -103,29 +119,29 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
     );
   }
 
-  Widget alert(){
-     Widget okButton = FlatButton(
-    child: Text("OK"),
-    onPressed: () {
-       exit(0);
-     },
-  );
+  Widget alert() {
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        exit(0);
+      },
+    );
 
-  // set up the AlertDialog
-  AlertDialog alert = AlertDialog(
-    title: Text("Importação bem sucedida!"),
-    content: Text("O APP será fechado, por farvor inicie novamente"),
-    actions: [
-      okButton,
-    ],
-  );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Importação bem sucedida!"),
+      content: Text("O APP será fechado, por farvor inicie novamente"),
+      actions: [
+        okButton,
+      ],
+    );
 
-  // show the dialog
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
-  );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }

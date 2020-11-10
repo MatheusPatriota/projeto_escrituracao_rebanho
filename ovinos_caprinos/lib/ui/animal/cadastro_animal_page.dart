@@ -13,6 +13,8 @@ import 'package:ovinos_caprinos/especie/db/especie_database.dart';
 import 'package:ovinos_caprinos/raca/class/raca.dart';
 import 'package:ovinos_caprinos/raca/db/raca_database.dart';
 import 'package:ovinos_caprinos/util/funcoes.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as pth;
 
 class CadastroAnimalPage extends StatefulWidget {
   final Animal animal;
@@ -387,11 +389,19 @@ class _CadastroAnimalPageState extends State<CadastroAnimalPage> {
                     fit: BoxFit.cover),
               ),
             ),
-            onTap: () {
+            onTap: () async {
+              var file2 = await getApplicationSupportDirectory();
+              print(file2.absolute);
               ImagePicker.pickImage(source: ImageSource.camera).then((file) {
+                var basNameWithExtension = pth.basename(file.path);
+                final fileResult =
+                    file.copySync(file2.path + "/" + basNameWithExtension);
+                file.deleteSync();
+                print(fileResult.path);
                 if (file == null) return;
                 setState(() {
-                  _editedAnimal.img = file.path;
+                  _editedAnimal.img = fileResult.path;
+                  print(fileResult.path);
                 });
               });
             },
