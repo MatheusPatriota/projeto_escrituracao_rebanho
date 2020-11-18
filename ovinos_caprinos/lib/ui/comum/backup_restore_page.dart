@@ -47,7 +47,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                   var date = new DateTime.fromMillisecondsSinceEpoch(timestamp);
                   var encoder = ZipFileEncoder();
                   encoder.create(
-                      dataDir.path + "/" + date.toIso8601String() + '.zip');
+                      dataDir.path + "/" + date.toUtc().toString() + '.zip');
                   for (var element in files) {
                     if (element.path.substring(
                             element.path.length - 3, element.path.length) !=
@@ -66,8 +66,9 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
 
                   files.forEach((element) => print(element));
                   filesImages.forEach((element) => print(element));
-                  Share.shareFiles(['$path/' + date.toIso8601String() + '.zip'],
-                      text: 'Backup File' + date.toIso8601String());
+                  Share.shareFiles(
+                      ['$path/' + date.toUtc().toString() + '.zip'],
+                      text: 'Backup File' + date.toUtc().toString());
                   // which is data/data/<package_name>/databases
                 }),
             ListTile(
@@ -77,9 +78,11 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                   String path = await getDatabasesPath();
 
                   final dataDir = Directory(path);
-
+                  Directory imagensDir = new Directory(
+                      "/data/user/0/matheuspatriota.com.br.ovinos_caprinos/files");
                   print(dataDir.existsSync());
                   var files = dataDir.listSync().toList();
+                  var imagesFiles = imagensDir.listSync().toList();
 
                   FlutterDocumentPickerParams params =
                       FlutterDocumentPickerParams(
@@ -89,28 +92,61 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                   );
                   final pathDocument =
                       await FlutterDocumentPicker.openDocument(params: params);
-                  print(pathDocument);
                   if (pathDocument != null) {
-                    final zipFile = File(pathDocument);
-                    try {
-                      for (var element in files) {
-                        if (element.path.substring(
-                                element.path.length - 3, element.path.length) !=
-                            // ignore: unnecessary_statements
-                            "zip") (element.deleteSync());
-                        print(element.path + ": deleted!");
+                    print(pathDocument);
+                    if (pathDocument != null) {
+                      final zipFile = File(pathDocument);
+                      try {
+                        bool val = true;
+                        String dataValidar = zipFile.path.substring(
+                            zipFile.path.length - 28, zipFile.path.length - 18);
+                        print(dataValidar + "  arquivo");
+                        try {
+                          DateTime todayDate = DateTime.parse(dataValidar);
+                          print(todayDate);
+                        } catch (e) {
+                          val = false;
+                        }
+                        if (val == true) {
+                          for (var element in files) {
+                            if (element.path.substring(element.path.length - 3,
+                                    element.path.length) !=
+                                // ignore: unnecessary_statements
+                                "zip") (element.deleteSync());
+                            print(element.path + ": deleted!");
+                          }
+                          for (var element in imagesFiles) {
+                            if (element.path.substring(element.path.length - 3,
+                                    element.path.length) ==
+                                // ignore: unnecessary_statements
+                                "jpg") (element.deleteSync());
+                            print(element.path + ": deleted!");
+                          }
+
+                          //aleterar futuramente
+
+                          fa.ZipFile.extractToDirectory(
+                              zipFile: zipFile, destinationDir: imagensDir);
+                          fa.ZipFile.extractToDirectory(
+                              zipFile: zipFile, destinationDir: dataDir);
+                          Future.delayed(Duration(seconds: 3), () {
+                            //  SystemNavigator.pop();
+                            alert(0);
+                          });
+                        } else {
+                          alert(2);
+                        }
+                      } catch (e) {
+                        print(e.toString());
                       }
-                      fa.ZipFile.extractToDirectory(
-                          zipFile: zipFile, destinationDir: dataDir);
-                    } catch (e) {}
+                    }
+                  } else {
+                    alert(1);
                   }
 
                   //reiniciar app
                   // Navigator.pop(context);
-                  Future.delayed(Duration(seconds: 3), () {
-                    //  SystemNavigator.pop();
-                    alert();
-                  });
+
                   // which is data/data/<package_name>/databases
                 }),
           ],
@@ -119,22 +155,57 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
     );
   }
 
-  Widget alert() {
-    Widget okButton = FlatButton(
-      child: Text("OK"),
-      onPressed: () {
-        exit(0);
-      },
-    );
+  void alert(int cond) {
+    AlertDialog alert;
+    if (cond == 0) {
+      Widget okButton = FlatButton(
+        child: Text("OK"),
+        onPressed: () {
+          exit(0);
+        },
+      );
 
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text("Importação bem sucedida!"),
-      content: Text("O APP será fechado, por farvor inicie novamente"),
-      actions: [
-        okButton,
-      ],
-    );
+      // set up the AlertDialog
+      alert = AlertDialog(
+        title: Text("Importação bem sucedida!"),
+        content: Text("O APP será fechado, por farvor inicie novamente"),
+        actions: [
+          okButton,
+        ],
+      );
+    } else if (cond == 1) {
+      Widget okButton = FlatButton(
+        child: Text("OK"),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      );
+
+      // set up the AlertDialog
+      alert = AlertDialog(
+        title: Text("Não foi possível realizar importação!"),
+        content: Text("Operação não realizada"),
+        actions: [
+          okButton,
+        ],
+      );
+    } else {
+      Widget okButton = FlatButton(
+        child: Text("OK"),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      );
+
+      // set up the AlertDialog
+      alert = AlertDialog(
+        title: Text("Arquivo Invalido!"),
+        content: Text("Operação não realizada"),
+        actions: [
+          okButton,
+        ],
+      );
+    }
 
     // show the dialog
     showDialog(

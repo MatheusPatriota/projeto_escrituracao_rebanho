@@ -706,6 +706,17 @@ class _CaprinoInformationState extends State<AnimalInformation> {
                         fit: BoxFit.cover),
                   ),
                 ),
+                onTap: () {
+                  if (_animalSelecionado.img != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ImagemPage(_animalSelecionado.img),
+                      ),
+                    );
+                  }
+                },
               ),
             ],
           ),

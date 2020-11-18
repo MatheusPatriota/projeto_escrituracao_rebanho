@@ -77,7 +77,8 @@ class _TratamentoPageState extends State<TratamentoPage> {
         },
       );
     } else {
-      return Text("");
+       _tratamentoCadastrado.dataAgendamento = "Não Informada";
+       return Text("");
     }
   }
 

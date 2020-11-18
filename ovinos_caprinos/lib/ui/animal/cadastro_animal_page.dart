@@ -394,6 +394,7 @@ class _CadastroAnimalPageState extends State<CadastroAnimalPage> {
               print(file2.absolute);
               ImagePicker.pickImage(source: ImageSource.camera).then((file) {
                 var basNameWithExtension = pth.basename(file.path);
+                print(basNameWithExtension);
                 final fileResult =
                     file.copySync(file2.path + "/" + basNameWithExtension);
                 file.deleteSync();
