@@ -43,11 +43,28 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
 
     if (widget.animaisSelecionados.isNotEmpty) {
       Comparator<Animal> dataComparator = (a, b) {
-        DateTime dateTimeA =
-            DateTime.parse("${a.dataNascimento}" + " 00:00:00");
-        DateTime dateTimeB =
-            DateTime.parse("${b.dataNascimento}" + " 00:00:00");
-        return dateTimeA.compareTo(dateTimeB);
+        if (a.dataNascimento == "Não Informada" &&
+            b.dataNascimento == "Não Informada") {
+          DateTime dateTimeA = DateTime.parse("${'0000-00-00'}" + " 00:00:00");
+          DateTime dateTimeB = DateTime.parse("${'0000-00-00'}" + " 00:00:00");
+          return dateTimeA.compareTo(dateTimeB);
+        } else if (b.dataNascimento == "Não Informada") {
+          DateTime dateTimeA =
+              DateTime.parse("${a.dataNascimento}" + " 00:00:00");
+          DateTime dateTimeB = DateTime.parse("${'0000-00-00'}" + " 00:00:00");
+          return dateTimeA.compareTo(dateTimeB);
+        } else if (a.dataNascimento == "Não Informada") {
+          DateTime dateTimeA = DateTime.parse("${'0000-00-00'}" + " 00:00:00");
+          DateTime dateTimeB =
+              DateTime.parse("${b.dataNascimento}" + " 00:00:00");
+          return dateTimeA.compareTo(dateTimeB);
+        } else {
+          DateTime dateTimeA =
+              DateTime.parse("${a.dataNascimento}" + " 00:00:00");
+          DateTime dateTimeB =
+              DateTime.parse("${b.dataNascimento}" + " 00:00:00");
+          return dateTimeA.compareTo(dateTimeB);
+        }
       };
       listaFinal.sort(dataComparator);
       listaFinal.forEach((Animal item) {
@@ -79,24 +96,25 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
 
     //idade
     for (var ani in widget.animaisSelecionados) {
-      List<String> dataSplitada = ani.dataNascimento.split("-");
-      int idadeAni =
-          int.parse(idadeAnimal(dataSplitada[0], dataSplitada[1], condicao: 0));
-      if (idadeAni >= 0 && idadeAni <= 6) {
-        zeroSeis += 1;
-      } else if (idadeAni >= 7 && idadeAni <= 12) {
-        seteDoze += 1;
-      } else if (idadeAni >= 13 && idadeAni <= 18) {
-        trezeDezoito += 1;
-      } else if (idadeAni >= 19 && idadeAni <= 24) {
-        dezenoveVinteQuatro += 1;
-      } else if (idadeAni >= 25 && idadeAni <= 36) {
-        vinteCincoTrintaSeis += 1;
-      } else if (idadeAni >= 36) {
-        maisqueTrintaSeis += 1;
+      if (ani.dataNascimento != "Não Informada") {
+        List<String> dataSplitada = ani.dataNascimento.split("-");
+        int idadeAni = int.parse(
+            idadeAnimal(dataSplitada[0], dataSplitada[1], condicao: 0));
+        if (idadeAni >= 0 && idadeAni <= 6) {
+          zeroSeis += 1;
+        } else if (idadeAni >= 7 && idadeAni <= 12) {
+          seteDoze += 1;
+        } else if (idadeAni >= 13 && idadeAni <= 18) {
+          trezeDezoito += 1;
+        } else if (idadeAni >= 19 && idadeAni <= 24) {
+          dezenoveVinteQuatro += 1;
+        } else if (idadeAni >= 25 && idadeAni <= 36) {
+          vinteCincoTrintaSeis += 1;
+        } else if (idadeAni >= 36) {
+          maisqueTrintaSeis += 1;
+        }
       }
     }
-
     final data = [
       new AnimaisIdade('0-6 meses', zeroSeis),
       new AnimaisIdade('7-12', seteDoze),
@@ -137,10 +155,13 @@ class _GraficosAnaliticosPageState extends State<GraficosAnaliticosPage> {
     int contadorAnimais = 0;
     for (var ani in listaFinal) {
       contadorAnimais++;
-      List<String> data = ani.dataNascimento.split("-");
-      evolucaoRebanho.add(EvolucaoRebanho(
-          DateTime(int.parse(data[0]), int.parse(data[1]), int.parse(data[2])),
-          contadorAnimais));
+      if (ani.dataNascimento != "Não Informada") {
+        List<String> data = ani.dataNascimento.split("-");
+        evolucaoRebanho.add(EvolucaoRebanho(
+            DateTime(
+                int.parse(data[0]), int.parse(data[1]), int.parse(data[2])),
+            contadorAnimais));
+      }
     }
 
     //adicionando ao grafico e animais por raca

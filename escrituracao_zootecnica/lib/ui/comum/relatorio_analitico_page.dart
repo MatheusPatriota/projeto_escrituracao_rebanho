@@ -60,22 +60,24 @@ class _RelatorioAnaliticoPageState extends State<RelatorioAnaliticoPage> {
         femeas += 1;
       }
 
-      //idade
-      List<String> dataSplitada = ani.dataNascimento.split("-");
-      int idadeAni =
-          int.parse(idadeAnimal(dataSplitada[0], dataSplitada[1], condicao: 0));
-      if (idadeAni >= 0 && idadeAni <= 6) {
-        zeroSeis += 1;
-      } else if (idadeAni >= 7 && idadeAni <= 12) {
-        seteDoze += 1;
-      } else if (idadeAni >= 13 && idadeAni <= 18) {
-        trezeDezoito += 1;
-      } else if (idadeAni >= 19 && idadeAni <= 24) {
-        dezenoveVinteQuatro += 1;
-      } else if (idadeAni >= 25 && idadeAni <= 36) {
-        vinteCincoTrintaSeis += 1;
-      } else if (idadeAni >= 36) {
-        maisqueTrintaSeis += 1;
+      if (ani.dataNascimento != "Não Informada") {
+        //idade
+        List<String> dataSplitada = ani.dataNascimento.split("-");
+        int idadeAni = int.parse(
+            idadeAnimal(dataSplitada[0], dataSplitada[1], condicao: 0));
+        if (idadeAni >= 0 && idadeAni <= 6) {
+          zeroSeis += 1;
+        } else if (idadeAni >= 7 && idadeAni <= 12) {
+          seteDoze += 1;
+        } else if (idadeAni >= 13 && idadeAni <= 18) {
+          trezeDezoito += 1;
+        } else if (idadeAni >= 19 && idadeAni <= 24) {
+          dezenoveVinteQuatro += 1;
+        } else if (idadeAni >= 25 && idadeAni <= 36) {
+          vinteCincoTrintaSeis += 1;
+        } else if (idadeAni >= 36) {
+          maisqueTrintaSeis += 1;
+        }
       }
 
       //cria, recria, terminação

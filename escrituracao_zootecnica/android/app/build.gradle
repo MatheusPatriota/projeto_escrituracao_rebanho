@@ -46,7 +46,7 @@ android {
         applicationId "com.escrituracao_zootecnica.matheus.coimbra.patriota"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode flutterVersionCode.toInteger()
+        versionCode 4
         versionName flutterVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
