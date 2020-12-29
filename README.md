@@ -14,12 +14,12 @@
 
 Este software para plataforma Android foi desenvolvido a fim de informatizar o processo de escrituração zootécnica para rebanhos de animais ruminantes das seguintes espécies: Ovino, Caprino, Bovino, etc. O mesmo foi adaptado e aplicado em um projeto de extensão de nível médio a fim de acomodar alguns requisitos específicos do projeto. O projeto está sendo conduzido por docentes e discentes do curso superior em Engenharia de Software e curso Tecnico em agropecuária do Instituto Federal de Educação do Pernambuco (IFPE), campus Belo Jardim, Pernambuco. Para maiores detalhes sobre a equipe, verificar a seção 8 do documento. 
 
-![](https://i.imgur.com/BUbmJHF.jpg)
-![](https://i.imgur.com/dJfto4l.jpg)
-![](https://i.imgur.com/qrLfHKi.jpg)
-![](https://i.imgur.com/b3MbYS8.jpg)
-![](https://i.imgur.com/ahdURvr.jpg)
-![](https://i.imgur.com/94vd2NW.jpg)
+<img src="https://i.imgur.com/BUbmJHF.jpg" width="500px"/>
+<img src="https://i.imgur.com/dJfto4l.jpg" width="500px/">
+<img src="https://i.imgur.com/qrLfHKi.jpg" width="500px"/>
+<img src="https://i.imgur.com/b3MbYS8.jpg" width="500px"/>
+<img src="https://i.imgur.com/ahdURvr.jpg" width="500px"/>
+<img src="https://i.imgur.com/94vd2NW.jpg" width="500px"/>
 
 ## 2. Consideração de Uso
 
