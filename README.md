@@ -14,6 +14,13 @@
 
 Este software para plataforma Android foi desenvolvido a fim de informatizar o processo de escrituração zootécnica para rebanhos de animais ruminantes das seguintes espécies: Ovino, Caprino, Bovino, etc. O mesmo foi adaptado e aplicado em um projeto de extensão de nível médio a fim de acomodar alguns requisitos específicos do projeto. O projeto está sendo conduzido por docentes e discentes do curso superior em Engenharia de Software e curso Tecnico em agropecuária do Instituto Federal de Educação do Pernambuco (IFPE), campus Belo Jardim, Pernambuco. Para maiores detalhes sobre a equipe, verificar a seção 8 do documento. 
 
+![](https://i.imgur.com/BUbmJHF.jpg)
+![](https://i.imgur.com/dJfto4l.jpg)
+![](https://i.imgur.com/qrLfHKi.jpg)
+![](https://i.imgur.com/b3MbYS8.jpg)
+![](https://i.imgur.com/ahdURvr.jpg)
+![](https://i.imgur.com/94vd2NW.jpg)
+
 ## 2. Consideração de Uso
 
 O Software Cap & Ino Rebanho foi concebido para fins educacionais e sua distribuição é livre e gratuita. O App é distribuído sob a licença GPL-3.0. Para conferir maiores detalhes sobre a licença de utilização do software, verifique os seus termos em: https://www.gnu.org/licenses/gpl-3.0.txt ou acesse o arquivo COPYING no repositório.   
